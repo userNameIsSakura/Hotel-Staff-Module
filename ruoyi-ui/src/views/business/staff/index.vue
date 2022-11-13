@@ -221,10 +221,9 @@ export default {
   },
   created() {
     this.getList();
-    if(Cookies.get("admin") === "0")
+    //0:酒店管理员
+    if(Cookies.get("admin") === "1")
       this.admin = true;
-    else {
-    }
   },
   methods: {
     /** 查询员工信息列表 */

@@ -2,8 +2,10 @@ package com.ruoyi.web.controller.system;
 
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import com.ruoyi.common.core.domain.entity.SysAdministrator;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.web.bind.annotation.*;
@@ -43,7 +45,7 @@ public class SysLoginController
 
     public AjaxResult login(@RequestBody LoginBody loginBody, HttpServletResponse response,HttpServletRequest request)
     {
-        System.out.println("ddd");
+        System.out.println();
         SysAdministrator login = loginService.login(loginBody.getUsername(), loginBody.getPassword());
         if(login == null)
         {
@@ -71,13 +73,14 @@ public class SysLoginController
      * @return 结果
      */
     @PostMapping("/login")
-    public AjaxResult login(@RequestBody LoginBody loginBody)
-    {
+    public AjaxResult login(@RequestBody LoginBody loginBody,HttpServletResponse response) throws InterruptedException {
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid());
+
         ajax.put(Constants.TOKEN, token);
+
         return ajax;
     }
 

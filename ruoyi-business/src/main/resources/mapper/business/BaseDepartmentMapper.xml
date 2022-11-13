@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BaseDepartmentMapper">
+
+    <resultMap type="BaseDepartment" id="BaseDepartmentResult">
+        <result property="departmentId"    column="department_id"    />
+        <result property="superiorId"    column="superior_id"    />
+        <result property="hotelId"    column="hotel_id"    />
+        <result property="departmentName"    column="department_name"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <resultMap id="BaseDepartmentBaseStaffResult" type="BaseDepartment" extends="BaseDepartmentResult">
+        <collection property="baseStaffList" notNullColumn="sub_staff_id" javaType="java.util.List" resultMap="BaseStaffResult" />
+    </resultMap>
+
+    <resultMap type="BaseStaff" id="BaseStaffResult">
+        <result property="staffId"    column="sub_staff_id"    />
+        <result property="staffName"    column="sub_staff_name"    />
+        <result property="staffPhone"    column="sub_staff_phone"    />
+        <result property="hotelId"    column="sub_hotel_id"    />
+        <result property="departmentId"    column="sub_department_id"    />
+        <result property="staffPassword"    column="sub_staff_password"    />
+        <result property="remark"    column="sub_remark"    />
+    </resultMap>
+
+    <sql id="selectBaseDepartmentVo">
+        select department_id, superior_id, hotel_id, department_name, remark from base_department
+    </sql>
+
+    <select id="selectBaseDepartmentList" parameterType="BaseDepartment" resultMap="BaseDepartmentResult">
+        <include refid="selectBaseDepartmentVo"/>
+        <where>
+            <if test="superiorId != null "> and superior_id = #{superiorId}</if>
+            <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
+            <if test="departmentName != null  and departmentName != ''"> and department_name like concat('%', #{departmentName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectBaseDepartmentByDepartmentId" parameterType="Long" resultMap="BaseDepartmentBaseStaffResult">
+        select a.department_id, a.superior_id, a.hotel_id, a.department_name, a.remark,
+ b.staff_id as sub_staff_id, b.staff_name as sub_staff_name, b.staff_phone as sub_staff_phone, b.hotel_id as sub_hotel_id, b.department_id as sub_department_id, b.staff_password as sub_staff_password, b.remark as sub_remark
+        from base_department a
+        left join base_staff b on b.department_id = a.department_id and b.hotel_id = a.hotel_id
+        where a.department_id = #{departmentId}
+    </select>
+
+    <insert id="insertBaseDepartment" parameterType="BaseDepartment" useGeneratedKeys="true" keyProperty="departmentId">
+        insert into base_department
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="superiorId != null">superior_id,</if>
+            <if test="hotelId != null">hotel_id,</if>
+            <if test="departmentName != null and departmentName != ''">department_name,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="superiorId != null">#{superiorId},</if>
+            <if test="hotelId != null">#{hotelId},</if>
+            <if test="departmentName != null and departmentName != ''">#{departmentName},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBaseDepartment" parameterType="BaseDepartment">
+        update base_department
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="superiorId != null">superior_id = #{superiorId},</if>
+            <if test="hotelId != null">hotel_id = #{hotelId},</if>
+            <if test="departmentName != null and departmentName != ''">department_name = #{departmentName},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where department_id = #{departmentId}
+    </update>
+
+    <delete id="deleteBaseDepartmentByDepartmentId" parameterType="Long">
+        delete from base_department where department_id = #{departmentId}
+    </delete>
+
+    <delete id="deleteBaseDepartmentByDepartmentIds" parameterType="String">
+        delete from base_department where department_id in
+        <foreach item="departmentId" collection="array" open="(" separator="," close=")">
+            #{departmentId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteBaseStaffByDepartmentIds" parameterType="String">
+        delete from base_staff where department_id in
+        <foreach item="departmentId" collection="array" open="(" separator="," close=")">
+            #{departmentId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteBaseStaffByDepartmentId" parameterType="Long">
+        delete from base_staff where department_id = #{departmentId}
+    </delete>
+
+    <insert id="batchBaseStaff">
+        insert into base_staff( staff_id, staff_name, staff_phone, hotel_id, department_id, staff_password, remark) values
+		<foreach item="item" index="index" collection="list" separator=",">
+            ( #{item.staffId}, #{item.staffName}, #{item.staffPhone}, #{item.hotelId}, #{item.departmentId}, #{item.staffPassword}, #{item.remark})
+        </foreach>
+    </insert>
+</mapper>

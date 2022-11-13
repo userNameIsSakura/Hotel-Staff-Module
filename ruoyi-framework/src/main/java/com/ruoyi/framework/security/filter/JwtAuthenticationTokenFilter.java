@@ -3,6 +3,7 @@ package com.ruoyi.framework.security.filter;
 import java.io.IOException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,11 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, loginUser.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+            Cookie admin = new Cookie("admin", ((LoginUser) (SecurityContextHolder.getContext().getAuthentication().getPrincipal())).getSuperAdministrator().toString());
+            admin.setPath("/");
+            response.addCookie(admin);
+
         }
         chain.doFilter(request, response);
     }

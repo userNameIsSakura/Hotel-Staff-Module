@@ -58,7 +58,7 @@ public class SecurityUtils
         }
     }
     /**
-     * 获取酒店ID
+     * 获取超管标识
      **/
     public static Long getSuperAdministrator()
     {

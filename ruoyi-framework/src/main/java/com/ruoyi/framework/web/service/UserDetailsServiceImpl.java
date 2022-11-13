@@ -52,6 +52,7 @@ public class UserDetailsServiceImpl implements UserDetailsService
 
         passwordService.validate(user);
 
+        //返回的User什么时候放到Login User里的
         return createLoginUser(user);
     }
 
@@ -60,7 +61,6 @@ public class UserDetailsServiceImpl implements UserDetailsService
 
     public UserDetails createLoginUser(SysUser user)
     {
-        System.out.println("user"+user.getHotelId());
         return new LoginUser(user.getUserId(), user.getDeptId(),user.getHotelId(),user.getSuperAdministrator(), user, permissionService.getMenuPermission(user));
     }
 }
