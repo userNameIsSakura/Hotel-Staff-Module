@@ -34,9 +34,8 @@ public class BaseDepartmentController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('business:department:list')")
     @GetMapping("/list")
-    public TableDataInfo list(BaseDepartment baseDepartment,@CookieValue(name = "admin" , required = false) String str)
+    public AjaxResult list(BaseDepartment baseDepartment,@CookieValue(name = "admin" , required = false) String str)
     {
-        startPage();
 
         Long hotelId = SecurityUtils.getHotelId();
         if(SecurityUtils.getSuperAdministrator() == 0) {
@@ -46,7 +45,7 @@ public class BaseDepartmentController extends BaseController
 
 
         List<BaseDepartment> list = baseDepartmentService.selectBaseDepartmentList(baseDepartment);
-        return getDataTable(list);
+        return AjaxResult.success(list);
     }
 
     /**

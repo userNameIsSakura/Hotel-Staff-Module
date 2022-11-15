@@ -81,6 +81,12 @@ public class BaseStaffController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody BaseStaff baseStaff)
     {
+        Long hotelId = SecurityUtils.getHotelId();
+        if(SecurityUtils.getSuperAdministrator() == 0) {
+            //不是超管
+            baseStaff.setHotelId(hotelId);
+        }
+
         return toAjax(baseStaffService.insertBaseStaff(baseStaff));
     }
 
