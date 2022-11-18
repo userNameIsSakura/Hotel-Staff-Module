@@ -36,19 +36,23 @@ public class BaseStaffController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('business:staff:list')")
     @GetMapping("/list")
-    public TableDataInfo list(BaseStaff baseStaff, HttpServletRequest request, @CookieValue(name = "admin" , required = false) String str)
+    public TableDataInfo list(BaseStaff baseStaff)
     {
         startPage();
 
-        Long hotelId = SecurityUtils.getHotelId();
-        if(SecurityUtils.getSuperAdministrator() == 0) {
-            //不是超管
-            baseStaff.setHotelId(hotelId);
-        }
+        baseStaff.setHotelId(SecurityUtils.getHotelId());
 
         List<BaseStaff> list = baseStaffService.selectBaseStaffList(baseStaff);
         return getDataTable(list);
     }
+
+
+    @GetMapping("/list2")
+    public String list2()
+    {
+        return "success";
+    }
+
 
     /**
      * 导出员工信息列表
@@ -81,11 +85,7 @@ public class BaseStaffController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody BaseStaff baseStaff)
     {
-        Long hotelId = SecurityUtils.getHotelId();
-        if(SecurityUtils.getSuperAdministrator() == 0) {
-            //不是超管
-            baseStaff.setHotelId(hotelId);
-        }
+        baseStaff.setHotelId(SecurityUtils.getHotelId());
 
         return toAjax(baseStaffService.insertBaseStaff(baseStaff));
     }

@@ -35,7 +35,7 @@ import com.ruoyi.system.service.ISysUserService;
 
 /**
  * 用户信息
- * 
+ *
  * @author ruoyi
  */
 @RestController
@@ -141,6 +141,12 @@ public class SysUserController extends BaseController
         }
         user.setCreateBy(getUsername());
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
+
+        if(user.getSuperAdministrator() == 0)
+            user.setRoleIds(new Long[]{2L});
+        else
+            user.setRoleIds(new Long[]{1L});
+
         return toAjax(userService.insertUser(user));
     }
 

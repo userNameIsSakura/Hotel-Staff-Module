@@ -148,7 +148,7 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="管理员类别">
+            <el-form-item label="管理等级">
               <el-select v-model="form.superAdministrator">
                 <el-option
                   v-for="dict in dict.type.super_administrator"
@@ -161,7 +161,7 @@
           </el-col>
         </el-row>
 
-        <el-row>
+        <el-row v-if="form.superAdministrator === 0">
           <el-col :span="12">
             <el-form-item label="酒店ID" prop="hotelId">
               <el-input v-model="form.hotelId" placeholder="请输入酒店ID" maxlength="30" />

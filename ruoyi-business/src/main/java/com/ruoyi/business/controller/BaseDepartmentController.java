@@ -34,15 +34,10 @@ public class BaseDepartmentController extends BaseController
      */
     @PreAuthorize("@ss.hasPermi('business:department:list')")
     @GetMapping("/list")
-    public AjaxResult list(BaseDepartment baseDepartment,@CookieValue(name = "admin" , required = false) String str)
+    public AjaxResult list(BaseDepartment baseDepartment)
     {
 
-        Long hotelId = SecurityUtils.getHotelId();
-        if(SecurityUtils.getSuperAdministrator() == 0) {
-            //不是超管
-            baseDepartment.setHotelId(hotelId);
-        }
-
+        baseDepartment.setHotelId(SecurityUtils.getHotelId());
 
         List<BaseDepartment> list = baseDepartmentService.selectBaseDepartmentList(baseDepartment);
         return AjaxResult.success(list);
@@ -68,7 +63,6 @@ public class BaseDepartmentController extends BaseController
     @GetMapping(value = "/{departmentId}")
     public AjaxResult getInfo(@PathVariable("departmentId") Long departmentId)
     {
-        System.out.println(departmentId);
         return AjaxResult.success(baseDepartmentService.selectBaseDepartmentByDepartmentId(departmentId));
     }
 
@@ -80,11 +74,10 @@ public class BaseDepartmentController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody BaseDepartment baseDepartment)
     {
-        Long hotelId = SecurityUtils.getHotelId();
-        if(SecurityUtils.getSuperAdministrator() == 0) {
-            //不是超管
-            baseDepartment.setHotelId(hotelId);
-        }
+        if(baseDepartment.getSuperiorId() == null)
+            baseDepartment.setSuperiorId(-1l);
+        baseDepartment.setHotelId(SecurityUtils.getHotelId());
+
 
         return toAjax(baseDepartmentService.insertBaseDepartment(baseDepartment));
     }
@@ -97,15 +90,9 @@ public class BaseDepartmentController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody BaseDepartment baseDepartment)
     {
-
-        Long hotelId = SecurityUtils.getHotelId();
-        if(SecurityUtils.getSuperAdministrator() == 0) {
-            //不是超管
-            baseDepartment.getBaseStaffList().forEach(staff -> {
-                staff.setHotelId(hotelId);
-            });
-        }
-
+        baseDepartment.getBaseStaffList().forEach(staff -> {
+            staff.setHotelId(SecurityUtils.getHotelId());
+        });
 
         return toAjax(baseDepartmentService.updateBaseDepartment(baseDepartment));
     }

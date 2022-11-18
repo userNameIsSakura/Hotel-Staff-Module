@@ -34,7 +34,6 @@ public class BaseDepartmentServiceImpl implements IBaseDepartmentService
     {
 
         BaseDepartment baseDepartment = baseDepartmentMapper.selectBaseDepartmentByDepartmentId(departmentId);
-        System.out.println(baseDepartment);
         return baseDepartment;
     }
 

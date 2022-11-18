@@ -45,6 +45,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter
             response.addCookie(admin);
 
         }
+
         chain.doFilter(request, response);
     }
 }

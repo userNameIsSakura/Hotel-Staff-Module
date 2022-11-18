@@ -74,15 +74,30 @@ public class SysLoginController
      */
     @PostMapping("/login")
     public AjaxResult login(@RequestBody LoginBody loginBody,HttpServletResponse response) throws InterruptedException {
+
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
-                loginBody.getUuid());
+                loginBody.getUuid(),true);
 
         ajax.put(Constants.TOKEN, token);
 
         return ajax;
     }
+
+    @PostMapping("/loginInterface")
+    public AjaxResult loginInterface(@RequestBody LoginBody loginBody,HttpServletResponse response) throws InterruptedException {
+
+        AjaxResult ajax = AjaxResult.success();
+        // 生成令牌
+        String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
+                loginBody.getUuid(),false);
+
+        ajax.put(Constants.TOKEN, token);
+
+        return ajax;
+    }
+
 
     /**
      * 获取用户信息

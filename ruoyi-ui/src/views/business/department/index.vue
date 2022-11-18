@@ -98,18 +98,32 @@
     <el-dialog :title="title" :visible.sync="open" width="900px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="上级ID" prop="superiorId">
-          <el-input v-model="form.superiorId" placeholder="请输入上级ID" />
+          <el-input disabled="disabled" v-model="form.superiorId" placeholder="请输入上级ID" />
         </el-form-item>
-        <el-form-item v-if="admin" label="酒店ID" prop="hotelId">
-          <el-input v-model="form.hotelId" placeholder="请输入酒店ID" />
+
+        <el-form-item label="上级部门" prop="superiorId">
+          <el-select v-model="form.superiorId" placeholder="请输入上级ID" >
+            <el-option
+              v-for="d in allDepartmentList"
+              :key="d.departmentId"
+              :label="d.departmentName"
+              :value="parseInt(d.departmentId)"
+              v-if="!nowAndLower.includes(d.departmentId)"
+            ></el-option>
+          </el-select>
         </el-form-item>
+
         <el-form-item label="部门名" prop="departmentName">
           <el-input v-model="form.departmentName" placeholder="请输入部门名" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
+
         <el-divider content-position="center">员工信息信息</el-divider>
+        <el-divider content-position="center" v-for="d in baseStaffList">
+          {{d.staffId}}
+        </el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
             <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddBaseStaff">添加</el-button>
@@ -182,6 +196,10 @@ export default {
       total: 0,
       // 部门信息表格数据
       departmentList: [],
+      // 全部部门信息表格
+      allDepartmentList: [],
+      //当前部门及其下级ID
+      nowAndLower: [],
       // 员工信息表格数据
       baseStaffList: [],
       // 弹出层标题
@@ -225,6 +243,12 @@ export default {
       this.loading = true;
       listDepartment(this.queryParams).then(response => {
         this.departmentList = this.handleTree(response.data, "departmentId", "superiorId");
+
+        this.allDepartmentList = response.data;
+        this.allDepartmentList.push({
+          departmentId: -1,
+          departmentName: "无上级部门",
+        });
         this.loading = false;
       });
     },
@@ -291,6 +315,21 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
+
+      //排除不可作为上级的部门
+      var list = [row.departmentId];
+      var all = this.allDepartmentList;
+      var end = true;
+      while (end) {
+        end = false;
+        all.forEach(a => {
+          if(list.includes(a.superiorId) && !list.includes(a.departmentId)) {
+            list.push(a.departmentId);
+          }
+        })
+      }
+      this.nowAndLower = list;
+
       const departmentId = row.departmentId || this.ids
       getDepartment(departmentId).then(response => {
 
