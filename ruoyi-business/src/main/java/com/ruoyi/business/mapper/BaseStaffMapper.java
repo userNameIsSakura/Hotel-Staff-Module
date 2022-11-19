@@ -5,15 +5,15 @@ import com.ruoyi.business.domain.BaseStaff;
 
 /**
  * 员工信息Mapper接口
- * 
+ *
  * @author ruoyi
  * @date 2022-11-10
  */
-public interface BaseStaffMapper 
+public interface BaseStaffMapper
 {
     /**
      * 查询员工信息
-     * 
+     *
      * @param staffId 员工信息主键
      * @return 员工信息
      */
@@ -21,7 +21,7 @@ public interface BaseStaffMapper
 
     /**
      * 查询员工信息列表
-     * 
+     *
      * @param baseStaff 员工信息
      * @return 员工信息集合
      */
@@ -29,7 +29,7 @@ public interface BaseStaffMapper
 
     /**
      * 新增员工信息
-     * 
+     *
      * @param baseStaff 员工信息
      * @return 结果
      */
@@ -37,7 +37,7 @@ public interface BaseStaffMapper
 
     /**
      * 修改员工信息
-     * 
+     *
      * @param baseStaff 员工信息
      * @return 结果
      */
@@ -45,7 +45,7 @@ public interface BaseStaffMapper
 
     /**
      * 删除员工信息
-     * 
+     *
      * @param staffId 员工信息主键
      * @return 结果
      */
@@ -53,9 +53,16 @@ public interface BaseStaffMapper
 
     /**
      * 批量删除员工信息
-     * 
+     *
      * @param staffIds 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteBaseStaffByStaffIds(Long[] staffIds);
+
+    /**
+     *
+     * 根据staffId删除职位-员工关联信息
+     *
+     * */
+    public int deleteSRPByStaffId(Long staffId);
 }

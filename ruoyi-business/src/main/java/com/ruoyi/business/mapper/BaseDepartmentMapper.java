@@ -2,7 +2,9 @@ package com.ruoyi.business.mapper;
 
 import java.util.List;
 import com.ruoyi.business.domain.BaseDepartment;
+import com.ruoyi.business.domain.BaseFunction;
 import com.ruoyi.business.domain.BaseStaff;
+import com.ruoyi.business.domain.DepartmentFunctionRelationships;
 
 /**
  * 部门信息Mapper接口
@@ -76,6 +78,19 @@ public interface BaseDepartmentMapper
      */
     public int batchBaseStaff(List<BaseStaff> baseStaffList);
 
+    /**
+     * 批量新增职能信息
+     *
+     */
+    public int insertBaseFunction(BaseFunction baseFunction);
+
+    /**
+     * 批量新增职能-部门-职位信息
+     *
+     */
+    public int batchRelation(List<DepartmentFunctionRelationships> departmentFunctionRelationshipsList);
+
+
 
     /**
      * 通过部门信息主键删除员工信息信息
@@ -84,4 +99,16 @@ public interface BaseDepartmentMapper
      * @return 结果
      */
     public int deleteBaseStaffByDepartmentId(Long departmentId);
+
+
+    /**
+     * 通过部门信息主键删除职能信息信息
+     *
+     * @param departmentId 部门信息ID
+     * @return 结果
+     */
+    public int deleteBaseFunctionByDepartmentId(Long departmentId);
+
+
+
 }

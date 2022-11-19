@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BaseFunctionMapper">
+    
+    <resultMap type="BaseFunction" id="BaseFunctionResult">
+        <result property="functionId"    column="function_id"    />
+        <result property="functionValue"    column="function_value"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBaseFunctionVo">
+        select function_id, function_value, remark from base_function
+    </sql>
+
+    <select id="selectBaseFunctionList" parameterType="BaseFunction" resultMap="BaseFunctionResult">
+        <include refid="selectBaseFunctionVo"/>
+        <where>  
+            <if test="functionId != null "> and function_id = #{functionId}</if>
+            <if test="functionValue != null  and functionValue != ''"> and function_value = #{functionValue}</if>
+        </where>
+    </select>
+    
+    <select id="selectBaseFunctionByFunctionId" parameterType="Long" resultMap="BaseFunctionResult">
+        <include refid="selectBaseFunctionVo"/>
+        where function_id = #{functionId}
+    </select>
+        
+    <insert id="insertBaseFunction" parameterType="BaseFunction" useGeneratedKeys="true" keyProperty="functionId">
+        insert into base_function
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="functionValue != null and functionValue != ''">function_value,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="functionValue != null and functionValue != ''">#{functionValue},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBaseFunction" parameterType="BaseFunction">
+        update base_function
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="functionValue != null and functionValue != ''">function_value = #{functionValue},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where function_id = #{functionId}
+    </update>
+
+    <delete id="deleteBaseFunctionByFunctionId" parameterType="Long">
+        delete from base_function where function_id = #{functionId}
+    </delete>
+
+    <delete id="deleteBaseFunctionByFunctionIds" parameterType="String">
+        delete from base_function where function_id in 
+        <foreach item="functionId" collection="array" open="(" separator="," close=")">
+            #{functionId}
+        </foreach>
+    </delete>
+</mapper>

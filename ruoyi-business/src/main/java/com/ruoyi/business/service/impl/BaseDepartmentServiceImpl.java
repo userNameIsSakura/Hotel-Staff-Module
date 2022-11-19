@@ -1,14 +1,17 @@
 package com.ruoyi.business.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.business.domain.*;
+import com.ruoyi.business.mapper.BaseFunctionMapper;
+import com.ruoyi.business.mapper.BasePositionMapper;
+import com.ruoyi.business.mapper.DepartmentFunctionRelationshipsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import com.ruoyi.common.utils.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
-import com.ruoyi.business.domain.BaseStaff;
 import com.ruoyi.business.mapper.BaseDepartmentMapper;
-import com.ruoyi.business.domain.BaseDepartment;
 import com.ruoyi.business.service.IBaseDepartmentService;
 
 /**
@@ -22,6 +25,10 @@ public class BaseDepartmentServiceImpl implements IBaseDepartmentService
 {
     @Autowired
     private BaseDepartmentMapper baseDepartmentMapper;
+    @Autowired
+    private BaseFunctionMapper baseFunctionMapper;
+    @Autowired
+    private DepartmentFunctionRelationshipsMapper departmentFunctionRelationshipsMapper;
 
     /**
      * 查询部门信息
@@ -60,7 +67,7 @@ public class BaseDepartmentServiceImpl implements IBaseDepartmentService
     public int insertBaseDepartment(BaseDepartment baseDepartment)
     {
         int rows = baseDepartmentMapper.insertBaseDepartment(baseDepartment);
-        insertBaseStaff(baseDepartment);
+        insertBaseFunction(baseDepartment);
         return rows;
     }
 
@@ -74,8 +81,9 @@ public class BaseDepartmentServiceImpl implements IBaseDepartmentService
     @Override
     public int updateBaseDepartment(BaseDepartment baseDepartment)
     {
-        baseDepartmentMapper.deleteBaseStaffByDepartmentId(baseDepartment.getDepartmentId());
-        insertBaseStaff(baseDepartment);
+        baseDepartmentMapper.deleteBaseFunctionByDepartmentId(baseDepartment.getDepartmentId());
+        insertBaseFunction(baseDepartment);
+
         return baseDepartmentMapper.updateBaseDepartment(baseDepartment);
     }
 
@@ -108,7 +116,7 @@ public class BaseDepartmentServiceImpl implements IBaseDepartmentService
     }
 
     /**
-     * 新增员工信息信息
+     * 新增职能信息信息
      *
      * @param baseDepartment 部门信息对象
      */
@@ -130,4 +138,34 @@ public class BaseDepartmentServiceImpl implements IBaseDepartmentService
             }
         }
     }
+
+
+    /**
+     *
+     * 新增职能信息
+     *
+     * */
+    public void insertBaseFunction(BaseDepartment baseDepartment)
+    {
+        List<BasePosition> basePositionList = baseDepartment.getBasePositionList();
+        if (StringUtils.isNotNull(basePositionList))
+        {
+            basePositionList.forEach(p -> {
+                BaseFunction f = new BaseFunction();
+                f.setFunctionValue(p.getFunctionValue());
+                f.setRemark(p.getRemark());
+
+                baseFunctionMapper.insertBaseFunction(f);
+
+                DepartmentFunctionRelationships departmentFunctionRelationships = new DepartmentFunctionRelationships();
+                departmentFunctionRelationships.setFunctionId(f.getFunctionId());
+                departmentFunctionRelationships.setDepartmentId(baseDepartment.getDepartmentId());
+                departmentFunctionRelationships.setPositionId(p.getPositionId());
+                departmentFunctionRelationshipsMapper.insertDepartmentFunctionRelationships(departmentFunctionRelationships);
+
+            });
+        }
+    }
+
+
 }

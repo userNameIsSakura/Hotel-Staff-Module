@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="员工ID" prop="staffId">
+        <el-input
+          v-model="queryParams.staffId"
+          placeholder="请输入员工Id"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="员工名" prop="staffName">
         <el-input
           v-model="queryParams.staffName"
@@ -25,21 +33,15 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="部门ID" prop="departmentId">
-        <el-input
-          v-model="queryParams.departmentId"
-          placeholder="请输入部门ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="员工密码" prop="staffPassword">
-        <el-input
-          v-model="queryParams.staffPassword"
-          placeholder="请输入员工密码"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
+      <el-form-item label="部门" prop="departmentId">
+        <el-select v-model="queryParams.departmentId" filterable placeholder="请选择部门" @change="departmentChange">
+          <el-option
+            v-for="d in baseDepartmentList"
+            :label="d.departmentName"
+            :key="d.departmentId"
+            :value="parseInt(d.departmentId)"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
@@ -99,8 +101,7 @@
       <el-table-column label="员工名" align="center" prop="staffName" />
       <el-table-column label="联系电话" align="center" prop="staffPhone" />
       <el-table-column label="酒店ID" align="center" prop="hotelId" />
-      <el-table-column label="部门ID" align="center" prop="departmentId" />
-      <el-table-column label="员工密码" align="center" prop="staffPassword" />
+      <el-table-column label="部门名" align="center" prop="departmentName" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -131,7 +132,7 @@
     />
 
     <!-- 添加或修改员工信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="员工名" prop="staffName">
           <el-input v-model="form.staffName" placeholder="请输入员工名" />
@@ -143,14 +144,64 @@
           <el-input v-model="form.hotelId" placeholder="请输入酒店ID" />
         </el-form-item>
         <el-form-item label="部门ID" prop="departmentId">
-          <el-input v-model="form.departmentId" placeholder="请输入部门ID" />
+          <el-select v-model="form.departmentId" filterable placeholder="请选择部门" @change="departmentChange">
+            <el-option
+              v-for="d in baseDepartmentList"
+              :label="d.departmentName"
+              :key="d.departmentId"
+              :value="parseInt(d.departmentId)"
+            ></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="员工密码" prop="staffPassword">
-          <el-input v-model="form.staffPassword" placeholder="请输入员工密码" />
+          <el-input type="password" show-password v-model="form.staffPassword" placeholder="请输入员工密码" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
+
+
+
+        <el-divider content-position="center">职位信息</el-divider>
+        <el-row :gutter="10" class="mb8">
+          <el-col :span="1.5">
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddBasePosition">添加</el-button>
+          </el-col>
+          <el-col :span="1.5">
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteBasePosition">删除</el-button>
+          </el-col>
+        </el-row>
+
+        <el-table :data="basePositionList" :row-class-name="rowBasePositionIndex" @selection-change="handleBasePositionSelectionChange" ref="basePosition">
+          <el-table-column type="selection" width="50" align="center" />
+          <el-table-column label="序号" align="center" prop="index" width="50"/>
+
+          <el-table-column label="职位名" prop="positionId" width="150">
+            <template slot-scope="scope">
+              <el-select v-model="scope.row.positionId" filterable>
+                <el-option v-for="i in allBasePositionList"
+                           :key="i.positionId"
+                           :label="i.positionName"
+                           :value="i.positionId">
+                </el-option>
+              </el-select>
+            </template>
+          </el-table-column>
+
+
+          <el-table-column label="备注" prop="remark" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.remark" disabled="disabled" />
+            </template>
+          </el-table-column>
+          <el-table-column label="职能" prop="functionValue" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.functionValue" disabled="disabled" />
+            </template>
+          </el-table-column>
+
+        </el-table>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -163,6 +214,8 @@
 <script>
 import { listStaff, getStaff, delStaff, addStaff, updateStaff } from "@/api/business/staff";
 import Cookies from "js-cookie";
+import {listAllPosition, listPositionByDepartmentId} from "@/api/business/position";
+import {listDepartment} from "@/api/business/department";
 
 export default {
   name: "Staff",
@@ -183,6 +236,19 @@ export default {
       total: 0,
       // 员工信息表格数据
       staffList: [],
+      // 员工职位信息列表
+      basePositionList: [],
+      //员工能选的职位信息
+      allBasePositionList: [],
+      //部门列表
+      baseDepartmentList: [],
+      //原本的部门ID和职位列表
+      originalMessage: {
+        departmentId: "",
+        list: []
+      },
+      //记录全部
+      allList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -220,7 +286,11 @@ export default {
     };
   },
   created() {
+
     this.getList();
+    listDepartment().then(res => {
+      this.baseDepartmentList = res.data;
+    })
     //0:酒店管理员
     if(Cookies.get("admin") === "1")
       this.admin = true;
@@ -234,6 +304,23 @@ export default {
         this.total = response.total;
         this.loading = false;
       });
+    },
+    /** 员工的部门改变时改变职位 */
+    departmentChange(id) {
+      if(id === this.originalMessage.departmentId) {
+        this.basePositionList = this.originalMessage.list;
+      }
+      else {
+        this.basePositionList = [];
+      }
+
+      listPositionByDepartmentId(id).then(res => {
+        this.allBasePositionList = res;
+      })
+    },
+    /** 复选框选中数据 */
+    handleBaseStaffSelectionChange(selection) {
+      this.checkedBaseStaff = selection.map(item => item.index)
     },
     // 取消按钮
     cancel() {
@@ -251,6 +338,7 @@ export default {
         staffPassword: null,
         remark: null
       };
+      this.basePositionList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -275,20 +363,66 @@ export default {
       this.open = true;
       this.title = "添加员工信息";
     },
+    /** 职位信息添加按钮操作 */
+    handleAddBasePosition() {
+      let obj = {};
+      obj.positionName = "";
+      obj.remark = "";
+      obj.functionValue = "";
+      this.basePositionList.push(obj);
+    },
+    /** 职位信息序号 */
+    rowBasePositionIndex({ row, rowIndex }) {
+      row.index = rowIndex + 1;
+    },
+    /** 复选框选中数据 */
+    handleBasePositionSelectionChange(selection) {
+      this.checkedBasePosition = selection.map(item => item.index)
+    },
+    /** 职位信息删除按钮操作 */
+    handleDeleteBasePosition() {
+      if (this.checkedBasePosition.length === 0) {
+        this.$modal.msgError("请先选择要删除的职位信息数据");
+      } else {
+        const basePositionList = this.basePositionList;
+        const checkedBasePosition = this.checkedBasePosition;
+        this.basePositionList = basePositionList.filter(function(item) {
+          return checkedBasePosition.indexOf(item.index) === -1
+        });
+      }
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
       const staffId = row.staffId || this.ids
+
+
+      listPositionByDepartmentId(row.departmentId).then(res => {
+        this.allBasePositionList = res;
+      })
+
       getStaff(staffId).then(response => {
         this.form = response.data;
+        this.basePositionList = response.data.basePositionList;
+        this.originalMessage.departmentId = row.departmentId;
+        this.originalMessage.list = this.basePositionList;
         this.open = true;
         this.title = "修改员工信息";
       });
     },
     /** 提交按钮 */
     submitForm() {
+
+      for(var i = 0; i < this.basePositionList.length; i++) {
+        if(this.basePositionList[i].positionId === undefined) {
+          this.$modal.msgError("职位不能为空");
+          return;
+        }
+      }
+
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.form.basePositionList = this.basePositionList;
           if (this.form.staffId != null) {
             updateStaff(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");

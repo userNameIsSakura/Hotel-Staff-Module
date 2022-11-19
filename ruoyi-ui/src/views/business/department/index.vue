@@ -95,14 +95,11 @@
 
 
     <!-- 添加或修改部门信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="900px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="上级ID" prop="superiorId">
-          <el-input disabled="disabled" v-model="form.superiorId" placeholder="请输入上级ID" />
-        </el-form-item>
 
         <el-form-item label="上级部门" prop="superiorId">
-          <el-select v-model="form.superiorId" placeholder="请输入上级ID" >
+          <el-select v-model="form.superiorId" filterable placeholder="请输入上级ID" >
             <el-option
               v-for="d in allDepartmentList"
               :key="d.departmentId"
@@ -120,46 +117,43 @@
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
 
-        <el-divider content-position="center">员工信息信息</el-divider>
-        <el-divider content-position="center" v-for="d in baseStaffList">
-          {{d.staffId}}
-        </el-divider>
+        <el-divider content-position="center">职位信息</el-divider>
         <el-row :gutter="10" class="mb8">
           <el-col :span="1.5">
-            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddBaseStaff">添加</el-button>
+            <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddBasePosition">添加</el-button>
           </el-col>
           <el-col :span="1.5">
-            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteBaseStaff">删除</el-button>
+            <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteBasePosition">删除</el-button>
           </el-col>
         </el-row>
-        <el-table :data="baseStaffList" :row-class-name="rowBaseStaffIndex" @selection-change="handleBaseStaffSelectionChange" ref="baseStaff">
+        <el-table :data="basePositionList" :row-class-name="rowBasePositionIndex" @selection-change="handleBasePositionSelectionChange" ref="basePosition">
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="序号" align="center" prop="index" width="50"/>
-          <el-table-column label="员工名" prop="staffName" width="150">
+
+          <el-table-column label="职位名" prop="positionId" width="150">
             <template slot-scope="scope">
-              <el-input v-model="scope.row.staffName" placeholder="请输入员工名" />
+              <el-select v-model="scope.row.positionId" filterable>
+                <el-option v-for="i in allBasePositionList"
+                           :key="i.positionId"
+                           :label="i.positionName"
+                           :value="i.positionId">
+                </el-option>
+              </el-select>
             </template>
           </el-table-column>
-          <el-table-column label="联系电话" prop="staffPhone" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.staffPhone" placeholder="请输入联系电话" />
-            </template>
-          </el-table-column>
-          <el-table-column v-if="admin" label="酒店ID" prop="hotelId" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.hotelId" placeholder="请输入酒店ID" />
-            </template>
-          </el-table-column>
-          <el-table-column label="员工密码" prop="staffPassword" width="150">
-            <template slot-scope="scope">
-              <el-input v-model="scope.row.staffPassword" placeholder="请输入员工密码" />
-            </template>
-          </el-table-column>
+
+
           <el-table-column label="备注" prop="remark" width="150">
             <template slot-scope="scope">
               <el-input v-model="scope.row.remark" placeholder="请输入备注" />
             </template>
           </el-table-column>
+          <el-table-column label="职能" prop="functionValue" width="150">
+            <template slot-scope="scope">
+              <el-input v-model="scope.row.functionValue" placeholder="请输入职能" />
+            </template>
+          </el-table-column>
+
         </el-table>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -173,6 +167,7 @@
 <script>
 import { listDepartment, getDepartment, delDepartment, addDepartment, updateDepartment } from "@/api/business/department";
 import Cookies from "js-cookie";
+import {listAllPosition, listPosition} from "@/api/business/position";
 
 export default {
   name: "Department",
@@ -185,7 +180,9 @@ export default {
       // 选中数组
       ids: [],
       // 子表选中数据
-      checkedBaseStaff: [],
+      checkedBasePosition: [],
+      // 职位列表
+      allBasePositionList: [],
       // 非单个禁用
       single: true,
       // 非多个禁用
@@ -200,8 +197,8 @@ export default {
       allDepartmentList: [],
       //当前部门及其下级ID
       nowAndLower: [],
-      // 员工信息表格数据
-      baseStaffList: [],
+      // 职位信息表格数据
+      basePositionList: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -245,6 +242,11 @@ export default {
         this.departmentList = this.handleTree(response.data, "departmentId", "superiorId");
 
         this.allDepartmentList = response.data;
+
+        listAllPosition().then(res => {
+          this.allBasePositionList = res;
+        })
+
         this.allDepartmentList.push({
           departmentId: -1,
           departmentName: "无上级部门",
@@ -287,7 +289,7 @@ export default {
         departmentName: null,
         remark: null
       };
-      this.baseStaffList = [];
+      this.basePositionList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -307,8 +309,9 @@ export default {
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
-    handleAdd() {
+    handleAdd(row) {
       this.reset();
+      this.form.superiorId = isNaN(parseInt(row.departmentId)) ? -1 : parseInt(row.departmentId);
       this.open = true;
       this.title = "添加部门信息";
     },
@@ -334,16 +337,30 @@ export default {
       getDepartment(departmentId).then(response => {
 
         this.form = response.data;
-        this.baseStaffList = response.data.baseStaffList;
+        this.basePositionList = response.data.basePositionList;
         this.open = true;
         this.title = "修改部门信息";
       });
     },
     /** 提交按钮 */
     submitForm() {
+      var list = [];
+      for(var i = 0;i < this.basePositionList.length; i++) {
+        if(this.basePositionList[i].functionValue === "" || this.basePositionList[i].positionId === undefined) {
+          this.$modal.msgError("职位/职能不能为空");
+          return;
+        }
+        if(list.includes(this.basePositionList[i].positionId)) {
+          this.$modal.msgError("职位不能重复");
+          return;
+        }
+
+        list.push(this.basePositionList[i].positionId);
+      }
+
       this.$refs["form"].validate(valid => {
         if (valid) {
-          this.form.baseStaffList = this.baseStaffList;
+          this.form.basePositionList = this.basePositionList;
           if (this.form.departmentId != null) {
             //修改
             updateDepartment(this.form).then(response => {
@@ -373,34 +390,32 @@ export default {
       }).catch(() => {});
     },
 	/** 员工信息序号 */
-    rowBaseStaffIndex({ row, rowIndex }) {
+    rowBasePositionIndex({ row, rowIndex }) {
       row.index = rowIndex + 1;
     },
     /** 员工信息添加按钮操作 */
-    handleAddBaseStaff() {
+    handleAddBasePosition() {
       let obj = {};
-      obj.staffName = "";
-      obj.staffPhone = "";
-      obj.hotelId = "";
-      obj.staffPassword = "";
+      obj.positionName = "";
       obj.remark = "";
-      this.baseStaffList.push(obj);
+      obj.functionValue = "";
+      this.basePositionList.push(obj);
     },
     /** 员工信息删除按钮操作 */
-    handleDeleteBaseStaff() {
-      if (this.checkedBaseStaff.length == 0) {
-        this.$modal.msgError("请先选择要删除的员工信息数据");
+    handleDeleteBasePosition() {
+      if (this.checkedBasePosition.length === 0) {
+        this.$modal.msgError("请先选择要删除的职位信息数据");
       } else {
-        const baseStaffList = this.baseStaffList;
-        const checkedBaseStaff = this.checkedBaseStaff;
-        this.baseStaffList = baseStaffList.filter(function(item) {
-          return checkedBaseStaff.indexOf(item.index) == -1
+        const basePositionList = this.basePositionList;
+        const checkedBasePosition = this.checkedBasePosition;
+        this.basePositionList = basePositionList.filter(function(item) {
+          return checkedBasePosition.indexOf(item.index) === -1
         });
       }
     },
     /** 复选框选中数据 */
-    handleBaseStaffSelectionChange(selection) {
-      this.checkedBaseStaff = selection.map(item => item.index)
+    handleBasePositionSelectionChange(selection) {
+      this.checkedBasePosition = selection.map(item => item.index)
     },
     /** 导出按钮操作 */
     handleExport() {

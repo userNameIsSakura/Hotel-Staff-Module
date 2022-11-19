@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.StaffPositionRelationshipsMapper">
+    
+    <resultMap type="StaffPositionRelationships" id="StaffPositionRelationshipsResult">
+        <result property="id"    column="id"    />
+        <result property="staffId"    column="staff_id"    />
+        <result property="positionId"    column="position_id"    />
+    </resultMap>
+
+    <sql id="selectStaffPositionRelationshipsVo">
+        select id, staff_id, position_id from staff_position_relationships
+    </sql>
+
+    <select id="selectStaffPositionRelationshipsList" parameterType="StaffPositionRelationships" resultMap="StaffPositionRelationshipsResult">
+        <include refid="selectStaffPositionRelationshipsVo"/>
+        <where>  
+            <if test="id != null "> and id = #{id}</if>
+            <if test="staffId != null "> and staff_id = #{staffId}</if>
+            <if test="positionId != null "> and position_id = #{positionId}</if>
+        </where>
+    </select>
+    
+    <select id="selectStaffPositionRelationshipsById" parameterType="Long" resultMap="StaffPositionRelationshipsResult">
+        <include refid="selectStaffPositionRelationshipsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertStaffPositionRelationships" parameterType="StaffPositionRelationships" useGeneratedKeys="true" keyProperty="id">
+        insert into staff_position_relationships
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="staffId != null">staff_id,</if>
+            <if test="positionId != null">position_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="staffId != null">#{staffId},</if>
+            <if test="positionId != null">#{positionId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStaffPositionRelationships" parameterType="StaffPositionRelationships">
+        update staff_position_relationships
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="staffId != null">staff_id = #{staffId},</if>
+            <if test="positionId != null">position_id = #{positionId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteStaffPositionRelationshipsById" parameterType="Long">
+        delete from staff_position_relationships where id = #{id}
+    </delete>
+
+    <delete id="deleteStaffPositionRelationshipsByIds" parameterType="String">
+        delete from staff_position_relationships where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

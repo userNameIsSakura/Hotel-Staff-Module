@@ -8,7 +8,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 部门信息对象 base_department
- * 
+ *
  * @author ruoyi
  * @date 2022-11-12
  */
@@ -34,39 +34,50 @@ public class BaseDepartment extends BaseEntity
     /** 员工信息信息 */
     private List<BaseStaff> baseStaffList;
 
-    public void setDepartmentId(Long departmentId) 
+    public List<BasePosition> getBasePositionList() {
+        return basePositionList;
+    }
+
+    public void setBasePositionList(List<BasePosition> basePositionList) {
+        this.basePositionList = basePositionList;
+    }
+
+    /** 职位信息列表 */
+    private List<BasePosition> basePositionList;
+
+    public void setDepartmentId(Long departmentId)
     {
         this.departmentId = departmentId;
     }
 
-    public Long getDepartmentId() 
+    public Long getDepartmentId()
     {
         return departmentId;
     }
-    public void setSuperiorId(Long superiorId) 
+    public void setSuperiorId(Long superiorId)
     {
         this.superiorId = superiorId;
     }
 
-    public Long getSuperiorId() 
+    public Long getSuperiorId()
     {
         return superiorId;
     }
-    public void setHotelId(Long hotelId) 
+    public void setHotelId(Long hotelId)
     {
         this.hotelId = hotelId;
     }
 
-    public Long getHotelId() 
+    public Long getHotelId()
     {
         return hotelId;
     }
-    public void setDepartmentName(String departmentName) 
+    public void setDepartmentName(String departmentName)
     {
         this.departmentName = departmentName;
     }
 
-    public String getDepartmentName() 
+    public String getDepartmentName()
     {
         return departmentName;
     }

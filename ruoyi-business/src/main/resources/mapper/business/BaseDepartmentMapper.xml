@@ -12,8 +12,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="remark"    column="remark"    />
     </resultMap>
 
-    <resultMap id="BaseDepartmentBaseStaffResult" type="BaseDepartment" extends="BaseDepartmentResult">
-        <collection property="baseStaffList" notNullColumn="sub_staff_id" javaType="java.util.List" resultMap="BaseStaffResult" />
+    <resultMap id="BasePositionResult" type="BasePosition">
+        <result property="positionId" column="sub_position_id"></result>
+        <result property="positionName" column="sub_position_name"></result>
+        <result property="remark" column="sub_remark"></result>
+        <result property="functionValue" column="sub_function_value"></result>
+    </resultMap>
+
+
+    <resultMap id="BaseDepartmentBasePositionResult" type="BaseDepartment" extends="BaseDepartmentResult">
+        <collection property="basePositionList" notNullColumn="sub_position_id" javaType="java.util.List" resultMap="BasePositionResult" />
     </resultMap>
 
     <resultMap type="BaseStaff" id="BaseStaffResult">
@@ -39,11 +47,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
-    <select id="selectBaseDepartmentByDepartmentId" parameterType="Long" resultMap="BaseDepartmentBaseStaffResult">
+    <select id="selectBaseDepartmentByDepartmentId" parameterType="Long" resultMap="BaseDepartmentBasePositionResult">
         select a.department_id, a.superior_id, a.hotel_id, a.department_name, a.remark,
- b.staff_id as sub_staff_id, b.staff_name as sub_staff_name, b.staff_phone as sub_staff_phone, b.hotel_id as sub_hotel_id, b.department_id as sub_department_id, b.staff_password as sub_staff_password, b.remark as sub_remark
-        from base_department a
-        left join base_staff b on b.department_id = a.department_id and b.hotel_id = a.hotel_id
+               b.position_id as sub_position_id,b.position_name as sub_position_name, b.remark as sub_remark,b.function_value as sub_function_value
+        from base_department a left join (select r.department_id,p.position_id,p.position_name,f.remark,f.function_value
+            from department_function_relationships as r,base_function as f,base_position as p
+            where r.position_id = p.position_id and r.function_id = f.function_id) as b on a.department_id = b.department_id
         where a.department_id = #{departmentId}
     </select>
 
@@ -96,10 +105,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from base_staff where department_id = #{departmentId}
     </delete>
 
+    <delete id="deleteBaseFunctionByDepartmentId" parameterType="Long">
+        delete from base_function where function_id in (
+            select function_id from department_function_relationships r
+            where r.department_id = #{departmentId}
+            )
+    </delete>
+
     <insert id="batchBaseStaff">
         insert into base_staff( staff_id, staff_name, staff_phone, hotel_id, department_id, staff_password, remark) values
 		<foreach item="item" index="index" collection="list" separator=",">
             ( #{item.staffId}, #{item.staffName}, #{item.staffPhone}, #{item.hotelId}, #{item.departmentId}, #{item.staffPassword}, #{item.remark})
         </foreach>
     </insert>
+
+
+
 </mapper>

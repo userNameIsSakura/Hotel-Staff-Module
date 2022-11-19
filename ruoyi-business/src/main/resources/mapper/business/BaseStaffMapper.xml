@@ -3,15 +3,28 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.business.mapper.BaseStaffMapper">
-    
+
     <resultMap type="BaseStaff" id="BaseStaffResult">
         <result property="staffId"    column="staff_id"    />
         <result property="staffName"    column="staff_name"    />
         <result property="staffPhone"    column="staff_phone"    />
         <result property="hotelId"    column="hotel_id"    />
         <result property="departmentId"    column="department_id"    />
+        <result property="departmentName"    column="department_name"    />
         <result property="staffPassword"    column="staff_password"    />
         <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <resultMap id="BaseStaffBasePositionResult" type="BaseStaff" extends="BaseStaffResult">
+        <collection property="basePositionList" notNullColumn="sub_position_id" javaType="java.util.List"
+                    resultMap="BasePositionResult"/>
+    </resultMap>
+
+    <resultMap id="BasePositionResult" type="BasePosition">
+        <result property="positionId" column="sub_position_id"></result>
+        <result property="positionName" column="sub_position_name"></result>
+        <result property="remark" column="sub_remark"></result>
+        <result property="functionValue" column="sub_function_value"></result>
     </resultMap>
 
     <sql id="selectBaseStaffVo">
@@ -19,21 +32,31 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectBaseStaffList" parameterType="BaseStaff" resultMap="BaseStaffResult">
-        <include refid="selectBaseStaffVo"/>
-        <where>  
+        select staff_id, staff_name, staff_phone, s.hotel_id, s.department_id, staff_password, s.remark, d.department_name from base_staff s,base_department d
+        <where>
+            s.department_id = d.department_id
+            <if test="staffId != null  and staffId != ''"> and staff_id = #{staffId}</if>
             <if test="staffName != null  and staffName != ''"> and staff_name like concat('%', #{staffName}, '%')</if>
             <if test="staffPhone != null  and staffPhone != ''"> and staff_phone = #{staffPhone}</if>
-            <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
-            <if test="departmentId != null "> and department_id = #{departmentId}</if>
+            <if test="hotelId != null "> and s.hotel_id = #{hotelId}</if>
+            <if test="departmentId != null "> and s.department_id = #{departmentId}</if>
+            <if test="departmentName != null "> and department_name = #{departmentName}</if>
             <if test="staffPassword != null  and staffPassword != ''"> and staff_password = #{staffPassword}</if>
         </where>
     </select>
-    
-    <select id="selectBaseStaffByStaffId" parameterType="Long" resultMap="BaseStaffResult">
-        <include refid="selectBaseStaffVo"/>
-        where staff_id = #{staffId}
+
+    <select id="selectBaseStaffByStaffId" parameterType="Long" resultMap="BaseStaffBasePositionResult">
+
+        SELECT a.staff_id, a.staff_name, a.staff_phone, a.hotel_id, a.department_id, a.staff_password, a.remark,
+               b.position_id as sub_position_id,b.position_name as sub_position_name,b.remark as sub_remark,
+               b.function_value as sub_function_value
+        FROM base_staff a LEFT JOIN (SELECT r1.staff_id,p.position_id,p.position_name,f.remark,f.function_value
+            FROM staff_position_relationships r1,base_position p,department_function_relationships r2,base_function f
+            where r1.position_id = p.position_id and r2.position_id = p.position_id and f.function_id = r2.function_id) b
+        on a.staff_id = b.staff_id
+        where a.staff_id = #{staffId}
     </select>
-        
+
     <insert id="insertBaseStaff" parameterType="BaseStaff" useGeneratedKeys="true" keyProperty="staffId">
         insert into base_staff
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -72,9 +95,16 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteBaseStaffByStaffIds" parameterType="String">
-        delete from base_staff where staff_id in 
+        delete from base_staff where staff_id in
         <foreach item="staffId" collection="array" open="(" separator="," close=")">
             #{staffId}
         </foreach>
     </delete>
+
+    <delete id="deleteSRPByStaffId" parameterType="Long">
+        delete from staff_position_relationships where staff_id = #{staffId}
+    </delete>
+
+
+
 </mapper>

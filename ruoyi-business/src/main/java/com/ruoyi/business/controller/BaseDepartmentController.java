@@ -90,10 +90,6 @@ public class BaseDepartmentController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody BaseDepartment baseDepartment)
     {
-        baseDepartment.getBaseStaffList().forEach(staff -> {
-            staff.setHotelId(SecurityUtils.getHotelId());
-        });
-
         return toAjax(baseDepartmentService.updateBaseDepartment(baseDepartment));
     }
 

@@ -5,6 +5,8 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
+import java.util.List;
+
 /**
  * 员工信息对象 base_staff
  *
@@ -33,10 +35,31 @@ public class BaseStaff extends BaseEntity
     /** 部门ID */
     @Excel(name = "部门ID")
     private Long departmentId;
+    /** 部门名 */
+    private String departmentName;
+
+    public String getDepartmentName() {
+        return departmentName;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
 
     /** 员工密码 */
     @Excel(name = "员工密码")
     private String staffPassword;
+
+    /** 员工职位列表*/
+    private List<BasePosition> basePositionList;
+
+    public List<BasePosition> getBasePositionList() {
+        return basePositionList;
+    }
+
+    public void setBasePositionList(List<BasePosition> basePositionList) {
+        this.basePositionList = basePositionList;
+    }
 
     public void setStaffId(Long staffId)
     {

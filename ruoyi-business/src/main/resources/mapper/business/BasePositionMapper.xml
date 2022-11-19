@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BasePositionMapper">
+
+    <resultMap type="BasePosition" id="BasePositionResult">
+        <result property="positionId"    column="position_id"    />
+        <result property="positionName"    column="position_name"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectBasePositionVo">
+        select position_id, position_name, remark from base_position
+    </sql>
+
+    <select id="selectBasePositionList" parameterType="BasePosition" resultMap="BasePositionResult">
+        <include refid="selectBasePositionVo"/>
+        <where>
+            <if test="positionName != null  and positionName != ''"> and position_name like concat('%', #{positionName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectBasePositionByPositionId" parameterType="Long" resultMap="BasePositionResult">
+        <include refid="selectBasePositionVo"/>
+        where position_id = #{positionId}
+    </select>
+
+    <select id="selectBasePositionByDepartmentId" parameterType="Long" resultMap="BasePositionResult">
+        select p.position_id, position_name, remark from base_position p,department_function_relationships r
+        where r.department_id = #{departmentId} and r.position_id = p.position_id
+    </select>
+
+
+
+    <insert id="insertBasePosition" parameterType="BasePosition" useGeneratedKeys="true" keyProperty="positionId">
+        insert into base_position
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="positionName != null and positionName != ''">position_name,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="positionName != null and positionName != ''">#{positionName},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBasePosition" parameterType="BasePosition">
+        update base_position
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="positionName != null and positionName != ''">position_name = #{positionName},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where position_id = #{positionId}
+    </update>
+
+    <delete id="deleteBasePositionByPositionId" parameterType="Long">
+        delete from base_position where position_id = #{positionId}
+    </delete>
+
+    <delete id="deleteBasePositionByPositionIds" parameterType="String">
+        delete from base_position where position_id in
+        <foreach item="positionId" collection="array" open="(" separator="," close=")">
+            #{positionId}
+        </foreach>
+    </delete>
+</mapper>
