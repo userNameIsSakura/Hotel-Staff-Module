@@ -7,9 +7,6 @@
       <el-tooltip class="item" effect="dark" content="刷新" placement="top">
         <el-button size="mini" circle icon="el-icon-refresh" @click="refresh()" />
       </el-tooltip>
-      <el-tooltip class="item" effect="dark" content="显隐列" placement="top" v-if="columns">
-        <el-button size="mini" circle icon="el-icon-menu" @click="showColumn()" />
-      </el-tooltip>
     </el-row>
     <el-dialog :title="title" :visible.sync="open" append-to-body>
       <el-transfer
