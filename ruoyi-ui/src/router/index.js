@@ -61,19 +61,7 @@ export const constantRoutes = [
     component: () => import('@/views/error/401'),
     hidden: true
   },
-  {
-    path: '',
-    component: Layout,
-    redirect: 'index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/index'),
-        name: 'Index',
-        meta: { title: '首页', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
+
   {
     path: '/user',
     component: Layout,
@@ -92,6 +80,41 @@ export const constantRoutes = [
 
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes = [
+
+
+  //超管
+  {
+    path: '',
+    component: Layout,
+    redirect: 'index',
+    permissions: ['system:user:list'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/system/user/index'),
+        name: 'Index',
+        permissions: ['system:user:list'],
+        meta: { title: '首页', icon: 'dashboard', affix: true }
+      }
+    ]
+  },
+  //酒店管理员
+  //超管
+  {
+    path: '',
+    component: Layout,
+    redirect: 'index',
+    permissions: ['business:staff:list'],
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/business/staff/index'),
+        name: 'Index',
+        permissions: ['business:staff:list'],
+        meta: { title: '首页', icon: 'dashboard', affix: true }
+      }
+    ]
+  },
   {
     path: '/system/user-auth',
     component: Layout,

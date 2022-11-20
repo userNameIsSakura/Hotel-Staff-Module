@@ -93,6 +93,7 @@
           <el-table-column label="酒店ID" align="center" key="hotelId" prop="hotelId"  :show-overflow-tooltip="true" />
           <el-table-column label="超管权限" align="center" key="userId" prop="superAdministrator"  :show-overflow-tooltip="true" />
           <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
+          <el-table-column label="备注" align="center" key="userId" prop="remark" v-if="columns[4].visible" width="120" />
 
 
           <el-table-column
@@ -143,6 +144,13 @@
           <el-col :span="12">
             <el-form-item label="手机号码" prop="phonenumber">
               <el-input v-model="form.phonenumber" placeholder="请输入手机号码" maxlength="11" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="用户名称" prop="userName">
+              <el-input v-model="form.userName" placeholder="请输入用户名称" maxlength="11" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -358,6 +366,10 @@ export default {
       this.loading = true;
       listUser(this.addDateRange(this.queryParams, this.dateRange)).then(response => {
           this.userList = response.rows;
+          this.userList.forEach(u => {
+            u.superAdministrator = u.superAdministrator === 0 ? "酒店管理员" : "超级管理员"
+          })
+
           this.total = response.total;
           this.loading = false;
         }
