@@ -53,8 +53,8 @@
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column label="部门名" align="center" prop="departmentName" />
       <el-table-column label="部门ID" align="center" prop="departmentId" />
+      <el-table-column label="部门名" align="center" prop="departmentName" />
       <el-table-column label="酒店ID" align="center" prop="hotelId" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
