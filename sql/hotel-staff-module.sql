@@ -11,7 +11,7 @@
  Target Server Version : 80026
  File Encoding         : 65001
 
- Date: 20/11/2022 13:18:53
+ Date: 09/12/2022 12:36:46
 */
 
 SET NAMES utf8mb4;
@@ -22,13 +22,13 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `base_department`;
 CREATE TABLE `base_department`  (
-                                    `department_id` int(0) NOT NULL AUTO_INCREMENT,
-                                    `superior_id` int(0) NULL DEFAULT NULL,
-                                    `hotel_id` int(0) NOT NULL,
-                                    `department_name` varchar(63) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                                    `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-                                    PRIMARY KEY (`department_id`) USING BTREE,
-                                    INDEX `id_superior`(`superior_id`) USING BTREE
+  `department_id` int(0) NOT NULL AUTO_INCREMENT,
+  `superior_id` int(0) NULL DEFAULT NULL,
+  `hotel_id` int(0) NOT NULL,
+  `department_name` varchar(63) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`department_id`) USING BTREE,
+  INDEX `id_superior`(`superior_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -44,11 +44,11 @@ INSERT INTO `base_department` VALUES (5, 2, 2, '销售部', NULL);
 -- ----------------------------
 DROP TABLE IF EXISTS `base_function`;
 CREATE TABLE `base_function`  (
-                                  `function_id` int(0) NOT NULL AUTO_INCREMENT,
-                                  `function_value` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                                  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-                                  PRIMARY KEY (`function_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 63 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  `function_id` int(0) NOT NULL AUTO_INCREMENT,
+  `function_value` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`function_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 104 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of base_function
@@ -62,15 +62,46 @@ INSERT INTO `base_function` VALUES (102, '商务销售专员', '测试');
 INSERT INTO `base_function` VALUES (103, '会议销售专员', '测试');
 
 -- ----------------------------
+-- Table structure for base_hotel
+-- ----------------------------
+DROP TABLE IF EXISTS `base_hotel`;
+CREATE TABLE `base_hotel`  (
+  `hotel_id` int(0) NOT NULL AUTO_INCREMENT,
+  `hotel_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `remark` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`hotel_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of base_hotel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for base_model
+-- ----------------------------
+DROP TABLE IF EXISTS `base_model`;
+CREATE TABLE `base_model`  (
+  `model_id` int(0) NOT NULL AUTO_INCREMENT,
+  `model_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `model_file` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `remark` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`model_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of base_model
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for base_position
 -- ----------------------------
 DROP TABLE IF EXISTS `base_position`;
 CREATE TABLE `base_position`  (
-                                  `position_id` int(0) NOT NULL AUTO_INCREMENT,
-                                  `position_name` varchar(63) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                                  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-                                  PRIMARY KEY (`position_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  `position_id` int(0) NOT NULL AUTO_INCREMENT,
+  `position_name` varchar(63) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`position_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of base_position
@@ -88,14 +119,14 @@ INSERT INTO `base_position` VALUES (7, '会议销售专员', '测试');
 -- ----------------------------
 DROP TABLE IF EXISTS `base_record`;
 CREATE TABLE `base_record`  (
-                                `record_id` int(0) NOT NULL AUTO_INCREMENT,
-                                `staff_id` int(0) NOT NULL,
-                                `account_type` tinyint(0) NOT NULL,
-                                `account` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                                `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-                                PRIMARY KEY (`record_id`) USING BTREE,
-                                INDEX `FK_Reference_1`(`staff_id`) USING BTREE,
-                                CONSTRAINT `FK_Reference_1` FOREIGN KEY (`staff_id`) REFERENCES `base_staff` (`staff_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  `record_id` int(0) NOT NULL AUTO_INCREMENT,
+  `staff_id` int(0) NOT NULL,
+  `account_type` tinyint(0) NOT NULL,
+  `account` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`record_id`) USING BTREE,
+  INDEX `FK_Reference_1`(`staff_id`) USING BTREE,
+  CONSTRAINT `FK_Reference_1` FOREIGN KEY (`staff_id`) REFERENCES `base_staff` (`staff_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -107,16 +138,16 @@ CREATE TABLE `base_record`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `base_staff`;
 CREATE TABLE `base_staff`  (
-                               `staff_id` int(0) NOT NULL AUTO_INCREMENT,
-                               `staff_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                               `staff_phone` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                               `hotel_id` int(0) NOT NULL,
-                               `department_id` int(0) NOT NULL,
-                               `staff_password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-                               `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-                               PRIMARY KEY (`staff_id`) USING BTREE,
-                               INDEX `FK_Reference_4`(`department_id`) USING BTREE,
-                               CONSTRAINT `FK_Reference_4` FOREIGN KEY (`department_id`) REFERENCES `base_department` (`department_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  `staff_id` int(0) NOT NULL AUTO_INCREMENT,
+  `staff_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `staff_phone` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `hotel_id` int(0) NOT NULL,
+  `department_id` int(0) NOT NULL,
+  `staff_password` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`staff_id`) USING BTREE,
+  INDEX `FK_Reference_4`(`department_id`) USING BTREE,
+  CONSTRAINT `FK_Reference_4` FOREIGN KEY (`department_id`) REFERENCES `base_department` (`department_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -128,22 +159,48 @@ INSERT INTO `base_staff` VALUES (13, '王五', '13890902323', 2, 5, '123', '测�
 INSERT INTO `base_staff` VALUES (14, '陈六', '13678783636', 2, 5, '123', '测试');
 
 -- ----------------------------
+-- Table structure for biz_contract
+-- ----------------------------
+DROP TABLE IF EXISTS `biz_contract`;
+CREATE TABLE `biz_contract`  (
+  `contract_id` int(0) NOT NULL AUTO_INCREMENT,
+  `hotel_id` int(0) NOT NULL,
+  `contract_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `contract_file` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `contract_sign` datetime(0) NOT NULL,
+  `contract_effect` datetime(0) NOT NULL,
+  `contract_invalid` datetime(0) NOT NULL,
+  `remark` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `contract_state` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `model_id` int(0) NOT NULL,
+  PRIMARY KEY (`contract_id`) USING BTREE,
+  INDEX `FK_Reference_3`(`hotel_id`) USING BTREE,
+  INDEX `FK_Reference_4`(`model_id`) USING BTREE,
+  CONSTRAINT `biz_contract_ibfk_1` FOREIGN KEY (`hotel_id`) REFERENCES `base_hotel` (`hotel_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `biz_contract_ibfk_2` FOREIGN KEY (`model_id`) REFERENCES `base_model` (`model_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of biz_contract
+-- ----------------------------
+
+-- ----------------------------
 -- Table structure for department_function_relationships
 -- ----------------------------
 DROP TABLE IF EXISTS `department_function_relationships`;
 CREATE TABLE `department_function_relationships`  (
-                                                      `id` int(0) NOT NULL AUTO_INCREMENT,
-                                                      `department_id` int(0) NOT NULL,
-                                                      `position_id` int(0) NOT NULL,
-                                                      `function_id` int(0) NOT NULL,
-                                                      PRIMARY KEY (`id`) USING BTREE,
-                                                      INDEX `FK_Reference_2`(`department_id`) USING BTREE,
-                                                      INDEX `FK_Reference_3`(`function_id`) USING BTREE,
-                                                      INDEX `FK_Reference_7`(`position_id`) USING BTREE,
-                                                      CONSTRAINT `FK_Reference_2` FOREIGN KEY (`department_id`) REFERENCES `base_department` (`department_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-                                                      CONSTRAINT `FK_Reference_3` FOREIGN KEY (`function_id`) REFERENCES `base_function` (`function_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-                                                      CONSTRAINT `FK_Reference_7` FOREIGN KEY (`position_id`) REFERENCES `base_position` (`position_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 57 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `department_id` int(0) NOT NULL,
+  `position_id` int(0) NOT NULL,
+  `function_id` int(0) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `FK_Reference_2`(`department_id`) USING BTREE,
+  INDEX `FK_Reference_3`(`function_id`) USING BTREE,
+  INDEX `FK_Reference_7`(`position_id`) USING BTREE,
+  CONSTRAINT `FK_Reference_2` FOREIGN KEY (`department_id`) REFERENCES `base_department` (`department_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_Reference_3` FOREIGN KEY (`function_id`) REFERENCES `base_function` (`function_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_Reference_7` FOREIGN KEY (`position_id`) REFERENCES `base_position` (`position_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 97 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of department_function_relationships
@@ -161,28 +218,28 @@ INSERT INTO `department_function_relationships` VALUES (97, 5, 7, 103);
 -- ----------------------------
 DROP TABLE IF EXISTS `gen_table`;
 CREATE TABLE `gen_table`  (
-                              `table_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '编号',
-                              `table_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '表名称',
-                              `table_comment` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '表描述',
-                              `sub_table_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '关联子表的表名',
-                              `sub_table_fk_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '子表关联的外键名',
-                              `class_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '实体类名称',
-                              `tpl_category` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'crud' COMMENT '使用的模板（crud单表操作 tree树表操作）',
-                              `package_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生成包路径',
-                              `module_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生成模块名',
-                              `business_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生成业务名',
-                              `function_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生成功能名',
-                              `function_author` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生成功能作者',
-                              `gen_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '生成代码方式（0zip压缩包 1自定义路径）',
-                              `gen_path` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '/' COMMENT '生成路径（不填默认项目路径）',
-                              `options` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其它生成选项',
-                              `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
-                              `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-                              `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
-                              `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-                              `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
-                              PRIMARY KEY (`table_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '代码生成业务表' ROW_FORMAT = Dynamic;
+  `table_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `table_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '表名称',
+  `table_comment` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '表描述',
+  `sub_table_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '关联子表的表名',
+  `sub_table_fk_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '子表关联的外键名',
+  `class_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '实体类名称',
+  `tpl_category` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'crud' COMMENT '使用的模板（crud单表操作 tree树表操作）',
+  `package_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生成包路径',
+  `module_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生成模块名',
+  `business_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生成业务名',
+  `function_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生成功能名',
+  `function_author` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '生成功能作者',
+  `gen_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '生成代码方式（0zip压缩包 1自定义路径）',
+  `gen_path` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '/' COMMENT '生成路径（不填默认项目路径）',
+  `options` varchar(1000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '其它生成选项',
+  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`table_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '代码生成业务表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of gen_table
@@ -196,36 +253,39 @@ INSERT INTO `gen_table` VALUES (8, 'staff_position_relationships', '员工职位
 INSERT INTO `gen_table` VALUES (10, 'sys_user', '用户信息表', NULL, NULL, 'SysUser', 'crud', 'com.ruoyi.business', 'business', 'user', '用户信息', 'ruoyi', '0', '/', '{\"parentMenuId\":\"2000\"}', 'admin', '2022-11-13 20:24:38', '', '2022-11-14 14:23:39', NULL);
 INSERT INTO `gen_table` VALUES (11, 'base_function', '职能表', NULL, NULL, 'BaseFunction', 'crud', 'com.ruoyi.business', 'business', 'function', '职能信息', 'ruoyi', '0', '/', '{}', 'ry', '2022-11-16 09:15:24', '', '2022-11-18 16:17:34', NULL);
 INSERT INTO `gen_table` VALUES (12, 'department_function_relationships', '部门职能连接信息表', NULL, NULL, 'DepartmentFunctionRelationships', 'crud', 'com.ruoyi.business', 'business', 'relationships', '部门职能连接信息', 'ruoyi', '0', '/', '{}', '2酒店管理员', '2022-11-18 16:49:08', '', '2022-11-18 16:49:54', NULL);
+INSERT INTO `gen_table` VALUES (13, 'base_model', '范本表', NULL, NULL, 'BaseModel', 'crud', 'com.hotel.business', 'business', 'model', '范本列表', 'ruoyi', '0', '/', '{}', '王一', '2022-12-03 19:55:24', '', '2022-12-03 19:57:31', NULL);
+INSERT INTO `gen_table` VALUES (14, 'base_hotel', '酒店表', NULL, NULL, 'BaseHotel', 'crud', 'com.ruoyi.business', 'business', 'hotel', '酒店列表', 'ruoyi', '0', '/', '{}', '王一', '2022-12-07 14:25:07', '', '2022-12-07 19:51:16', NULL);
+INSERT INTO `gen_table` VALUES (15, 'biz_contract', '合同记录表', NULL, NULL, 'BizContract', 'crud', 'com.hotel.business', 'business', 'contract', '合同记录', 'ruoyi', '0', '/', '{}', '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22', NULL);
 
 -- ----------------------------
 -- Table structure for gen_table_column
 -- ----------------------------
 DROP TABLE IF EXISTS `gen_table_column`;
 CREATE TABLE `gen_table_column`  (
-                                     `column_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '编号',
-                                     `table_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '归属表编号',
-                                     `column_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '列名称',
-                                     `column_comment` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '列描述',
-                                     `column_type` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '列类型',
-                                     `java_type` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'JAVA类型',
-                                     `java_field` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'JAVA字段名',
-                                     `is_pk` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否主键（1是）',
-                                     `is_increment` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否自增（1是）',
-                                     `is_required` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否必填（1是）',
-                                     `is_insert` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否为插入字段（1是）',
-                                     `is_edit` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否编辑字段（1是）',
-                                     `is_list` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否列表字段（1是）',
-                                     `is_query` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否查询字段（1是）',
-                                     `query_type` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'EQ' COMMENT '查询方式（等于、不等于、大于、小于、范围）',
-                                     `html_type` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '显示类型（文本框、文本域、下拉框、复选框、单选框、日期控件）',
-                                     `dict_type` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典类型',
-                                     `sort` int(0) NULL DEFAULT NULL COMMENT '排序',
-                                     `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
-                                     `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-                                     `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
-                                     `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-                                     PRIMARY KEY (`column_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 87 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '代码生成业务表字段' ROW_FORMAT = Dynamic;
+  `column_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '编号',
+  `table_id` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '归属表编号',
+  `column_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '列名称',
+  `column_comment` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '列描述',
+  `column_type` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '列类型',
+  `java_type` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'JAVA类型',
+  `java_field` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'JAVA字段名',
+  `is_pk` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否主键（1是）',
+  `is_increment` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否自增（1是）',
+  `is_required` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否必填（1是）',
+  `is_insert` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否为插入字段（1是）',
+  `is_edit` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否编辑字段（1是）',
+  `is_list` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否列表字段（1是）',
+  `is_query` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否查询字段（1是）',
+  `query_type` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'EQ' COMMENT '查询方式（等于、不等于、大于、小于、范围）',
+  `html_type` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '显示类型（文本框、文本域、下拉框、复选框、单选框、日期控件）',
+  `dict_type` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典类型',
+  `sort` int(0) NULL DEFAULT NULL COMMENT '排序',
+  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`column_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 104 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '代码生成业务表字段' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of gen_table_column
@@ -288,18 +348,35 @@ INSERT INTO `gen_table_column` VALUES (83, '12', 'id', 'ID', 'int', 'Long', 'id'
 INSERT INTO `gen_table_column` VALUES (84, '12', 'department_id', '部门ID', 'int', 'Long', 'departmentId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 2, '2酒店管理员', '2022-11-18 16:49:08', '', '2022-11-18 16:49:54');
 INSERT INTO `gen_table_column` VALUES (85, '12', 'position_id', '职位ID', 'int', 'Long', 'positionId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 3, '2酒店管理员', '2022-11-18 16:49:08', '', '2022-11-18 16:49:54');
 INSERT INTO `gen_table_column` VALUES (86, '12', 'function_id', '职能ID', 'int', 'Long', 'functionId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 4, '2酒店管理员', '2022-11-18 16:49:08', '', '2022-11-18 16:49:54');
+INSERT INTO `gen_table_column` VALUES (87, '13', 'model_id', '范本ID', 'int', 'Long', 'modelId', '1', '1', NULL, '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, '王一', '2022-12-03 19:55:24', '', '2022-12-03 19:57:31');
+INSERT INTO `gen_table_column` VALUES (88, '13', 'model_name', '范本名', 'varchar(20)', 'String', 'modelName', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 2, '王一', '2022-12-03 19:55:24', '', '2022-12-03 19:57:31');
+INSERT INTO `gen_table_column` VALUES (89, '13', 'model_file', '范本文件地址', 'varchar(100)', 'String', 'modelFile', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'fileUpload', '', 3, '王一', '2022-12-03 19:55:24', '', '2022-12-03 19:57:31');
+INSERT INTO `gen_table_column` VALUES (90, '13', 'remark', '备注', 'varchar(50)', 'String', 'remark', '0', '0', NULL, '1', '1', '1', NULL, 'EQ', 'input', '', 4, '王一', '2022-12-03 19:55:24', '', '2022-12-03 19:57:31');
+INSERT INTO `gen_table_column` VALUES (91, '14', 'hotel_id', '酒店ID', 'int', 'Long', 'hotelId', '1', '1', NULL, '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, '王一', '2022-12-07 14:25:07', '', '2022-12-07 19:51:16');
+INSERT INTO `gen_table_column` VALUES (92, '14', 'hotel_name', '酒店名', 'varchar(20)', 'String', 'hotelName', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 2, '王一', '2022-12-07 14:25:07', '', '2022-12-07 19:51:16');
+INSERT INTO `gen_table_column` VALUES (93, '14', 'remark', '备注', 'varchar(50)', 'String', 'remark', '0', '0', NULL, '1', '1', '1', NULL, 'EQ', 'input', '', 3, '王一', '2022-12-07 14:25:07', '', '2022-12-07 19:51:16');
+INSERT INTO `gen_table_column` VALUES (94, '15', 'contract_id', '合同id', 'int', 'Long', 'contractId', '1', '1', NULL, '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
+INSERT INTO `gen_table_column` VALUES (95, '15', 'hotel_id', '酒店id', 'int', 'Long', 'hotelId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 2, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
+INSERT INTO `gen_table_column` VALUES (96, '15', 'contract_name', '合同名', 'varchar(20)', 'String', 'contractName', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 3, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
+INSERT INTO `gen_table_column` VALUES (97, '15', 'contract_file', '合同文件地址', 'varchar(100)', 'String', 'contractFile', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'fileUpload', '', 4, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
+INSERT INTO `gen_table_column` VALUES (98, '15', 'contract_sign', '签约时间', 'datetime', 'Date', 'contractSign', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'datetime', '', 5, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
+INSERT INTO `gen_table_column` VALUES (99, '15', 'contract_effect', '生效时间', 'datetime', 'Date', 'contractEffect', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'datetime', '', 6, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
+INSERT INTO `gen_table_column` VALUES (100, '15', 'contract_invalid', '到期时间', 'datetime', 'Date', 'contractInvalid', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'datetime', '', 7, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
+INSERT INTO `gen_table_column` VALUES (101, '15', 'remark', '备注', 'varchar(50)', 'String', 'remark', '0', '0', NULL, '1', '1', '1', NULL, 'EQ', 'input', '', 8, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
+INSERT INTO `gen_table_column` VALUES (102, '15', 'contract_state', '合同状态', 'varchar(10)', 'String', 'contractState', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 9, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
+INSERT INTO `gen_table_column` VALUES (103, '15', 'model_id', '范本id', 'int', 'Long', 'modelId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 10, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
 
 -- ----------------------------
 -- Table structure for qrtz_blob_triggers
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_blob_triggers`;
 CREATE TABLE `qrtz_blob_triggers`  (
-                                       `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
-                                       `trigger_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
-                                       `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
-                                       `blob_data` blob NULL COMMENT '存放持久化Trigger对象',
-                                       PRIMARY KEY (`sched_name`, `trigger_name`, `trigger_group`) USING BTREE,
-                                       CONSTRAINT `qrtz_blob_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `qrtz_triggers` (`sched_name`, `trigger_name`, `trigger_group`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
+  `trigger_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
+  `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
+  `blob_data` blob NULL COMMENT '存放持久化Trigger对象',
+  PRIMARY KEY (`sched_name`, `trigger_name`, `trigger_group`) USING BTREE,
+  CONSTRAINT `qrtz_blob_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `qrtz_triggers` (`sched_name`, `trigger_name`, `trigger_group`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'Blob类型的触发器表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -311,10 +388,10 @@ CREATE TABLE `qrtz_blob_triggers`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_calendars`;
 CREATE TABLE `qrtz_calendars`  (
-                                   `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
-                                   `calendar_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '日历名称',
-                                   `calendar` blob NOT NULL COMMENT '存放持久化calendar对象',
-                                   PRIMARY KEY (`sched_name`, `calendar_name`) USING BTREE
+  `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
+  `calendar_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '日历名称',
+  `calendar` blob NOT NULL COMMENT '存放持久化calendar对象',
+  PRIMARY KEY (`sched_name`, `calendar_name`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '日历信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -326,13 +403,13 @@ CREATE TABLE `qrtz_calendars`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_cron_triggers`;
 CREATE TABLE `qrtz_cron_triggers`  (
-                                       `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
-                                       `trigger_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
-                                       `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
-                                       `cron_expression` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'cron表达式',
-                                       `time_zone_id` varchar(80) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '时区',
-                                       PRIMARY KEY (`sched_name`, `trigger_name`, `trigger_group`) USING BTREE,
-                                       CONSTRAINT `qrtz_cron_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `qrtz_triggers` (`sched_name`, `trigger_name`, `trigger_group`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
+  `trigger_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
+  `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
+  `cron_expression` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'cron表达式',
+  `time_zone_id` varchar(80) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '时区',
+  PRIMARY KEY (`sched_name`, `trigger_name`, `trigger_group`) USING BTREE,
+  CONSTRAINT `qrtz_cron_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `qrtz_triggers` (`sched_name`, `trigger_name`, `trigger_group`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = 'Cron类型的触发器表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -344,20 +421,20 @@ CREATE TABLE `qrtz_cron_triggers`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_fired_triggers`;
 CREATE TABLE `qrtz_fired_triggers`  (
-                                        `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
-                                        `entry_id` varchar(95) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度器实例id',
-                                        `trigger_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
-                                        `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
-                                        `instance_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度器实例名',
-                                        `fired_time` bigint(0) NOT NULL COMMENT '触发的时间',
-                                        `sched_time` bigint(0) NOT NULL COMMENT '定时器制定的时间',
-                                        `priority` int(0) NOT NULL COMMENT '优先级',
-                                        `state` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '状态',
-                                        `job_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '任务名称',
-                                        `job_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '任务组名',
-                                        `is_nonconcurrent` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否并发',
-                                        `requests_recovery` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否接受恢复执行',
-                                        PRIMARY KEY (`sched_name`, `entry_id`) USING BTREE
+  `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
+  `entry_id` varchar(95) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度器实例id',
+  `trigger_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
+  `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
+  `instance_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度器实例名',
+  `fired_time` bigint(0) NOT NULL COMMENT '触发的时间',
+  `sched_time` bigint(0) NOT NULL COMMENT '定时器制定的时间',
+  `priority` int(0) NOT NULL COMMENT '优先级',
+  `state` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '状态',
+  `job_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '任务名称',
+  `job_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '任务组名',
+  `is_nonconcurrent` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否并发',
+  `requests_recovery` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '是否接受恢复执行',
+  PRIMARY KEY (`sched_name`, `entry_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '已触发的触发器表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -369,17 +446,17 @@ CREATE TABLE `qrtz_fired_triggers`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_job_details`;
 CREATE TABLE `qrtz_job_details`  (
-                                     `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
-                                     `job_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务名称',
-                                     `job_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务组名',
-                                     `description` varchar(250) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '相关介绍',
-                                     `job_class_name` varchar(250) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '执行任务类名称',
-                                     `is_durable` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '是否持久化',
-                                     `is_nonconcurrent` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '是否并发',
-                                     `is_update_data` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '是否更新数据',
-                                     `requests_recovery` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '是否接受恢复执行',
-                                     `job_data` blob NULL COMMENT '存放持久化job对象',
-                                     PRIMARY KEY (`sched_name`, `job_name`, `job_group`) USING BTREE
+  `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
+  `job_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务名称',
+  `job_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务组名',
+  `description` varchar(250) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '相关介绍',
+  `job_class_name` varchar(250) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '执行任务类名称',
+  `is_durable` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '是否持久化',
+  `is_nonconcurrent` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '是否并发',
+  `is_update_data` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '是否更新数据',
+  `requests_recovery` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '是否接受恢复执行',
+  `job_data` blob NULL COMMENT '存放持久化job对象',
+  PRIMARY KEY (`sched_name`, `job_name`, `job_group`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '任务详细信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -391,9 +468,9 @@ CREATE TABLE `qrtz_job_details`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_locks`;
 CREATE TABLE `qrtz_locks`  (
-                               `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
-                               `lock_name` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '悲观锁名称',
-                               PRIMARY KEY (`sched_name`, `lock_name`) USING BTREE
+  `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
+  `lock_name` varchar(40) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '悲观锁名称',
+  PRIMARY KEY (`sched_name`, `lock_name`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '存储的悲观锁信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -405,9 +482,9 @@ CREATE TABLE `qrtz_locks`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_paused_trigger_grps`;
 CREATE TABLE `qrtz_paused_trigger_grps`  (
-                                             `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
-                                             `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
-                                             PRIMARY KEY (`sched_name`, `trigger_group`) USING BTREE
+  `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
+  `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
+  PRIMARY KEY (`sched_name`, `trigger_group`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '暂停的触发器表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -419,11 +496,11 @@ CREATE TABLE `qrtz_paused_trigger_grps`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_scheduler_state`;
 CREATE TABLE `qrtz_scheduler_state`  (
-                                         `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
-                                         `instance_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '实例名称',
-                                         `last_checkin_time` bigint(0) NOT NULL COMMENT '上次检查时间',
-                                         `checkin_interval` bigint(0) NOT NULL COMMENT '检查间隔时间',
-                                         PRIMARY KEY (`sched_name`, `instance_name`) USING BTREE
+  `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
+  `instance_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '实例名称',
+  `last_checkin_time` bigint(0) NOT NULL COMMENT '上次检查时间',
+  `checkin_interval` bigint(0) NOT NULL COMMENT '检查间隔时间',
+  PRIMARY KEY (`sched_name`, `instance_name`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '调度器状态表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -435,14 +512,14 @@ CREATE TABLE `qrtz_scheduler_state`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_simple_triggers`;
 CREATE TABLE `qrtz_simple_triggers`  (
-                                         `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
-                                         `trigger_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
-                                         `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
-                                         `repeat_count` bigint(0) NOT NULL COMMENT '重复的次数统计',
-                                         `repeat_interval` bigint(0) NOT NULL COMMENT '重复的间隔时间',
-                                         `times_triggered` bigint(0) NOT NULL COMMENT '已经触发的次数',
-                                         PRIMARY KEY (`sched_name`, `trigger_name`, `trigger_group`) USING BTREE,
-                                         CONSTRAINT `qrtz_simple_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `qrtz_triggers` (`sched_name`, `trigger_name`, `trigger_group`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
+  `trigger_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
+  `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
+  `repeat_count` bigint(0) NOT NULL COMMENT '重复的次数统计',
+  `repeat_interval` bigint(0) NOT NULL COMMENT '重复的间隔时间',
+  `times_triggered` bigint(0) NOT NULL COMMENT '已经触发的次数',
+  PRIMARY KEY (`sched_name`, `trigger_name`, `trigger_group`) USING BTREE,
+  CONSTRAINT `qrtz_simple_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `qrtz_triggers` (`sched_name`, `trigger_name`, `trigger_group`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '简单触发器的信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -454,22 +531,22 @@ CREATE TABLE `qrtz_simple_triggers`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_simprop_triggers`;
 CREATE TABLE `qrtz_simprop_triggers`  (
-                                          `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
-                                          `trigger_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
-                                          `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
-                                          `str_prop_1` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'String类型的trigger的第一个参数',
-                                          `str_prop_2` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'String类型的trigger的第二个参数',
-                                          `str_prop_3` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'String类型的trigger的第三个参数',
-                                          `int_prop_1` int(0) NULL DEFAULT NULL COMMENT 'int类型的trigger的第一个参数',
-                                          `int_prop_2` int(0) NULL DEFAULT NULL COMMENT 'int类型的trigger的第二个参数',
-                                          `long_prop_1` bigint(0) NULL DEFAULT NULL COMMENT 'long类型的trigger的第一个参数',
-                                          `long_prop_2` bigint(0) NULL DEFAULT NULL COMMENT 'long类型的trigger的第二个参数',
-                                          `dec_prop_1` decimal(13, 4) NULL DEFAULT NULL COMMENT 'decimal类型的trigger的第一个参数',
-                                          `dec_prop_2` decimal(13, 4) NULL DEFAULT NULL COMMENT 'decimal类型的trigger的第二个参数',
-                                          `bool_prop_1` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'Boolean类型的trigger的第一个参数',
-                                          `bool_prop_2` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'Boolean类型的trigger的第二个参数',
-                                          PRIMARY KEY (`sched_name`, `trigger_name`, `trigger_group`) USING BTREE,
-                                          CONSTRAINT `qrtz_simprop_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `qrtz_triggers` (`sched_name`, `trigger_name`, `trigger_group`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
+  `trigger_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_name的外键',
+  `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_triggers表trigger_group的外键',
+  `str_prop_1` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'String类型的trigger的第一个参数',
+  `str_prop_2` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'String类型的trigger的第二个参数',
+  `str_prop_3` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'String类型的trigger的第三个参数',
+  `int_prop_1` int(0) NULL DEFAULT NULL COMMENT 'int类型的trigger的第一个参数',
+  `int_prop_2` int(0) NULL DEFAULT NULL COMMENT 'int类型的trigger的第二个参数',
+  `long_prop_1` bigint(0) NULL DEFAULT NULL COMMENT 'long类型的trigger的第一个参数',
+  `long_prop_2` bigint(0) NULL DEFAULT NULL COMMENT 'long类型的trigger的第二个参数',
+  `dec_prop_1` decimal(13, 4) NULL DEFAULT NULL COMMENT 'decimal类型的trigger的第一个参数',
+  `dec_prop_2` decimal(13, 4) NULL DEFAULT NULL COMMENT 'decimal类型的trigger的第二个参数',
+  `bool_prop_1` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'Boolean类型的trigger的第一个参数',
+  `bool_prop_2` varchar(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT 'Boolean类型的trigger的第二个参数',
+  PRIMARY KEY (`sched_name`, `trigger_name`, `trigger_group`) USING BTREE,
+  CONSTRAINT `qrtz_simprop_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `trigger_name`, `trigger_group`) REFERENCES `qrtz_triggers` (`sched_name`, `trigger_name`, `trigger_group`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '同步机制的行锁表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -481,25 +558,25 @@ CREATE TABLE `qrtz_simprop_triggers`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `qrtz_triggers`;
 CREATE TABLE `qrtz_triggers`  (
-                                  `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
-                                  `trigger_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '触发器的名字',
-                                  `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '触发器所属组的名字',
-                                  `job_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_job_details表job_name的外键',
-                                  `job_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_job_details表job_group的外键',
-                                  `description` varchar(250) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '相关介绍',
-                                  `next_fire_time` bigint(0) NULL DEFAULT NULL COMMENT '上一次触发时间（毫秒）',
-                                  `prev_fire_time` bigint(0) NULL DEFAULT NULL COMMENT '下一次触发时间（默认为-1表示不触发）',
-                                  `priority` int(0) NULL DEFAULT NULL COMMENT '优先级',
-                                  `trigger_state` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '触发器状态',
-                                  `trigger_type` varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '触发器的类型',
-                                  `start_time` bigint(0) NOT NULL COMMENT '开始时间',
-                                  `end_time` bigint(0) NULL DEFAULT NULL COMMENT '结束时间',
-                                  `calendar_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '日程表名称',
-                                  `misfire_instr` smallint(0) NULL DEFAULT NULL COMMENT '补偿执行的策略',
-                                  `job_data` blob NULL COMMENT '存放持久化job对象',
-                                  PRIMARY KEY (`sched_name`, `trigger_name`, `trigger_group`) USING BTREE,
-                                  INDEX `sched_name`(`sched_name`, `job_name`, `job_group`) USING BTREE,
-                                  CONSTRAINT `qrtz_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `job_name`, `job_group`) REFERENCES `qrtz_job_details` (`sched_name`, `job_name`, `job_group`) ON DELETE RESTRICT ON UPDATE RESTRICT
+  `sched_name` varchar(120) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调度名称',
+  `trigger_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '触发器的名字',
+  `trigger_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '触发器所属组的名字',
+  `job_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_job_details表job_name的外键',
+  `job_group` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT 'qrtz_job_details表job_group的外键',
+  `description` varchar(250) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '相关介绍',
+  `next_fire_time` bigint(0) NULL DEFAULT NULL COMMENT '上一次触发时间（毫秒）',
+  `prev_fire_time` bigint(0) NULL DEFAULT NULL COMMENT '下一次触发时间（默认为-1表示不触发）',
+  `priority` int(0) NULL DEFAULT NULL COMMENT '优先级',
+  `trigger_state` varchar(16) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '触发器状态',
+  `trigger_type` varchar(8) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '触发器的类型',
+  `start_time` bigint(0) NOT NULL COMMENT '开始时间',
+  `end_time` bigint(0) NULL DEFAULT NULL COMMENT '结束时间',
+  `calendar_name` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '日程表名称',
+  `misfire_instr` smallint(0) NULL DEFAULT NULL COMMENT '补偿执行的策略',
+  `job_data` blob NULL COMMENT '存放持久化job对象',
+  PRIMARY KEY (`sched_name`, `trigger_name`, `trigger_group`) USING BTREE,
+  INDEX `sched_name`(`sched_name`, `job_name`, `job_group`) USING BTREE,
+  CONSTRAINT `qrtz_triggers_ibfk_1` FOREIGN KEY (`sched_name`, `job_name`, `job_group`) REFERENCES `qrtz_job_details` (`sched_name`, `job_name`, `job_group`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '触发器详细信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -511,15 +588,15 @@ CREATE TABLE `qrtz_triggers`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `staff_position_relationships`;
 CREATE TABLE `staff_position_relationships`  (
-                                                 `id` int(0) NOT NULL AUTO_INCREMENT COMMENT '关联员工表和员工职位表\r\n            ',
-                                                 `staff_id` int(0) NOT NULL,
-                                                 `position_id` int(0) NOT NULL,
-                                                 PRIMARY KEY (`id`) USING BTREE,
-                                                 INDEX `FK_Reference_5`(`staff_id`) USING BTREE,
-                                                 INDEX `FK_Reference_6`(`position_id`) USING BTREE,
-                                                 CONSTRAINT `FK_Reference_5` FOREIGN KEY (`staff_id`) REFERENCES `base_staff` (`staff_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-                                                 CONSTRAINT `FK_Reference_6` FOREIGN KEY (`position_id`) REFERENCES `base_position` (`position_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 73 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+  `id` int(0) NOT NULL AUTO_INCREMENT COMMENT '关联员工表和员工职位表\r\n            ',
+  `staff_id` int(0) NOT NULL,
+  `position_id` int(0) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `FK_Reference_5`(`staff_id`) USING BTREE,
+  INDEX `FK_Reference_6`(`position_id`) USING BTREE,
+  CONSTRAINT `FK_Reference_5` FOREIGN KEY (`staff_id`) REFERENCES `base_staff` (`staff_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_Reference_6` FOREIGN KEY (`position_id`) REFERENCES `base_position` (`position_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 78 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of staff_position_relationships
@@ -529,25 +606,26 @@ INSERT INTO `staff_position_relationships` VALUES (67, 13, 3);
 INSERT INTO `staff_position_relationships` VALUES (68, 12, 2);
 INSERT INTO `staff_position_relationships` VALUES (69, 12, 4);
 INSERT INTO `staff_position_relationships` VALUES (70, 12, 5);
-INSERT INTO `staff_position_relationships` VALUES (71, 14, 6);
-INSERT INTO `staff_position_relationships` VALUES (72, 14, 7);
+INSERT INTO `staff_position_relationships` VALUES (76, 14, 6);
+INSERT INTO `staff_position_relationships` VALUES (77, 14, 7);
+INSERT INTO `staff_position_relationships` VALUES (78, 14, 7);
 
 -- ----------------------------
 -- Table structure for sys_config
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_config`;
 CREATE TABLE `sys_config`  (
-                               `config_id` int(0) NOT NULL AUTO_INCREMENT COMMENT '参数主键',
-                               `config_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '参数名称',
-                               `config_key` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '参数键名',
-                               `config_value` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '参数键值',
-                               `config_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'N' COMMENT '系统内置（Y是 N否）',
-                               `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
-                               `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-                               `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
-                               `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-                               `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
-                               PRIMARY KEY (`config_id`) USING BTREE
+  `config_id` int(0) NOT NULL AUTO_INCREMENT COMMENT '参数主键',
+  `config_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '参数名称',
+  `config_key` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '参数键名',
+  `config_value` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '参数键值',
+  `config_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'N' COMMENT '系统内置（Y是 N否）',
+  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`config_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 100 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '参数配置表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -564,21 +642,21 @@ INSERT INTO `sys_config` VALUES (5, '账号自助-是否开启用户注册功能
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dept`;
 CREATE TABLE `sys_dept`  (
-                             `dept_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '部门id',
-                             `parent_id` bigint(0) NULL DEFAULT 0 COMMENT '父部门id',
-                             `ancestors` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '祖级列表',
-                             `dept_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '部门名称',
-                             `order_num` int(0) NULL DEFAULT 0 COMMENT '显示顺序',
-                             `leader` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '负责人',
-                             `phone` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '联系电话',
-                             `email` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '邮箱',
-                             `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '部门状态（0正常 1停用）',
-                             `del_flag` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
-                             `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
-                             `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-                             `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
-                             `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-                             PRIMARY KEY (`dept_id`) USING BTREE
+  `dept_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '部门id',
+  `parent_id` bigint(0) NULL DEFAULT 0 COMMENT '父部门id',
+  `ancestors` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '祖级列表',
+  `dept_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '部门名称',
+  `order_num` int(0) NULL DEFAULT 0 COMMENT '显示顺序',
+  `leader` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '负责人',
+  `phone` varchar(11) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '联系电话',
+  `email` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '邮箱',
+  `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '部门状态（0正常 1停用）',
+  `del_flag` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '删除标志（0代表存在 2代表删除）',
+  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`dept_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 200 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -600,21 +678,21 @@ INSERT INTO `sys_dept` VALUES (109, 102, '0,100,102', '财务部门', 2, '若依
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dict_data`;
 CREATE TABLE `sys_dict_data`  (
-                                  `dict_code` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '字典编码',
-                                  `dict_sort` int(0) NULL DEFAULT 0 COMMENT '字典排序',
-                                  `dict_label` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典标签',
-                                  `dict_value` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典键值',
-                                  `dict_type` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典类型',
-                                  `css_class` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '样式属性（其他样式扩展）',
-                                  `list_class` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '表格回显样式',
-                                  `is_default` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'N' COMMENT '是否默认（Y是 N否）',
-                                  `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '状态（0正常 1停用）',
-                                  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
-                                  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-                                  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
-                                  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-                                  `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
-                                  PRIMARY KEY (`dict_code`) USING BTREE
+  `dict_code` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '字典编码',
+  `dict_sort` int(0) NULL DEFAULT 0 COMMENT '字典排序',
+  `dict_label` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典标签',
+  `dict_value` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典键值',
+  `dict_type` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典类型',
+  `css_class` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '样式属性（其他样式扩展）',
+  `list_class` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '表格回显样式',
+  `is_default` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'N' COMMENT '是否默认（Y是 N否）',
+  `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '状态（0正常 1停用）',
+  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`dict_code`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 102 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '字典数据表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -657,17 +735,17 @@ INSERT INTO `sys_dict_data` VALUES (101, 1, '酒店管理员', '0', 'super_admin
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dict_type`;
 CREATE TABLE `sys_dict_type`  (
-                                  `dict_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '字典主键',
-                                  `dict_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典名称',
-                                  `dict_type` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典类型',
-                                  `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '状态（0正常 1停用）',
-                                  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
-                                  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-                                  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
-                                  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-                                  `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
-                                  PRIMARY KEY (`dict_id`) USING BTREE,
-                                  UNIQUE INDEX `dict_type`(`dict_type`) USING BTREE
+  `dict_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '字典主键',
+  `dict_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典名称',
+  `dict_type` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '字典类型',
+  `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '状态（0正常 1停用）',
+  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`dict_id`) USING BTREE,
+  UNIQUE INDEX `dict_type`(`dict_type`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 101 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '字典类型表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -690,20 +768,20 @@ INSERT INTO `sys_dict_type` VALUES (100, '超管标识', 'super_administrator', 
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_job`;
 CREATE TABLE `sys_job`  (
-                            `job_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '任务ID',
-                            `job_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '任务名称',
-                            `job_group` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'DEFAULT' COMMENT '任务组名',
-                            `invoke_target` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调用目标字符串',
-                            `cron_expression` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT 'cron执行表达式',
-                            `misfire_policy` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '3' COMMENT '计划执行错误策略（1立即执行 2执行一次 3放弃执行）',
-                            `concurrent` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '1' COMMENT '是否并发执行（0允许 1禁止）',
-                            `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '状态（0正常 1暂停）',
-                            `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
-                            `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-                            `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
-                            `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-                            `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '备注信息',
-                            PRIMARY KEY (`job_id`, `job_name`, `job_group`) USING BTREE
+  `job_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '任务ID',
+  `job_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '' COMMENT '任务名称',
+  `job_group` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT 'DEFAULT' COMMENT '任务组名',
+  `invoke_target` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调用目标字符串',
+  `cron_expression` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT 'cron执行表达式',
+  `misfire_policy` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '3' COMMENT '计划执行错误策略（1立即执行 2执行一次 3放弃执行）',
+  `concurrent` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '1' COMMENT '是否并发执行（0允许 1禁止）',
+  `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '状态（0正常 1暂停）',
+  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '备注信息',
+  PRIMARY KEY (`job_id`, `job_name`, `job_group`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 100 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '定时任务调度表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -718,15 +796,15 @@ INSERT INTO `sys_job` VALUES (3, '系统默认（多参）', 'DEFAULT', 'ryTask.
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_job_log`;
 CREATE TABLE `sys_job_log`  (
-                                `job_log_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '任务日志ID',
-                                `job_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务名称',
-                                `job_group` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务组名',
-                                `invoke_target` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调用目标字符串',
-                                `job_message` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '日志信息',
-                                `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '执行状态（0正常 1失败）',
-                                `exception_info` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '异常信息',
-                                `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-                                PRIMARY KEY (`job_log_id`) USING BTREE
+  `job_log_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '任务日志ID',
+  `job_name` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务名称',
+  `job_group` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '任务组名',
+  `invoke_target` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '调用目标字符串',
+  `job_message` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '日志信息',
+  `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '执行状态（0正常 1失败）',
+  `exception_info` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '异常信息',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`job_log_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '定时任务调度日志表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -738,17 +816,17 @@ CREATE TABLE `sys_job_log`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_logininfor`;
 CREATE TABLE `sys_logininfor`  (
-                                   `info_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '访问ID',
-                                   `user_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '用户账号',
-                                   `ipaddr` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '登录IP地址',
-                                   `login_location` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '登录地点',
-                                   `browser` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '浏览器类型',
-                                   `os` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '操作系统',
-                                   `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '登录状态（0成功 1失败）',
-                                   `msg` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '提示消息',
-                                   `login_time` datetime(0) NULL DEFAULT NULL COMMENT '访问时间',
-                                   PRIMARY KEY (`info_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 467 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统访问记录' ROW_FORMAT = Dynamic;
+  `info_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '访问ID',
+  `user_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '用户账号',
+  `ipaddr` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '登录IP地址',
+  `login_location` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '登录地点',
+  `browser` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '浏览器类型',
+  `os` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '操作系统',
+  `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '登录状态（0成功 1失败）',
+  `msg` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '提示消息',
+  `login_time` datetime(0) NULL DEFAULT NULL COMMENT '访问时间',
+  PRIMARY KEY (`info_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 624 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统访问记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_logininfor
@@ -1139,32 +1217,233 @@ INSERT INTO `sys_logininfor` VALUES (482, '王一', '127.0.0.1', '内网IP', 'Ch
 INSERT INTO `sys_logininfor` VALUES (483, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-11-20 12:19:55');
 INSERT INTO `sys_logininfor` VALUES (484, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-20 12:20:06');
 INSERT INTO `sys_logininfor` VALUES (485, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-20 13:04:24');
+INSERT INTO `sys_logininfor` VALUES (486, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2022-11-20 13:46:35');
+INSERT INTO `sys_logininfor` VALUES (487, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '密码输入错误1次', '2022-11-20 13:46:38');
+INSERT INTO `sys_logininfor` VALUES (488, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '用户不存在/密码错误', '2022-11-20 13:46:38');
+INSERT INTO `sys_logininfor` VALUES (489, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-20 13:46:44');
+INSERT INTO `sys_logininfor` VALUES (490, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-11-20 13:46:55');
+INSERT INTO `sys_logininfor` VALUES (491, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-20 13:47:09');
+INSERT INTO `sys_logininfor` VALUES (492, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码已失效', '2022-11-20 18:16:00');
+INSERT INTO `sys_logininfor` VALUES (493, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-20 18:16:03');
+INSERT INTO `sys_logininfor` VALUES (494, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-11-20 18:22:52');
+INSERT INTO `sys_logininfor` VALUES (495, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-20 18:22:55');
+INSERT INTO `sys_logininfor` VALUES (496, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-11-20 18:23:02');
+INSERT INTO `sys_logininfor` VALUES (497, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2022-11-20 18:23:14');
+INSERT INTO `sys_logininfor` VALUES (498, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2022-11-20 18:23:17');
+INSERT INTO `sys_logininfor` VALUES (499, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2022-11-20 18:23:20');
+INSERT INTO `sys_logininfor` VALUES (500, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-20 18:23:23');
+INSERT INTO `sys_logininfor` VALUES (501, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-11-20 18:25:51');
+INSERT INTO `sys_logininfor` VALUES (502, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2022-11-20 18:26:05');
+INSERT INTO `sys_logininfor` VALUES (503, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-20 18:26:08');
+INSERT INTO `sys_logininfor` VALUES (504, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-11-20 19:26:53');
+INSERT INTO `sys_logininfor` VALUES (505, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-20 19:26:56');
+INSERT INTO `sys_logininfor` VALUES (506, 'admin', '127.0.0.1', '内网IP', 'Unknown', 'Unknown', '1', '登录用户：admin 不存在', '2022-11-20 19:40:34');
+INSERT INTO `sys_logininfor` VALUES (507, '王一', '127.0.0.1', '内网IP', 'Unknown', 'Unknown', '0', '登录成功', '2022-11-20 19:40:54');
+INSERT INTO `sys_logininfor` VALUES (508, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-20 19:55:32');
+INSERT INTO `sys_logininfor` VALUES (509, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-20 20:49:39');
+INSERT INTO `sys_logininfor` VALUES (510, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-23 19:50:12');
+INSERT INTO `sys_logininfor` VALUES (511, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-11-23 19:52:19');
+INSERT INTO `sys_logininfor` VALUES (512, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-23 19:53:14');
+INSERT INTO `sys_logininfor` VALUES (513, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-11-23 20:49:27');
+INSERT INTO `sys_logininfor` VALUES (514, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-01 11:40:08');
+INSERT INTO `sys_logininfor` VALUES (515, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-01 14:02:15');
+INSERT INTO `sys_logininfor` VALUES (516, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-01 14:02:45');
+INSERT INTO `sys_logininfor` VALUES (517, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-01 14:02:52');
+INSERT INTO `sys_logininfor` VALUES (518, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-01 14:06:43');
+INSERT INTO `sys_logininfor` VALUES (519, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-01 14:06:51');
+INSERT INTO `sys_logininfor` VALUES (520, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-01 14:08:37');
+INSERT INTO `sys_logininfor` VALUES (521, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-01 14:08:41');
+INSERT INTO `sys_logininfor` VALUES (522, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-01 14:10:43');
+INSERT INTO `sys_logininfor` VALUES (523, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-01 14:10:48');
+INSERT INTO `sys_logininfor` VALUES (524, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-01 14:11:01');
+INSERT INTO `sys_logininfor` VALUES (525, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-01 14:11:13');
+INSERT INTO `sys_logininfor` VALUES (526, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-01 14:12:00');
+INSERT INTO `sys_logininfor` VALUES (527, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 15:45:41');
+INSERT INTO `sys_logininfor` VALUES (528, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 15:48:49');
+INSERT INTO `sys_logininfor` VALUES (529, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 15:55:25');
+INSERT INTO `sys_logininfor` VALUES (530, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 15:55:31');
+INSERT INTO `sys_logininfor` VALUES (531, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 15:55:37');
+INSERT INTO `sys_logininfor` VALUES (532, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 15:57:09');
+INSERT INTO `sys_logininfor` VALUES (533, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:00:21');
+INSERT INTO `sys_logininfor` VALUES (534, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:04:51');
+INSERT INTO `sys_logininfor` VALUES (535, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:07:25');
+INSERT INTO `sys_logininfor` VALUES (536, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:08:21');
+INSERT INTO `sys_logininfor` VALUES (537, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:09:49');
+INSERT INTO `sys_logininfor` VALUES (538, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:10:29');
+INSERT INTO `sys_logininfor` VALUES (539, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:17:07');
+INSERT INTO `sys_logininfor` VALUES (540, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:17:12');
+INSERT INTO `sys_logininfor` VALUES (541, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:19:16');
+INSERT INTO `sys_logininfor` VALUES (542, '王一', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:19:19');
+INSERT INTO `sys_logininfor` VALUES (543, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:19:52');
+INSERT INTO `sys_logininfor` VALUES (544, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:20:01');
+INSERT INTO `sys_logininfor` VALUES (545, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:20:26');
+INSERT INTO `sys_logininfor` VALUES (546, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:30:44');
+INSERT INTO `sys_logininfor` VALUES (547, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 16:30:57');
+INSERT INTO `sys_logininfor` VALUES (548, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 17:37:16');
+INSERT INTO `sys_logininfor` VALUES (549, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 17:38:14');
+INSERT INTO `sys_logininfor` VALUES (550, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 17:38:50');
+INSERT INTO `sys_logininfor` VALUES (551, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 17:59:18');
+INSERT INTO `sys_logininfor` VALUES (552, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 18:00:29');
+INSERT INTO `sys_logininfor` VALUES (553, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 18:00:48');
+INSERT INTO `sys_logininfor` VALUES (554, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 19:10:37');
+INSERT INTO `sys_logininfor` VALUES (555, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 19:15:35');
+INSERT INTO `sys_logininfor` VALUES (556, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 19:19:05');
+INSERT INTO `sys_logininfor` VALUES (557, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 19:19:21');
+INSERT INTO `sys_logininfor` VALUES (558, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 19:20:39');
+INSERT INTO `sys_logininfor` VALUES (559, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 19:21:39');
+INSERT INTO `sys_logininfor` VALUES (560, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-01 20:13:20');
+INSERT INTO `sys_logininfor` VALUES (561, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-02 12:41:15');
+INSERT INTO `sys_logininfor` VALUES (562, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-02 14:50:55');
+INSERT INTO `sys_logininfor` VALUES (563, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-02 14:57:15');
+INSERT INTO `sys_logininfor` VALUES (564, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-02 14:59:51');
+INSERT INTO `sys_logininfor` VALUES (565, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码已失效', '2022-12-02 14:59:52');
+INSERT INTO `sys_logininfor` VALUES (566, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码已失效', '2022-12-02 14:59:57');
+INSERT INTO `sys_logininfor` VALUES (567, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码已失效', '2022-12-02 14:59:59');
+INSERT INTO `sys_logininfor` VALUES (568, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码已失效', '2022-12-02 15:00:03');
+INSERT INTO `sys_logininfor` VALUES (569, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码已失效', '2022-12-02 15:00:07');
+INSERT INTO `sys_logininfor` VALUES (570, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码已失效', '2022-12-02 15:00:11');
+INSERT INTO `sys_logininfor` VALUES (571, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码已失效', '2022-12-02 15:00:15');
+INSERT INTO `sys_logininfor` VALUES (572, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码已失效', '2022-12-02 15:00:37');
+INSERT INTO `sys_logininfor` VALUES (573, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-02 15:03:49');
+INSERT INTO `sys_logininfor` VALUES (574, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-02 15:04:04');
+INSERT INTO `sys_logininfor` VALUES (575, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-02 15:04:11');
+INSERT INTO `sys_logininfor` VALUES (576, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-02 15:04:55');
+INSERT INTO `sys_logininfor` VALUES (577, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-02 15:05:03');
+INSERT INTO `sys_logininfor` VALUES (578, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-02 15:05:08');
+INSERT INTO `sys_logininfor` VALUES (579, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-02 15:15:34');
+INSERT INTO `sys_logininfor` VALUES (580, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-02 15:39:52');
+INSERT INTO `sys_logininfor` VALUES (581, 'null', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：null 不存在', '2022-12-02 17:16:31');
+INSERT INTO `sys_logininfor` VALUES (582, 'null', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：null 不存在', '2022-12-02 17:16:58');
+INSERT INTO `sys_logininfor` VALUES (583, 'null', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：null 不存在', '2022-12-02 17:17:00');
+INSERT INTO `sys_logininfor` VALUES (584, 'null', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：null 不存在', '2022-12-02 17:17:29');
+INSERT INTO `sys_logininfor` VALUES (585, 'null', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：null 不存在', '2022-12-02 17:18:02');
+INSERT INTO `sys_logininfor` VALUES (586, 'null', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：null 不存在', '2022-12-02 17:18:02');
+INSERT INTO `sys_logininfor` VALUES (587, 'admin', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：admin 不存在', '2022-12-02 17:20:10');
+INSERT INTO `sys_logininfor` VALUES (588, 'admin', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：admin 不存在', '2022-12-02 17:20:17');
+INSERT INTO `sys_logininfor` VALUES (589, 'admin', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：admin 不存在', '2022-12-02 17:21:41');
+INSERT INTO `sys_logininfor` VALUES (590, 'admin', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：admin 不存在', '2022-12-02 17:21:43');
+INSERT INTO `sys_logininfor` VALUES (591, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-02 17:22:03');
+INSERT INTO `sys_logininfor` VALUES (592, '刘七', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '0', '登录成功', '2022-12-02 17:25:25');
+INSERT INTO `sys_logininfor` VALUES (593, 'admin', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：admin 不存在', '2022-12-02 17:33:23');
+INSERT INTO `sys_logininfor` VALUES (594, 'admin', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：admin 不存在', '2022-12-02 17:38:42');
+INSERT INTO `sys_logininfor` VALUES (595, 'admin', '127.0.0.1', '内网IP', 'Robot/Spider', 'Unknown', '1', '登录用户：admin 不存在', '2022-12-02 17:40:16');
+INSERT INTO `sys_logininfor` VALUES (596, NULL, '127.0.0.1', '内网IP', 'Unknown', 'Unknown', '1', '验证码已失效', '2022-12-02 20:32:14');
+INSERT INTO `sys_logininfor` VALUES (597, NULL, '127.0.0.1', '内网IP', 'Unknown', 'Unknown', '1', '登录用户：NONE_PROVIDED 不存在', '2022-12-02 20:33:26');
+INSERT INTO `sys_logininfor` VALUES (598, '刘七', '127.0.0.1', '内网IP', 'Unknown', 'Unknown', '0', '登录成功', '2022-12-02 20:33:37');
+INSERT INTO `sys_logininfor` VALUES (599, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-02 20:38:13');
+INSERT INTO `sys_logininfor` VALUES (600, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-02 20:42:16');
+INSERT INTO `sys_logininfor` VALUES (601, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-02 20:42:24');
+INSERT INTO `sys_logininfor` VALUES (602, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-03 11:54:10');
+INSERT INTO `sys_logininfor` VALUES (603, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-03 18:12:40');
+INSERT INTO `sys_logininfor` VALUES (604, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-03 19:16:57');
+INSERT INTO `sys_logininfor` VALUES (605, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-03 19:49:31');
+INSERT INTO `sys_logininfor` VALUES (606, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-03 19:49:37');
+INSERT INTO `sys_logininfor` VALUES (607, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-03 19:50:17');
+INSERT INTO `sys_logininfor` VALUES (608, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码已失效', '2022-12-03 19:52:39');
+INSERT INTO `sys_logininfor` VALUES (609, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-03 19:52:42');
+INSERT INTO `sys_logininfor` VALUES (610, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-03 20:53:32');
+INSERT INTO `sys_logininfor` VALUES (611, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-03 20:57:28');
+INSERT INTO `sys_logininfor` VALUES (612, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-04 11:16:00');
+INSERT INTO `sys_logininfor` VALUES (613, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-07 09:59:32');
+INSERT INTO `sys_logininfor` VALUES (614, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-07 14:18:22');
+INSERT INTO `sys_logininfor` VALUES (615, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-07 14:18:40');
+INSERT INTO `sys_logininfor` VALUES (616, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-07 14:24:35');
+INSERT INTO `sys_logininfor` VALUES (617, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-07 19:49:23');
+INSERT INTO `sys_logininfor` VALUES (618, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-07 20:43:40');
+INSERT INTO `sys_logininfor` VALUES (619, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-08 10:08:51');
+INSERT INTO `sys_logininfor` VALUES (620, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-08 12:46:44');
+INSERT INTO `sys_logininfor` VALUES (621, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-08 13:10:54');
+INSERT INTO `sys_logininfor` VALUES (622, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-08 13:10:59');
+INSERT INTO `sys_logininfor` VALUES (623, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-08 15:10:24');
+INSERT INTO `sys_logininfor` VALUES (624, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-08 18:09:33');
+INSERT INTO `sys_logininfor` VALUES (625, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-08 18:30:10');
+INSERT INTO `sys_logininfor` VALUES (626, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-08 18:30:16');
+INSERT INTO `sys_logininfor` VALUES (627, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-08 18:37:43');
+INSERT INTO `sys_logininfor` VALUES (628, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '本系统暂不支持超级管理员', '2022-12-08 18:37:51');
+INSERT INTO `sys_logininfor` VALUES (629, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-08 18:38:14');
+INSERT INTO `sys_logininfor` VALUES (630, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-08 22:37:09');
+INSERT INTO `sys_logininfor` VALUES (631, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-08 23:41:21');
+INSERT INTO `sys_logininfor` VALUES (632, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-08 23:45:24');
+INSERT INTO `sys_logininfor` VALUES (633, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '本系统暂不支持超级管理员', '2022-12-08 23:45:39');
+INSERT INTO `sys_logininfor` VALUES (634, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '本系统暂不支持超级管理员', '2022-12-08 23:45:44');
+INSERT INTO `sys_logininfor` VALUES (635, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '本系统暂不支持超级管理员', '2022-12-08 23:45:47');
+INSERT INTO `sys_logininfor` VALUES (636, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '本系统暂不支持超级管理员', '2022-12-08 23:45:49');
+INSERT INTO `sys_logininfor` VALUES (637, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '本系统暂不支持超级管理员', '2022-12-08 23:45:50');
+INSERT INTO `sys_logininfor` VALUES (638, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '本系统暂不支持超级管理员', '2022-12-08 23:45:52');
+INSERT INTO `sys_logininfor` VALUES (639, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '本系统暂不支持超级管理员', '2022-12-08 23:45:53');
+INSERT INTO `sys_logininfor` VALUES (640, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-08 23:46:02');
+INSERT INTO `sys_logininfor` VALUES (641, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-08 23:50:02');
+INSERT INTO `sys_logininfor` VALUES (642, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-08 23:50:13');
+INSERT INTO `sys_logininfor` VALUES (643, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 00:03:03');
+INSERT INTO `sys_logininfor` VALUES (644, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 00:03:06');
+INSERT INTO `sys_logininfor` VALUES (645, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 00:07:04');
+INSERT INTO `sys_logininfor` VALUES (646, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 00:07:09');
+INSERT INTO `sys_logininfor` VALUES (647, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 00:07:15');
+INSERT INTO `sys_logininfor` VALUES (648, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 00:07:20');
+INSERT INTO `sys_logininfor` VALUES (649, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码已失效', '2022-12-09 00:25:09');
+INSERT INTO `sys_logininfor` VALUES (650, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2022-12-09 00:25:12');
+INSERT INTO `sys_logininfor` VALUES (651, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 00:25:14');
+INSERT INTO `sys_logininfor` VALUES (652, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 00:36:38');
+INSERT INTO `sys_logininfor` VALUES (653, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 00:36:43');
+INSERT INTO `sys_logininfor` VALUES (654, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 00:36:59');
+INSERT INTO `sys_logininfor` VALUES (655, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 00:37:09');
+INSERT INTO `sys_logininfor` VALUES (656, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 00:42:21');
+INSERT INTO `sys_logininfor` VALUES (657, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 00:42:24');
+INSERT INTO `sys_logininfor` VALUES (658, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 00:53:09');
+INSERT INTO `sys_logininfor` VALUES (659, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 00:53:11');
+INSERT INTO `sys_logininfor` VALUES (660, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 01:01:51');
+INSERT INTO `sys_logininfor` VALUES (661, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 01:01:55');
+INSERT INTO `sys_logininfor` VALUES (662, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 10:56:16');
+INSERT INTO `sys_logininfor` VALUES (663, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 10:58:44');
+INSERT INTO `sys_logininfor` VALUES (664, 'ry', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2022-12-09 10:59:08');
+INSERT INTO `sys_logininfor` VALUES (665, 'ry', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '登录用户：ry 不存在', '2022-12-09 10:59:11');
+INSERT INTO `sys_logininfor` VALUES (666, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 10:59:47');
+INSERT INTO `sys_logininfor` VALUES (667, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 11:00:32');
+INSERT INTO `sys_logininfor` VALUES (668, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', 'Invalid bound statement (not found): com.ruoyi.system.mapper.SysUserMapper.selectUserByUserName', '2022-12-09 11:00:36');
+INSERT INTO `sys_logininfor` VALUES (669, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', 'Invalid bound statement (not found): com.ruoyi.system.mapper.SysUserMapper.selectUserByUserName', '2022-12-09 11:00:41');
+INSERT INTO `sys_logininfor` VALUES (670, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', 'Invalid bound statement (not found): com.ruoyi.system.mapper.SysUserMapper.selectUserByUserName', '2022-12-09 11:00:55');
+INSERT INTO `sys_logininfor` VALUES (671, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 11:08:56');
+INSERT INTO `sys_logininfor` VALUES (672, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 11:19:32');
+INSERT INTO `sys_logininfor` VALUES (673, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 11:19:36');
+INSERT INTO `sys_logininfor` VALUES (674, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 11:32:58');
+INSERT INTO `sys_logininfor` VALUES (675, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 11:33:08');
+INSERT INTO `sys_logininfor` VALUES (676, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 11:33:22');
+INSERT INTO `sys_logininfor` VALUES (677, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2022-12-09 11:33:25');
+INSERT INTO `sys_logininfor` VALUES (678, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 11:33:27');
+INSERT INTO `sys_logininfor` VALUES (679, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 11:36:31');
+INSERT INTO `sys_logininfor` VALUES (680, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 11:36:39');
+INSERT INTO `sys_logininfor` VALUES (681, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 11:49:57');
+INSERT INTO `sys_logininfor` VALUES (682, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 11:50:00');
+INSERT INTO `sys_logininfor` VALUES (683, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 12:00:57');
+INSERT INTO `sys_logininfor` VALUES (684, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 12:01:02');
+INSERT INTO `sys_logininfor` VALUES (685, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 12:01:21');
+INSERT INTO `sys_logininfor` VALUES (686, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 12:01:26');
 
 -- ----------------------------
 -- Table structure for sys_menu
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_menu`;
 CREATE TABLE `sys_menu`  (
-                             `menu_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
-                             `menu_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '菜单名称',
-                             `parent_id` bigint(0) NULL DEFAULT 0 COMMENT '父菜单ID',
-                             `order_num` int(0) NULL DEFAULT 0 COMMENT '显示顺序',
-                             `path` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '路由地址',
-                             `component` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '组件路径',
-                             `query` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '路由参数',
-                             `is_frame` int(0) NULL DEFAULT 1 COMMENT '是否为外链（0是 1否）',
-                             `is_cache` int(0) NULL DEFAULT 0 COMMENT '是否缓存（0缓存 1不缓存）',
-                             `menu_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '菜单类型（M目录 C菜单 F按钮）',
-                             `visible` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '菜单状态（0显示 1隐藏）',
-                             `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '菜单状态（0正常 1停用）',
-                             `perms` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '权限标识',
-                             `icon` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '#' COMMENT '菜单图标',
-                             `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
-                             `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-                             `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
-                             `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-                             `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '备注',
-                             PRIMARY KEY (`menu_id`) USING BTREE
+  `menu_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '菜单ID',
+  `menu_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '菜单名称',
+  `parent_id` bigint(0) NULL DEFAULT 0 COMMENT '父菜单ID',
+  `order_num` int(0) NULL DEFAULT 0 COMMENT '显示顺序',
+  `path` varchar(200) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '路由地址',
+  `component` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '组件路径',
+  `query` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '路由参数',
+  `is_frame` int(0) NULL DEFAULT 1 COMMENT '是否为外链（0是 1否）',
+  `is_cache` int(0) NULL DEFAULT 0 COMMENT '是否缓存（0缓存 1不缓存）',
+  `menu_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '菜单类型（M目录 C菜单 F按钮）',
+  `visible` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '菜单状态（0显示 1隐藏）',
+  `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '菜单状态（0正常 1停用）',
+  `perms` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '权限标识',
+  `icon` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '#' COMMENT '菜单图标',
+  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '备注',
+  PRIMARY KEY (`menu_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 2026 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -1274,23 +1553,26 @@ INSERT INTO `sys_menu` VALUES (2022, '职位信息新增', 2020, 2, '#', '', NUL
 INSERT INTO `sys_menu` VALUES (2023, '职位信息修改', 2020, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:position:edit', '#', 'admin', '2022-11-18 17:32:55', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2024, '职位信息删除', 2020, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:position:remove', '#', 'admin', '2022-11-18 17:32:55', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2025, '职位信息导出', 2020, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:position:export', '#', 'admin', '2022-11-18 17:32:55', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2026, '合同列表', 0, 1, 'model', 'business/model/index', NULL, 1, 0, 'C', '0', '0', 'business:model', 'list', 'admin', '2022-12-08 00:00:00', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2027, '历史合同', 0, 2, 'contract', 'business/contract/index', NULL, 1, 0, 'C', '0', '0', 'business:contract', 'table', 'admin', '2022-12-08 00:00:00', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2028, '酒店信息', 0, 0, 'hotel', '', NULL, 1, 0, 'F', '0', '0', 'business:hotel', '#', 'admin', '2022-12-09 00:00:00', '', NULL, '');
 
 -- ----------------------------
 -- Table structure for sys_notice
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_notice`;
 CREATE TABLE `sys_notice`  (
-                               `notice_id` int(0) NOT NULL AUTO_INCREMENT COMMENT '公告ID',
-                               `notice_title` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '公告标题',
-                               `notice_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '公告类型（1通知 2公告）',
-                               `notice_content` longblob NULL COMMENT '公告内容',
-                               `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '公告状态（0正常 1关闭）',
-                               `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
-                               `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
-                               `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
-                               `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-                               `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
-                               PRIMARY KEY (`notice_id`) USING BTREE
+  `notice_id` int(0) NOT NULL AUTO_INCREMENT COMMENT '公告ID',
+  `notice_title` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '公告标题',
+  `notice_type` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '公告类型（1通知 2公告）',
+  `notice_content` longblob NULL COMMENT '公告内容',
+  `status` char(1) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '0' COMMENT '公告状态（0正常 1关闭）',
+  `create_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '创建者',
+  `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
+  `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
+  `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
+  `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`notice_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '通知公告表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -1304,24 +1586,24 @@ INSERT INTO `sys_notice` VALUES (2, '维护通知：2018-07-01 若依系统凌�
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_oper_log`;
 CREATE TABLE `sys_oper_log`  (
-                                 `oper_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '日志主键',
-                                 `title` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '模块标题',
-                                 `business_type` int(0) NULL DEFAULT 0 COMMENT '业务类型（0其它 1新增 2修改 3删除）',
-                                 `method` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '方法名称',
-                                 `request_method` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '请求方式',
-                                 `operator_type` int(0) NULL DEFAULT 0 COMMENT '操作类别（0其它 1后台用户 2手机端用户）',
-                                 `oper_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '操作人员',
-                                 `dept_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '部门名称',
-                                 `oper_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '请求URL',
-                                 `oper_ip` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '主机地址',
-                                 `oper_location` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '操作地点',
-                                 `oper_param` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '请求参数',
-                                 `json_result` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '返回参数',
-                                 `status` int(0) NULL DEFAULT 0 COMMENT '操作状态（0正常 1异常）',
-                                 `error_msg` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '错误消息',
-                                 `oper_time` datetime(0) NULL DEFAULT NULL COMMENT '操作时间',
-                                 PRIMARY KEY (`oper_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 335 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '操作日志记录' ROW_FORMAT = Dynamic;
+  `oper_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '日志主键',
+  `title` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '模块标题',
+  `business_type` int(0) NULL DEFAULT 0 COMMENT '业务类型（0其它 1新增 2修改 3删除）',
+  `method` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '方法名称',
+  `request_method` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '请求方式',
+  `operator_type` int(0) NULL DEFAULT 0 COMMENT '操作类别（0其它 1后台用户 2手机端用户）',
+  `oper_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '操作人员',
+  `dept_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '部门名称',
+  `oper_url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '请求URL',
+  `oper_ip` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '主机地址',
+  `oper_location` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '操作地点',
+  `oper_param` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '请求参数',
+  `json_result` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '返回参数',
+  `status` int(0) NULL DEFAULT 0 COMMENT '操作状态（0正常 1异常）',
+  `error_msg` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '错误消息',
+  `oper_time` datetime(0) NULL DEFAULT NULL COMMENT '操作时间',
+  PRIMARY KEY (`oper_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 439 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '操作日志记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_oper_log
@@ -1653,6 +1935,42 @@ INSERT INTO `sys_oper_log` VALUES (423, '用户管理', 2, 'com.ruoyi.web.contro
 INSERT INTO `sys_oper_log` VALUES (424, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"ancestors\":\"0,100,101\",\"children\":[],\"deptId\":103,\"deptName\":\"研发部门\",\"leader\":\"若依\",\"orderNum\":1,\"params\":{},\"parentId\":101,\"status\":\"0\"},\"deptId\":103,\"email\":\"ry@163.com\",\"loginDate\":\"2022-11-20 12:18:42\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"测试-超级管理员\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\",\"status\":\"0\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":1,\"updateBy\":\"王一\",\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-11-20 12:18:53');
 INSERT INTO `sys_oper_log` VALUES (425, '员工信息', 5, 'com.ruoyi.business.controller.BaseStaffController.export()', 'POST', 1, '刘七', NULL, '/business/staff/export', '127.0.0.1', '内网IP', '{\"params\":{}}', NULL, 0, NULL, '2022-11-20 12:23:37');
 INSERT INTO `sys_oper_log` VALUES (426, '职位信息', 5, 'com.ruoyi.business.controller.BasePositionController.export()', 'POST', 1, '刘七', NULL, '/business/position/export', '127.0.0.1', '内网IP', '{\"params\":{}}', NULL, 0, NULL, '2022-11-20 12:24:49');
+INSERT INTO `sys_oper_log` VALUES (427, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"商务销售专员\",\"params\":{},\"positionId\":6,\"positionName\":\"商务销售专员\",\"remark\":\"测试\"},{\"functionValue\":\"会议销售专员\",\"params\":{},\"positionId\":7,\"positionName\":\"会议销售专员\",\"remark\":\"测试\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":3,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":5,\"hotelId\":2,\"params\":{},\"remark\":\"测试\",\"staffId\":14,\"staffName\":\"陈六\",\"staffPassword\":\"123\",\"staffPhone\":\"13678783636\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-11-20 18:18:09');
+INSERT INTO `sys_oper_log` VALUES (428, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"商务销售专员\",\"params\":{},\"positionId\":6,\"positionName\":\"商务销售专员\",\"remark\":\"测试\"},{\"functionValue\":\"会议销售专员\",\"params\":{},\"positionId\":7,\"positionName\":\"会议销售专员\",\"remark\":\"测试\"},{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":7,\"positionName\":\"销售部经理\",\"remark\":\"测试\"}],\"departmentId\":5,\"hotelId\":2,\"params\":{},\"remark\":\"测试\",\"staffId\":14,\"staffName\":\"陈六\",\"staffPassword\":\"123\",\"staffPhone\":\"13678783636\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-11-20 18:18:30');
+INSERT INTO `sys_oper_log` VALUES (429, '代码生成', 6, 'com.ruoyi.generator.controller.GenController.importTableSave()', 'POST', 1, '王一', NULL, '/tool/gen/importTable', '127.0.0.1', '内网IP', '\"base_model\"', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-03 19:55:24');
+INSERT INTO `sys_oper_log` VALUES (430, '代码生成', 2, 'com.ruoyi.generator.controller.GenController.editSave()', 'PUT', 1, '王一', NULL, '/tool/gen', '127.0.0.1', '内网IP', '{\"businessName\":\"model\",\"className\":\"BaseModel\",\"columns\":[{\"capJavaField\":\"ModelId\",\"columnComment\":\"范本ID\",\"columnId\":87,\"columnName\":\"model_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2022-12-03 19:55:24\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":true,\"insert\":false,\"isIncrement\":\"1\",\"isPk\":\"1\",\"javaField\":\"modelId\",\"javaType\":\"Long\",\"list\":false,\"params\":{},\"pk\":true,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":1,\"superColumn\":false,\"tableId\":13,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"ModelName\",\"columnComment\":\"范本名\",\"columnId\":88,\"columnName\":\"model_name\",\"columnType\":\"varchar(20)\",\"createBy\":\"王一\",\"createTime\":\"2022-12-03 19:55:24\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":false,\"insert\":false,\"isIncrement\":\"0\",\"isPk\":\"0\",\"isRequired\":\"1\",\"javaField\":\"modelName\",\"javaType\":\"String\",\"list\":false,\"params\":{},\"pk\":false,\"query\":false,\"queryType\":\"LIKE\",\"required\":true,\"sort\":2,\"superColumn\":false,\"tableId\":13,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"ModelFile\",\"columnComment\":\"范本文件地址\",\"columnId\":89,\"columnName\":\"model_file\",\"columnType\":\"varchar(100)\",\"createBy\":\"王一\",\"createTime\":\"2022-12-03 19:55:24\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"fileUpload\",\"increment\":false,\"insert\":false,\"isIncrement\":\"0\",\"isPk\":\"0\",\"isRequired\":\"1\",\"javaField\":\"modelFile\",\"javaType\":\"String\",\"list\":false,\"params\":{},\"pk\":false,\"query\":false,\"queryType\":\"EQ\",\"required\":true,\"sort\":3,\"superColumn\":false,\"tableId\":13,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"Remark\",\"columnComment\":\"备注\",\"columnId\":90,\"columnName\":\"remark\",\"columnType\":\"varchar(50)\",\"createBy\":\"王一\",\"createTime\":\"2022-12-03 19:55:24\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":false,\"insert\":false,\"isIncrement\":\"0\",\"isPk\":\"0\",\"javaField\":\"remark\",\"javaType\":\"String\",\"list\":false,\"params\":{},\"pk\":false,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":4,\"superColumn\":true,\"tableId\":13,\"updateBy\":\"\",\"usableColumn\":true}]', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-03 19:57:31');
+INSERT INTO `sys_oper_log` VALUES (431, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, '王一', NULL, '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{}', NULL, 0, NULL, '2022-12-03 19:57:58');
+INSERT INTO `sys_oper_log` VALUES (432, '范本列表', 2, 'com.ruoyi.business.controller.BaseModelController.edit()', 'PUT', 1, '王一', NULL, '/business/model', '127.0.0.1', '内网IP', '{\"modelFile\":\"C:/Users/19059/Desktop/qqq.pdf,/profile/upload/2022/12/03/qqq_20221203201348A001.pdf\",\"modelId\":1,\"modelName\":\"软件合同\",\"params\":{}}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-03 20:13:50');
+INSERT INTO `sys_oper_log` VALUES (433, '代码生成', 6, 'com.ruoyi.generator.controller.GenController.importTableSave()', 'POST', 1, '王一', NULL, '/tool/gen/importTable', '127.0.0.1', '内网IP', '\"base_hotel\"', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-07 14:25:07');
+INSERT INTO `sys_oper_log` VALUES (434, '代码生成', 6, 'com.ruoyi.generator.controller.GenController.importTableSave()', 'POST', 1, '王一', NULL, '/tool/gen/importTable', '127.0.0.1', '内网IP', '\"biz_contract\"', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-07 14:26:45');
+INSERT INTO `sys_oper_log` VALUES (435, '代码生成', 2, 'com.ruoyi.generator.controller.GenController.editSave()', 'PUT', 1, '王一', NULL, '/tool/gen', '127.0.0.1', '内网IP', '{\"businessName\":\"contract\",\"className\":\"BizContract\",\"columns\":[{\"capJavaField\":\"ContractId\",\"columnComment\":\"合同id\",\"columnId\":94,\"columnName\":\"contract_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2022-12-07 14:26:45\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":true,\"insert\":true,\"isIncrement\":\"1\",\"isInsert\":\"1\",\"isPk\":\"1\",\"javaField\":\"contractId\",\"javaType\":\"Long\",\"list\":false,\"params\":{},\"pk\":true,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":1,\"superColumn\":false,\"tableId\":15,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"HotelId\",\"columnComment\":\"酒店id\",\"columnId\":95,\"columnName\":\"hotel_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2022-12-07 14:26:45\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"hotelId\",\"javaType\":\"Long\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"EQ\",\"required\":true,\"sort\":2,\"superColumn\":false,\"tableId\":15,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"ContractName\",\"columnComment\":\"合同名\",\"columnId\":96,\"columnName\":\"contract_name\",\"columnType\":\"varchar(20)\",\"createBy\":\"王一\",\"createTime\":\"2022-12-07 14:26:45\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"contractName\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"LIKE\",\"required\":true,\"sort\":3,\"superColumn\":false,\"tableId\":15,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"ContractFile\",\"columnComment\":\"合同文件地址\",\"columnId\":97,\"columnName\":\"contract_file\",\"columnType\":\"varchar(100)\",\"createBy\":\"王一\",\"createTime\":\"2022-12-07 14:26:45\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"fileUpload\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequire', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-07 14:35:22');
+INSERT INTO `sys_oper_log` VALUES (436, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, '王一', NULL, '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{}', NULL, 0, NULL, '2022-12-07 14:35:38');
+INSERT INTO `sys_oper_log` VALUES (437, '代码生成', 2, 'com.ruoyi.generator.controller.GenController.editSave()', 'PUT', 1, '王一', NULL, '/tool/gen', '127.0.0.1', '内网IP', '{\"businessName\":\"hotel\",\"className\":\"BaseHotel\",\"columns\":[{\"capJavaField\":\"HotelId\",\"columnComment\":\"酒店ID\",\"columnId\":91,\"columnName\":\"hotel_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2022-12-07 14:25:07\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":true,\"insert\":true,\"isIncrement\":\"1\",\"isInsert\":\"1\",\"isPk\":\"1\",\"javaField\":\"hotelId\",\"javaType\":\"Long\",\"list\":false,\"params\":{},\"pk\":true,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":1,\"superColumn\":false,\"tableId\":14,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"HotelName\",\"columnComment\":\"酒店名\",\"columnId\":92,\"columnName\":\"hotel_name\",\"columnType\":\"varchar(20)\",\"createBy\":\"王一\",\"createTime\":\"2022-12-07 14:25:07\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"hotelName\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"LIKE\",\"required\":true,\"sort\":2,\"superColumn\":false,\"tableId\":14,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"Remark\",\"columnComment\":\"备注\",\"columnId\":93,\"columnName\":\"remark\",\"columnType\":\"varchar(50)\",\"createBy\":\"王一\",\"createTime\":\"2022-12-07 14:25:07\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"javaField\":\"remark\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":3,\"superColumn\":true,\"tableId\":14,\"updateBy\":\"\",\"usableColumn\":true}],\"crud\":true,\"functionAuthor\":\"ruoyi\",\"functionName\":\"酒店列表\",\"genPath\":\"/\",\"genType\":\"0\",\"moduleName\":\"business\",\"options\":\"{}\",\"packageName\":\"com.ruoyi.business\",\"params\":{},\"sub\":false,\"tableComment\":\"酒店表\",\"tableId\":14,\"tableName\":\"base_hotel\",\"tplCategory\":\"crud\",\"tree\":false}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-07 19:51:16');
+INSERT INTO `sys_oper_log` VALUES (438, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, '王一', NULL, '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{}', NULL, 0, NULL, '2022-12-07 19:51:18');
+INSERT INTO `sys_oper_log` VALUES (439, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, '王一', NULL, '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{}', NULL, 0, NULL, '2022-12-08 18:09:41');
+INSERT INTO `sys_oper_log` VALUES (440, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"ancestors\":\"0,100,101\",\"children\":[],\"deptId\":103,\"deptName\":\"研发部门\",\"leader\":\"若依\",\"orderNum\":1,\"params\":{},\"parentId\":101,\"status\":\"0\"},\"deptId\":103,\"email\":\"ry@163.com\",\"loginDate\":\"2022-12-09 00:53:12\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"测试-超级管理员\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\",\"status\":\"0\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":1,\"userId\":1,\"userName\":\"王一2\"}', NULL, 1, '不允许操作超级管理员用户', '2022-12-09 00:58:44');
+INSERT INTO `sys_oper_log` VALUES (441, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"ancestors\":\"0,100,101\",\"children\":[],\"deptId\":103,\"deptName\":\"研发部门\",\"leader\":\"若依\",\"orderNum\":1,\"params\":{},\"parentId\":101,\"status\":\"0\"},\"deptId\":103,\"email\":\"ry@163.com\",\"loginDate\":\"2022-12-09 00:53:12\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"测试-超级管理员\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\",\"status\":\"0\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":1,\"updateBy\":\"王一\",\"userId\":1,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 01:00:16');
+INSERT INTO `sys_oper_log` VALUES (442, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"ancestors\":\"0,100,101\",\"children\":[],\"deptId\":103,\"deptName\":\"研发部门\",\"leader\":\"若依\",\"orderNum\":1,\"params\":{},\"parentId\":101,\"status\":\"0\"},\"deptId\":103,\"email\":\"ry@163.com\",\"loginDate\":\"2022-12-09 00:53:12\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"测试-超级管理员\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\",\"status\":\"0\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":1,\"updateBy\":\"王一\",\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 01:00:21');
+INSERT INTO `sys_oper_log` VALUES (443, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"ancestors\":\"0,100,101\",\"children\":[],\"deptId\":103,\"deptName\":\"研发部门\",\"leader\":\"若依\",\"orderNum\":1,\"params\":{},\"parentId\":101,\"status\":\"0\"},\"deptId\":103,\"email\":\"ry@163.com\",\"loginDate\":\"2022-12-09 10:56:16\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"测试-超级管理员2\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\",\"status\":\"0\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":1,\"updateBy\":\"王一\",\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 10:56:28');
+INSERT INTO `sys_oper_log` VALUES (444, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"ancestors\":\"0,100,101\",\"children\":[],\"deptId\":103,\"deptName\":\"研发部门\",\"leader\":\"若依\",\"orderNum\":1,\"params\":{},\"parentId\":101,\"status\":\"0\"},\"deptId\":103,\"email\":\"ry@163.com\",\"loginDate\":\"2022-12-09 10:56:16\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"测试-超级管理员\\n\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\",\"status\":\"0\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":1,\"updateBy\":\"王一\",\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 10:56:32');
+INSERT INTO `sys_oper_log` VALUES (445, '用户管理', 1, 'com.ruoyi.web.controller.system.SysUserController.add()', 'POST', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"createBy\":\"王一\",\"hotelId\":2,\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"status\":\"0\",\"superAdministrator\":0,\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 10:56:48');
+INSERT INTO `sys_oper_log` VALUES (446, '用户管理', 1, 'com.ruoyi.web.controller.system.SysUserController.add()', 'POST', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"createBy\":\"王一\",\"params\":{},\"phonenumber\":\"15678782232\",\"postIds\":[],\"roleIds\":[],\"status\":\"0\",\"superAdministrator\":1,\"userName\":\"sss\"}', NULL, 1, '\r\n### Error updating database.  Cause: java.sql.SQLException: Field \'super_administrator\' doesn\'t have a default value\r\n### The error may exist in file [D:\\Hotel-System\\Hotel-Module\\Hotel-Module\\RuoYi-Vue-master\\ruoyi-system\\target\\classes\\mapper\\system\\SysUserMapper.xml]\r\n### The error may involve com.ruoyi.system.mapper.SysUserMapper.insertUser-Inline\r\n### The error occurred while setting parameters\r\n### SQL: insert into sys_user(                  user_name,                         phonenumber,             password,       status,       create_by,            create_time    )values(                  ?,                         ?,             ?,       ?,       ?,            sysdate()    )\r\n### Cause: java.sql.SQLException: Field \'super_administrator\' doesn\'t have a default value\n; Field \'super_administrator\' doesn\'t have a default value; nested exception is java.sql.SQLException: Field \'super_administrator\' doesn\'t have a default value', '2022-12-09 11:12:19');
+INSERT INTO `sys_oper_log` VALUES (447, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"王一\",\"createTime\":\"2022-12-09 10:56:48\",\"delFlag\":\"0\",\"email\":\"\",\"hotelId\":2,\"loginIp\":\"\",\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"0\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":1,\"updateBy\":\"王一\",\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:19:07');
+INSERT INTO `sys_oper_log` VALUES (448, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"王一\",\"createTime\":\"2022-12-09 10:56:48\",\"delFlag\":\"0\",\"email\":\"\",\"hotelId\":2,\"loginIp\":\"\",\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"0\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:19:13');
+INSERT INTO `sys_oper_log` VALUES (449, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"王一\",\"createTime\":\"2022-12-09 10:56:48\",\"delFlag\":\"0\",\"email\":\"\",\"hotelId\":2,\"loginIp\":\"\",\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"0\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:19:19');
+INSERT INTO `sys_oper_log` VALUES (450, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"王一\",\"createTime\":\"2022-12-09 10:56:48\",\"delFlag\":\"0\",\"email\":\"\",\"hotelId\":2,\"loginIp\":\"\",\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"0\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:19:29');
+INSERT INTO `sys_oper_log` VALUES (451, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"王一\",\"createTime\":\"2022-12-09 10:56:48\",\"delFlag\":\"0\",\"email\":\"\",\"hotelId\":2,\"loginIp\":\"\",\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"0\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:19:41');
+INSERT INTO `sys_oper_log` VALUES (452, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"王一\",\"createTime\":\"2022-12-09 10:56:48\",\"delFlag\":\"0\",\"email\":\"\",\"hotelId\":2,\"loginIp\":\"\",\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"0\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:20:49');
+INSERT INTO `sys_oper_log` VALUES (453, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"王一\",\"createTime\":\"2022-12-09 10:56:48\",\"delFlag\":\"0\",\"email\":\"\",\"hotelId\":2,\"loginIp\":\"\",\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"0\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:21:01');
+INSERT INTO `sys_oper_log` VALUES (454, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"王一\",\"createTime\":\"2022-12-09 10:56:48\",\"delFlag\":\"0\",\"email\":\"\",\"hotelId\":25,\"loginIp\":\"\",\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"0\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:23:35');
+INSERT INTO `sys_oper_log` VALUES (455, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"王一\",\"createTime\":\"2022-12-09 10:56:48\",\"delFlag\":\"0\",\"email\":\"\",\"hotelId\":25,\"loginIp\":\"\",\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"0\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:23:40');
+INSERT INTO `sys_oper_log` VALUES (456, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"王一\",\"createTime\":\"2022-12-09 10:56:48\",\"delFlag\":\"0\",\"email\":\"\",\"hotelId\":25,\"loginIp\":\"\",\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"0\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:25:08');
+INSERT INTO `sys_oper_log` VALUES (457, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"王一\",\"createTime\":\"2022-12-09 10:56:48\",\"delFlag\":\"0\",\"email\":\"\",\"hotelId\":25,\"loginIp\":\"\",\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"0\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:25:55');
+INSERT INTO `sys_oper_log` VALUES (458, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"王一\",\"createTime\":\"2022-12-09 10:56:48\",\"delFlag\":\"0\",\"email\":\"\",\"hotelId\":25,\"loginIp\":\"\",\"params\":{},\"phonenumber\":\"13222323121\",\"postIds\":[],\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"0\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":108,\"userName\":\"王一2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:27:59');
+INSERT INTO `sys_oper_log` VALUES (459, '用户管理', 3, 'com.ruoyi.web.controller.system.SysUserController.remove()', 'DELETE', 1, '王一', NULL, '/system/user/108', '127.0.0.1', '内网IP', '{userIds=108}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:29:11');
+INSERT INTO `sys_oper_log` VALUES (460, '用户管理', 1, 'com.ruoyi.web.controller.system.SysUserController.add()', 'POST', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"createBy\":\"王一\",\"params\":{},\"phonenumber\":\"13567673737\",\"postIds\":[],\"roleIds\":[],\"status\":\"0\",\"superAdministrator\":1,\"userId\":109,\"userName\":\"测试\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:31:29');
+INSERT INTO `sys_oper_log` VALUES (461, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.resetPwd()', 'PUT', 1, '王一', NULL, '/system/user/resetPwd', '127.0.0.1', '内网IP', '{\"admin\":false,\"params\":{},\"updateBy\":\"王一\",\"userId\":109}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:31:40');
+INSERT INTO `sys_oper_log` VALUES (462, '用户管理', 3, 'com.ruoyi.web.controller.system.SysUserController.remove()', 'DELETE', 1, '王一', NULL, '/system/user/109', '127.0.0.1', '内网IP', '{userIds=109}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:31:51');
 
 -- ----------------------------
 -- Table structure for sys_post
@@ -1768,6 +2086,32 @@ INSERT INTO `sys_role_menu` VALUES (2, 2024);
 INSERT INTO `sys_role_menu` VALUES (2, 2025);
 
 -- ----------------------------
+-- Table structure for sys_role_menu_hotel
+-- ----------------------------
+DROP TABLE IF EXISTS `sys_role_menu_hotel`;
+CREATE TABLE `sys_role_menu_hotel`  (
+  `role_id` bigint(0) NOT NULL COMMENT '角色ID',
+  `menu_id` bigint(0) NOT NULL COMMENT '菜单ID',
+  PRIMARY KEY (`role_id`, `menu_id`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '角色和菜单关联表' ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of sys_role_menu_hotel
+-- ----------------------------
+INSERT INTO `sys_role_menu_hotel` VALUES (1, 1);
+INSERT INTO `sys_role_menu_hotel` VALUES (1, 100);
+INSERT INTO `sys_role_menu_hotel` VALUES (1, 1000);
+INSERT INTO `sys_role_menu_hotel` VALUES (1, 1001);
+INSERT INTO `sys_role_menu_hotel` VALUES (1, 1002);
+INSERT INTO `sys_role_menu_hotel` VALUES (1, 1003);
+INSERT INTO `sys_role_menu_hotel` VALUES (1, 1004);
+INSERT INTO `sys_role_menu_hotel` VALUES (1, 1005);
+INSERT INTO `sys_role_menu_hotel` VALUES (1, 1006);
+INSERT INTO `sys_role_menu_hotel` VALUES (1, 2028);
+INSERT INTO `sys_role_menu_hotel` VALUES (2, 2026);
+INSERT INTO `sys_role_menu_hotel` VALUES (2, 2027);
+
+-- ----------------------------
 -- Table structure for sys_user
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_user`;
@@ -1799,16 +2143,10 @@ CREATE TABLE `sys_user`  (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, NULL, 1, 103, '王一', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$DzfQV4zTPznMBm13lYkbcu/VNXhmacek2X6TDYotCWC1LfweUeQZK', '0', '0', '127.0.0.1', '2022-11-20 12:18:42', 'admin', '2022-10-18 18:10:30', '王一', '2022-11-20 12:18:53', '测试-超级管理员');
-INSERT INTO `sys_user` VALUES (2, NULL, 1, 105, 'ry', '若依', '00', 'ry@qq.com', '15666666666', '1', '', '$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', '0', '2', '127.0.0.1', '2022-11-16 11:02:33', 'admin', '2022-10-18 18:10:30', 'admin', '2022-11-16 11:02:32', '测试员');
-INSERT INTO `sys_user` VALUES (100, NULL, 1, NULL, 'test1', NULL, '00', '', '13578783738', '0', '', '$2a$10$yKTG1JuwS.HhgqoboMhIP.HokEtoL9idOiAZP6NBYZLWGtQIDp7P2', '0', '2', '127.0.0.1', '2022-11-17 16:09:49', 'admin', '2022-11-17 16:03:27', '', '2022-11-17 16:09:49', 'test1\n');
-INSERT INTO `sys_user` VALUES (101, 2, 0, NULL, 'test2', NULL, '00', '', '13578782323', '0', '', '$2a$10$7uS6.BTho89M287ad4bsQev8e7qswkWv6E1bz/2Nz4d8o64YQtFJi', '0', '2', '', NULL, 'admin', '2022-11-17 16:07:36', '', NULL, 'test2');
-INSERT INTO `sys_user` VALUES (102, NULL, 1, NULL, 'test1', NULL, '00', '', '13578782323', '0', '', '$2a$10$K4ykfWxRY8n2umOwSK6LEuNQxMLvIV4rjeDPJfSbQSoBZUkprj6u.', '0', '2', '127.0.0.1', '2022-11-17 16:14:39', 'admin', '2022-11-17 16:14:18', '', '2022-11-17 16:14:39', 'test1');
-INSERT INTO `sys_user` VALUES (103, NULL, 1, NULL, 'test2', NULL, '00', '', '13578789090', '0', '', '$2a$10$2wKIdYRocbVDDG.srb9kyeLWI9e6U5t/UPZhPIU3coqDGg9QevWea', '0', '2', '', NULL, 'admin', '2022-11-17 16:17:12', '', NULL, NULL);
-INSERT INTO `sys_user` VALUES (104, NULL, 1, NULL, 'test1', NULL, '00', '', '13589892929', '0', '', '$2a$10$ZhtCvrWfO.dKKfisdDvoueViBNTIn.cR4ux9fHcafrlaW9710IgKe', '0', '2', '127.0.0.1', '2022-11-17 16:23:31', 'admin', '2022-11-17 16:21:25', '', '2022-11-17 16:23:30', NULL);
-INSERT INTO `sys_user` VALUES (105, 1, 1, NULL, '1酒店管理员', NULL, '00', '', '13567672727', '0', '', '$2a$10$IlhIhgGvnwRUwT2Kscfpu.6J66dfMqNf4VXcu0hMF4XQnUT85NYne', '0', '2', '127.0.0.1', '2022-11-17 19:00:58', 'test1', '2022-11-17 16:23:18', '1酒店管理员', '2022-11-17 19:00:57', NULL);
-INSERT INTO `sys_user` VALUES (106, 2, 0, NULL, '刘七', NULL, '00', '', '13578782422', '0', '', '$2a$10$E7H7rTbnx2vpVGIz/wsEqeTgOmplAjWgEPZIoifmjG24LXMmxHUk.', '0', '0', '127.0.0.1', '2022-11-20 13:04:24', '1酒店管理员', '2022-11-17 16:25:51', 'admin', '2022-11-20 13:04:24', '测试-2酒店管理员');
-INSERT INTO `sys_user` VALUES (107, 1, 0, NULL, '酒店1管理员', NULL, '00', '', '13567679090', '0', '', '$2a$10$YOXWYknarGGUwEsKLrG4iexjlhwEok3WOTtg6N70NoVDcDxZuxVdW', '0', '2', '', NULL, '1酒店管理员', '2022-11-17 17:16:25', '', NULL, '23');
+INSERT INTO `sys_user` VALUES (1, NULL, 1, 103, '王一', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$DzfQV4zTPznMBm13lYkbcu/VNXhmacek2X6TDYotCWC1LfweUeQZK', '0', '0', '127.0.0.1', '2022-12-09 12:01:26', 'admin', '2022-10-18 18:10:30', '王一', '2022-12-09 12:01:26', '测试-超级管理员\n');
+INSERT INTO `sys_user` VALUES (106, 2, 0, NULL, '刘七', NULL, '00', '', '13578782422', '0', '', '$2a$10$E7H7rTbnx2vpVGIz/wsEqeTgOmplAjWgEPZIoifmjG24LXMmxHUk.', '0', '0', '127.0.0.1', '2022-12-09 12:01:02', '1酒店管理员', '2022-11-17 16:25:51', 'admin', '2022-12-09 12:01:02', '测试-2酒店管理员');
+INSERT INTO `sys_user` VALUES (108, 25, 0, NULL, '王一2', NULL, '00', '', '13222323121', '0', '', '$2a$10$MPrNl16STXsfrfKtjqCCYO4ELJkkfKAAB79u2wZWdNMA6jFIBT.pG', '0', '2', '', NULL, '王一', '2022-12-09 10:56:48', '王一', '2022-12-09 11:27:59', NULL);
+INSERT INTO `sys_user` VALUES (109, NULL, 1, NULL, '测试', NULL, '00', '', '13567673737', '0', '', '$2a$10$RElGEUtru9Pq3IuiKn7YteeYBy1jbokEDXVl.Zf4H8fdP.qdu4nLS', '0', '2', '', NULL, '王一', '2022-12-09 11:31:29', '王一', '2022-12-09 11:31:40', NULL);
 
 -- ----------------------------
 -- Table structure for sys_user_post
@@ -1849,7 +2187,7 @@ delimiter ;;
 CREATE TRIGGER `department_function` BEFORE DELETE ON `base_department` FOR EACH ROW BEGIN
 
 DELETE FROM base_function
-WHERE function_id in (SELECT r.function_id FROM department_function_relationships r
+WHERE function_id in (SELECT r.function_id FROM department_function_relationships r 
 											where r.department_id = OLD.department_id);
 
 END
@@ -1864,7 +2202,7 @@ delimiter ;;
 CREATE TRIGGER `position_function` BEFORE DELETE ON `base_position` FOR EACH ROW BEGIN
 
 DELETE FROM base_function
-WHERE function_id in (SELECT r.function_id FROM department_function_relationships r
+WHERE function_id in (SELECT r.function_id FROM department_function_relationships r 
 											where r.position_id = OLD.position_id);
 
 END
