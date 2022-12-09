@@ -216,7 +216,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
  			<if test="deptId != null and deptId != 0">dept_id = #{deptId},</if>
  			<if test="userName != null and userName != ''">user_name = #{userName},</if>
  			<if test="hotelId != null and hotelId != ''">hotel_id = #{hotelId},</if>
- 			<if test="superAdministrator != null and superAdministrator != ''">super_administrator = #{superAdministrator},</if>
+ 			<if test="superAdministrator != null">super_administrator = #{superAdministrator},</if>
  			<if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
  			<if test="email != null ">email = #{email},</if>
  			<if test="phonenumber != null ">phonenumber = #{phonenumber},</if>

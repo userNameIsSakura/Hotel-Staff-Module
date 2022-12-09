@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Configuration;
  * @author fzw
  */
 @Configuration
-@ComponentScan(basePackages = "com.ruoyi")
+@ComponentScan(basePackages = "com.hotel")
 public class Config {
+
+
+
 }

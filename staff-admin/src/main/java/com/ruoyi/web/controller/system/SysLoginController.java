@@ -86,16 +86,16 @@ public class SysLoginController
     }
 
     @PostMapping("/loginInterface")
-    public AjaxResult loginInterface(@RequestBody LoginBody loginBody,HttpServletResponse response) throws InterruptedException {
+    public String loginInterface(@RequestBody LoginBody loginBody,HttpServletResponse response) throws InterruptedException {
 
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
-        String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
+        String loginUser = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid(),false);
 
-        ajax.put(Constants.TOKEN, token);
+        ajax.put(Constants.TOKEN, loginUser);
 
-        return ajax;
+        return loginUser;
     }
 
 

@@ -90,6 +90,10 @@ public class LoginUser implements UserDetails
      */
     private SysUser user;
 
+
+
+
+
     public Long getUserId()
     {
         return userId;

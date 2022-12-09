@@ -67,6 +67,12 @@
             <version>3.8.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.staff</groupId>
+            <artifactId>hotel-business</artifactId>
+            <version>3.8.3</version>
+        </dependency>
+
     </dependencies>
 
     <build>
