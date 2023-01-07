@@ -71,7 +71,7 @@
           <el-table-column type="selection" width="50" align="center" />
           <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
           <el-table-column label="用户名称" align="center" key="userName" prop="userName" v-if="columns[1].visible" :show-overflow-tooltip="true" />
-          <el-table-column label="酒店ID" align="center" key="hotelId" prop="hotelId"  :show-overflow-tooltip="true" />
+          <el-table-column label="酒店" align="center" key="hotelName" prop="hotelName"  :show-overflow-tooltip="true" />
           <el-table-column label="超管权限" align="center" key="userId" prop="superAdministrator"  :show-overflow-tooltip="true" />
           <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
           <el-table-column label="备注" align="center" key="userId" prop="remark" v-if="columns[4].visible" width="120" />
@@ -150,10 +150,18 @@
           </el-col>
         </el-row>
 
+
         <el-row v-if="form.superAdministrator === 0">
           <el-col :span="12">
-            <el-form-item label="酒店ID" prop="hotelId">
-              <el-input v-model="form.hotelId" placeholder="请输入酒店ID" maxlength="30" />
+            <el-form-item label="酒店" prop="hotelId">
+              <el-select v-model="form.hotelId" placeholder="请选择酒店" maxlength="30" >
+                <el-option
+                  v-for="item in hotelList"
+                  :key="item.hotelId"
+                  :label="item.hotelName"
+                  :value="parseInt(item.hotelId)"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -187,6 +195,7 @@ import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUs
 import { getToken } from "@/utils/auth";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+import {listHotel, listHotelAll} from "@/api/business/hotel";
 
 export default {
   name: "User",
@@ -224,6 +233,8 @@ export default {
       postOptions: [],
       // 角色选项
       roleOptions: [],
+      //酒店列表
+      hotelList: [],
       // 表单参数
       form: {},
       defaultProps: {
@@ -405,6 +416,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
+      this.getHotels();
       getUser().then(response => {
         this.postOptions = response.posts;
         this.roleOptions = response.roles;
@@ -417,6 +429,7 @@ export default {
     handleUpdate(row) {
       this.reset();
       const userId = row.userId || this.ids;
+      this.getHotels();
       getUser(userId).then(response => {
         this.form = response.data;
         this.postOptions = response.posts;
@@ -427,6 +440,11 @@ export default {
         this.title = "修改用户";
         this.form.password = "";
       });
+    },
+    getHotels() {
+      listHotelAll().then(response => {
+        this.hotelList = response;
+      })
     },
     /** 重置密码按钮操作 */
     handleResetPwd(row) {

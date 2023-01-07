@@ -24,7 +24,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateTime"   column="update_time"  />
         <result property="remark"       column="remark"       />
         <result property="hotelId"       column="hotel_id"       />
-        <result property="superAdministrator"       column="super_administrator"       />
+		<result property="hotelName"    column="hotel_name"    />
+		<result property="superAdministrator"       column="super_administrator"       />
         <association property="dept"    column="department_id" javaType="SysDept" resultMap="deptResult" />
         <collection  property="roles"   javaType="java.util.List"           resultMap="RoleResult" />
     </resultMap>
@@ -61,11 +62,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<sql id="selectUserVo">
         select u.user_id, u.department_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,u.hotel_id,u.super_administrator,
         d.department_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.status as dept_status,
-        r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status
+        r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status, h.hotel_name as role_status
         from sys_user u
 		    left join sys_dept d on u.department_id = d.department_id
 		    left join sys_user_role ur on u.user_id = ur.user_id
 		    left join sys_role r on r.role_id = ur.role_id
+			left join base_hotel h on u.hotel_id = h.hotel_id
     </sql>
 
 	<sql id="selectBaseAdministratorsVo">
@@ -83,8 +85,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectUserList" parameterType="SysUser" resultMap="SysUserResult">
 		select u.user_id, u.department_id, u.nick_name,u.hotel_id,u.super_administrator,
-		       u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader from sys_user u
+		       u.user_name, u.email, u.avatar, u.phonenumber, u.sex, u.status, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark, d.dept_name, d.leader,
+			   h.hotel_name
+		from sys_user u
 		left join sys_dept d on u.department_id = d.department_id
+		left join base_hotel h on u.hotel_id = h.hotel_id
 		where u.del_flag = '0'
 		<if test="userId != null and userId != 0">
 			AND u.user_id = #{userId}

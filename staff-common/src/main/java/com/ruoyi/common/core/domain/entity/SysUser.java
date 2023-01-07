@@ -51,8 +51,19 @@ public class SysUser extends BaseEntity
     @Excel(name = "部门编号", type = Type.IMPORT)
     private Long deptId;
     /** 酒店ID */
-    @Excel(name = "酒店编号", type = Type.IMPORT)
     private Long hotelId;
+
+    /** 酒店名 */
+    @Excel(name = "酒店名", type = Type.IMPORT)
+    private String hotelName;
+
+    public String getHotelName() {
+        return hotelName;
+    }
+
+    public void setHotelName(String hotelName) {
+        this.hotelName = hotelName;
+    }
 
     public Long getHotelId() {
         return hotelId;

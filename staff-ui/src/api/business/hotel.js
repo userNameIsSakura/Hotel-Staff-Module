@@ -8,6 +8,13 @@ export function listHotel(query) {
     params: query
   })
 }
+// 查询全部酒店
+export function listHotelAll() {
+  return request({
+    url: '/business/hotel/listAll',
+    method: 'get',
+  })
+}
 
 // 查询酒店列表详细
 export function getHotel(hotelId) {

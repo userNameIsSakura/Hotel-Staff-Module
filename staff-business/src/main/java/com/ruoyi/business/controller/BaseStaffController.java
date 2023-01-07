@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.business.domain.BaseRole;
 import com.ruoyi.business.domain.StaffRoleRelationships;
+import com.ruoyi.business.mapper.BaseStaffMapper;
 import com.ruoyi.business.service.IBaseRoleService;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.framework.web.service.TokenService;
@@ -39,6 +40,8 @@ public class BaseStaffController extends BaseController
     private TokenService tokenService;
     @Autowired
     private IBaseRoleService baseRoleService;
+    @Autowired
+    private BaseStaffMapper baseStaffMapper;
 
     /**
      * 查询员工信息列表
@@ -125,8 +128,12 @@ public class BaseStaffController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody BaseStaff baseStaff)
     {
-        baseStaff.setHotelId(SecurityUtils.getHotelId());
 
+        int i = baseStaffMapper.checkStaffPhone(baseStaff.getStaffPhone());
+        if(i != 0) {
+            return AjaxResult.error("新增用户'" + baseStaff.getStaffName() + "'失败，手机号码已存在");
+        }
+        baseStaff.setHotelId(SecurityUtils.getHotelId());
         return toAjax(baseStaffService.insertBaseStaff(baseStaff));
     }
 
@@ -138,6 +145,10 @@ public class BaseStaffController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody BaseStaff baseStaff)
     {
+        int i = baseStaffMapper.checkStaffPhone(baseStaff.getStaffPhone());
+        if(i != 0) {
+            return AjaxResult.error("修改用户'" + baseStaff.getStaffName() + "'失败，手机号码已存在");
+        }
         return toAjax(baseStaffService.updateBaseStaff(baseStaff));
     }
 

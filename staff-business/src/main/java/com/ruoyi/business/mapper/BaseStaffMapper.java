@@ -94,4 +94,12 @@ public interface BaseStaffMapper
      * @return {@link StaffRoleRelationships}
      */
     public int checkUrl(@Param("staffId") Long staffId, @Param("url") String url);
+
+    /**
+     * 检查员工电话
+     *
+     * @param phone 电话
+     * @return {@link List}<{@link BaseStaff}>
+     */
+    public int checkStaffPhone(String phone);
 }

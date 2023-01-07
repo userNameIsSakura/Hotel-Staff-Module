@@ -7,6 +7,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <resultMap type="SysUser" id="SysUserResult">
         <result property="userId"    column="user_id"    />
         <result property="hotelId"    column="hotel_id"    />
+        <result property="hotelName"    column="hotel_name"    />
         <result property="superAdministrator"    column="super_administrator"    />
         <result property="deptId"    column="dept_id"    />
         <result property="userName"    column="user_name"    />
@@ -33,9 +34,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </sql>
 
     <select id="selectSysUserList" parameterType="SysUser" resultMap="SysUserResult">
-        <include refid="selectSysUserVo"/>
+        select u.*, h.hotel_name from sys_user u left join base_hotel h on u.hotel_id = h.hotel_id
         <where>
-            <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
+            <if test="hotelId != null "> and u.hotel_id = #{hotelId}</if>
+            <if test="hotelName != null and hotelName != '' "> and hotel_name = #{hotelName}</if>
             <if test="superAdministrator != null "> and super_administrator = #{superAdministrator}</if>
             <if test="deptId != null "> and dept_id = #{deptId}</if>
             <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
@@ -53,7 +55,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectSysUserByUserId" parameterType="Long" resultMap="SysUserResult">
-        <include refid="selectSysUserVo"/>
+        select u.*, h.hotel_name from sys_user u left join base_hotel h on u.hotel_id = h.hotel_id
         where user_id = #{userId}
     </select>
 

@@ -127,4 +127,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and sr.staff_id = #{staffId}
     </select>
 
+    <select id="checkStaffPhone"  parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(*) from base_staff s
+        where s.staff_phone = #{phone};
+    </select>
+
 </mapper>

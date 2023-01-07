@@ -23,7 +23,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 酒店列表Controller
- * 
+ *
  * @author ruoyi
  * @date 2023-01-06
  */
@@ -45,6 +45,20 @@ public class BaseHotelController extends BaseController
         List<BaseHotel> list = baseHotelService.selectBaseHotelList(baseHotel);
         return getDataTable(list);
     }
+
+        /**
+     * 查询酒店列表列表
+     */
+    @PreAuthorize("@ss.hasPermi('business:hotel:list')")
+    @GetMapping("/listAll")
+    public List<BaseHotel> listAll()
+    {
+        BaseHotel baseHotel = new BaseHotel();
+        List<BaseHotel> list = baseHotelService.selectBaseHotelList(baseHotel);
+        return list;
+    }
+
+
 
     /**
      * 导出酒店列表列表

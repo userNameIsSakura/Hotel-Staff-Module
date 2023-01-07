@@ -125,6 +125,10 @@ public class SysUserController extends BaseController
     @PostMapping
     public AjaxResult add(@Validated @RequestBody SysUser user)
     {
+        if(user.getSuperAdministrator() == 0 && user.getHotelId() == null) {
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，未选择酒店");
+        }
+
         if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user)))
         {
             return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
@@ -158,8 +162,14 @@ public class SysUserController extends BaseController
     @PutMapping
     public AjaxResult edit(@Validated @RequestBody SysUser user)
     {
+
+        if(user.getSuperAdministrator() == 0 && user.getHotelId() == null) {
+            return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，未选择酒店");
+        }
+
         userService.checkUserAllowed(user);
         userService.checkUserDataScope(user.getUserId());
+
         if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user)))
         {
             return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，登录账号已存在");
