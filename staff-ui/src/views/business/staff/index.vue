@@ -1,14 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="员工ID" prop="staffId">
-        <el-input
-          v-model="queryParams.staffId"
-          placeholder="请输入员工Id"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="员工名" prop="staffName">
         <el-input
           v-model="queryParams.staffName"
@@ -97,10 +89,9 @@
 
     <el-table v-loading="loading" :data="staffList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="员工ID" align="center" prop="staffId" />
       <el-table-column label="员工名" align="center" prop="staffName" />
       <el-table-column label="联系电话" align="center" prop="staffPhone" />
-      <el-table-column label="酒店ID" align="center" prop="hotelId" />
+      <el-table-column label="酒店" align="center" prop="hotelName" />
       <el-table-column label="部门名" align="center" prop="departmentName" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -156,6 +147,18 @@
         <el-form-item label="员工密码" prop="staffPassword">
           <el-input type="password" show-password v-model="form.staffPassword" placeholder="请输入员工密码" />
         </el-form-item>
+
+        <el-form-item label="角色">
+          <el-select v-model="form.roles" multiple placeholder="请选择角色"  @change="$forceUpdate()">
+            <el-option
+              v-for="item in roleList"
+              :key="item.roleId"
+              :label="item.roleName"
+              :value="parseInt(item.roleId)"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -236,6 +239,8 @@ export default {
       total: 0,
       // 员工信息表格数据
       staffList: [],
+      //角色列表
+      roleList: [],
       // 员工职位信息列表
       basePositionList: [],
       //员工能选的职位信息
@@ -361,6 +366,9 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
+      getStaff().then(response => {
+        this.roleList = response.roleList;
+      })
       this.title = "添加员工信息";
     },
     /** 职位信息添加按钮操作 */
@@ -403,6 +411,9 @@ export default {
 
       getStaff(staffId).then(response => {
         this.form = response.data;
+        this.form.roles = response.roles;
+        this.roleList = response.roleList;
+
         this.basePositionList = response.data.basePositionList;
         this.originalMessage.departmentId = row.departmentId;
         this.originalMessage.list = this.basePositionList;

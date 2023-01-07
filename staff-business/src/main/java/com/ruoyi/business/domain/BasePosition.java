@@ -25,6 +25,17 @@ public class BasePosition extends BaseEntity
     /** 职能 */
     private  String functionValue;
 
+    /** 酒店ID */
+    private Long hotelId;
+
+    public Long getHotelId() {
+        return hotelId;
+    }
+
+    public void setHotelId(Long hotelId) {
+        this.hotelId = hotelId;
+    }
+
     public String getFunctionValue() {
         return functionValue;
     }

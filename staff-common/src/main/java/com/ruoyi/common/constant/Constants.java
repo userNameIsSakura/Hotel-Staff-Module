@@ -4,7 +4,7 @@ import io.jsonwebtoken.Claims;
 
 /**
  * 通用常量信息
- * 
+ *
  * @author ruoyi
  */
 public class Constants
@@ -63,7 +63,7 @@ public class Constants
      * 登录失败
      */
     public static final String LOGIN_FAIL = "Error";
- 
+
     /**
      * 验证码有效期（分钟）
      */
@@ -83,6 +83,11 @@ public class Constants
      * 令牌前缀
      */
     public static final String LOGIN_USER_KEY = "login_user_key";
+
+    /**
+     * 员工令牌前缀
+     * */
+    public static final String STAFF_KEY = "staff_key";
 
     /**
      * 用户ID

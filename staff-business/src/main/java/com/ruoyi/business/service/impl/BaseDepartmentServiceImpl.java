@@ -97,7 +97,7 @@ public class BaseDepartmentServiceImpl implements IBaseDepartmentService
     @Override
     public int deleteBaseDepartmentByDepartmentIds(Long[] departmentIds)
     {
-        baseDepartmentMapper.deleteBaseStaffByDepartmentIds(departmentIds);
+        baseDepartmentMapper. deleteBaseStaffByDepartmentIds(departmentIds);
         return baseDepartmentMapper.deleteBaseDepartmentByDepartmentIds(departmentIds);
     }
 

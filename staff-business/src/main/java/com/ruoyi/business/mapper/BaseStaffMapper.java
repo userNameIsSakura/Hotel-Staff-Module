@@ -2,6 +2,9 @@ package com.ruoyi.business.mapper;
 
 import java.util.List;
 import com.ruoyi.business.domain.BaseStaff;
+import com.ruoyi.business.domain.RoleAuthRelationships;
+import com.ruoyi.business.domain.StaffRoleRelationships;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 员工信息Mapper接口
@@ -65,4 +68,30 @@ public interface BaseStaffMapper
      *
      * */
     public int deleteSRPByStaffId(Long staffId);
+
+    /**
+     * 批量新增员工角色信息
+     *
+     * @param staffRoleRelationships 员工角色列表
+     * @return 结果
+     */
+    public int batchStaffRole(List<StaffRoleRelationships> staffRoleRelationships);
+
+
+    /**
+     * 删除员工角色员工id
+     *
+     * @param staffId 员工id
+     * @return int
+     */
+    public int deleteStaffRoleByStaffId(Long staffId);
+
+    /**
+     * 检查网址
+     *
+     * @param staffId 员工id
+     * @param url     url
+     * @return {@link StaffRoleRelationships}
+     */
+    public int checkUrl(@Param("staffId") Long staffId, @Param("url") String url);
 }

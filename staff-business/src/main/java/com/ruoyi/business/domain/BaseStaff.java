@@ -37,6 +37,26 @@ public class BaseStaff extends BaseEntity
     private Long departmentId;
     /** 部门名 */
     private String departmentName;
+    /** 酒店名 */
+    private String hotelName;
+    /** 角色组 */
+    private Long[] roles;
+
+    public Long[] getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Long[] roles) {
+        this.roles = roles;
+    }
+
+    public String getHotelName() {
+        return hotelName;
+    }
+
+    public void setHotelName(String hotelName) {
+        this.hotelName = hotelName;
+    }
 
     public String getDepartmentName() {
         return departmentName;

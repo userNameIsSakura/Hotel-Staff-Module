@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BaseRoleMapper">
+
+    <resultMap type="BaseRole" id="BaseRoleResult">
+        <result property="roleId"    column="role_id"    />
+        <result property="roleName"    column="role_name"    />
+        <result property="hotelId"    column="hotel_id"    />
+    </resultMap>
+
+    <sql id="selectBaseRoleVo">
+        select role_id, role_name, hotel_id from base_role
+    </sql>
+
+    <select id="selectBaseRoleList" parameterType="BaseRole" resultMap="BaseRoleResult">
+        <include refid="selectBaseRoleVo"/>
+        <where>
+            <if test="roleName != null  and roleName != ''"> and role_name like concat('%', #{roleName}, '%')</if>
+            <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
+        </where>
+    </select>
+
+    <select id="selectBaseRoleByRoleId" parameterType="Long" resultMap="BaseRoleResult">
+        <include refid="selectBaseRoleVo"/>
+        where role_id = #{roleId}
+    </select>
+
+    <insert id="insertBaseRole" parameterType="BaseRole" useGeneratedKeys="true" keyProperty="roleId">
+        insert into base_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="roleName != null and roleName != ''">role_name,</if>
+            <if test="hotelId != null">hotel_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="roleName != null and roleName != ''">#{roleName},</if>
+            <if test="hotelId != null">#{hotelId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBaseRole" parameterType="BaseRole">
+        update base_role
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="roleName != null and roleName != ''">role_name = #{roleName},</if>
+            <if test="hotelId != null">hotel_id = #{hotelId},</if>
+        </trim>
+        where role_id = #{roleId}
+    </update>
+
+    <delete id="deleteBaseRoleByRoleId" parameterType="Long">
+        delete from base_role where role_id = #{roleId}
+    </delete>
+
+    <delete id="deleteBaseRoleByRoleIds" parameterType="String">
+        delete from base_role where role_id in
+        <foreach item="roleId" collection="array" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteRoleAuthByRoleId" parameterType="Long">
+        delete from role_auth_relationships r
+        where r.role_id = #{id}
+    </delete>
+
+    <insert id="batchRoleAuth">
+        insert into role_auth_relationships(role_id, auth_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.roleId},#{item.authId})
+        </foreach>
+    </insert>
+
+    <select id="selectBaseRoleByStaffId" parameterType="Long" resultMap="BaseRoleResult">
+        select b.* from base_role b left join staff_role_relationships r on b.role_id = r.role_id
+        where r.staff_id = #{id}
+    </select>
+</mapper>

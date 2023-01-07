@@ -1,22 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="上级ID" prop="superiorId">
-        <el-input
-          v-model="queryParams.superiorId"
-          placeholder="请输入上级ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item v-if="admin" label="酒店ID" prop="hotelId">
-        <el-input
-          v-model="queryParams.hotelId"
-          placeholder="请输入酒店ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="部门名" prop="departmentName">
         <el-input
           v-model="queryParams.departmentName"
@@ -53,9 +37,7 @@
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column label="部门ID" align="center" prop="departmentId" />
       <el-table-column label="部门名" align="center" prop="departmentName" />
-      <el-table-column label="酒店ID" align="center" prop="hotelId" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">

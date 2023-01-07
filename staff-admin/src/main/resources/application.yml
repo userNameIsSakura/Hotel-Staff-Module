@@ -129,3 +129,13 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+
+# PDF
+pdf:
+  path: D:\Hotel-System\pdf\
+  # 甲方信息
+  partyA:
+    name: 测试用甲方公司名
+  # 合同有效期一年
+  periodOfValidity: 31536000000
+

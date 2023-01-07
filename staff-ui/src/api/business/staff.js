@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import {parseStrEmpty} from "@/utils/ruoyi";
 
 // 查询员工信息列表
 export function listStaff(query) {
@@ -12,7 +13,7 @@ export function listStaff(query) {
 // 查询员工信息详细
 export function getStaff(staffId) {
   return request({
-    url: '/business/staff/' + staffId,
+    url: '/business/staff/' + parseStrEmpty(staffId),
     method: 'get'
   })
 }

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BaseHotelMapper">
+    
+    <resultMap type="BaseHotel" id="BaseHotelResult">
+        <result property="hotelId"    column="hotel_id"    />
+        <result property="hotelName"    column="hotel_name"    />
+        <result property="remark"    column="remark"    />
+        <result property="hotelNumber"    column="hotel_number"    />
+    </resultMap>
+
+    <sql id="selectBaseHotelVo">
+        select hotel_id, hotel_name, remark, hotel_number from base_hotel
+    </sql>
+
+    <select id="selectBaseHotelList" parameterType="BaseHotel" resultMap="BaseHotelResult">
+        <include refid="selectBaseHotelVo"/>
+        <where>  
+            <if test="hotelName != null  and hotelName != ''"> and hotel_name like concat('%', #{hotelName}, '%')</if>
+            <if test="hotelNumber != null  and hotelNumber != ''"> and hotel_number = #{hotelNumber}</if>
+        </where>
+    </select>
+    
+    <select id="selectBaseHotelByHotelId" parameterType="Long" resultMap="BaseHotelResult">
+        <include refid="selectBaseHotelVo"/>
+        where hotel_id = #{hotelId}
+    </select>
+        
+    <insert id="insertBaseHotel" parameterType="BaseHotel" useGeneratedKeys="true" keyProperty="hotelId">
+        insert into base_hotel
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="hotelName != null and hotelName != ''">hotel_name,</if>
+            <if test="remark != null">remark,</if>
+            <if test="hotelNumber != null and hotelNumber != ''">hotel_number,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="hotelName != null and hotelName != ''">#{hotelName},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="hotelNumber != null and hotelNumber != ''">#{hotelNumber},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBaseHotel" parameterType="BaseHotel">
+        update base_hotel
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="hotelName != null and hotelName != ''">hotel_name = #{hotelName},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="hotelNumber != null and hotelNumber != ''">hotel_number = #{hotelNumber},</if>
+        </trim>
+        where hotel_id = #{hotelId}
+    </update>
+
+    <delete id="deleteBaseHotelByHotelId" parameterType="Long">
+        delete from base_hotel where hotel_id = #{hotelId}
+    </delete>
+
+    <delete id="deleteBaseHotelByHotelIds" parameterType="String">
+        delete from base_hotel where hotel_id in 
+        <foreach item="hotelId" collection="array" open="(" separator="," close=")">
+            #{hotelId}
+        </foreach>
+    </delete>
+</mapper>

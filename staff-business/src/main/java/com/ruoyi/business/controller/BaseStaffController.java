@@ -1,11 +1,16 @@
 package com.ruoyi.business.controller;
 
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.business.domain.BaseRole;
+import com.ruoyi.business.domain.StaffRoleRelationships;
+import com.ruoyi.business.service.IBaseRoleService;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.framework.web.service.TokenService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +35,10 @@ public class BaseStaffController extends BaseController
 {
     @Autowired
     private IBaseStaffService baseStaffService;
+    @Autowired
+    private TokenService tokenService;
+    @Autowired
+    private IBaseRoleService baseRoleService;
 
     /**
      * 查询员工信息列表
@@ -46,13 +55,32 @@ public class BaseStaffController extends BaseController
         return getDataTable(list);
     }
 
-
-    @GetMapping("/list2")
-    public String list2()
+    @PostMapping("/login")
+    public String login(@RequestBody HashMap map)
     {
-        return "success";
+        String phone = (String) map.get("phone");
+        String password = (String) map.get("password");
+
+        /* 账号密码验证 */
+        BaseStaff baseStaff = new BaseStaff();
+        baseStaff.setStaffPhone(phone);
+        baseStaff.setStaffPassword(password);
+        List<BaseStaff> baseStaffs = baseStaffService.selectBaseStaffList(baseStaff);
+        if(baseStaffs.size() == 0)
+            return null;
+        else
+            return tokenService.createStaffToken(baseStaffs.get(0).getStaffId());
     }
 
+
+    @PostMapping("/auth")
+    public boolean auth(@RequestBody String url,HttpServletRequest request) {
+        Long staffId = tokenService.getStaffUser(request).getStaffId();
+        int i = baseStaffService.checkUrl(staffId, url);
+        if(i > 0)
+            return true;
+        return false;
+    }
 
     /**
      * 导出员工信息列表
@@ -67,14 +95,26 @@ public class BaseStaffController extends BaseController
         util.exportExcel(response, list, "员工信息数据");
     }
 
+
+
     /**
      * 获取员工信息详细信息
      */
     @PreAuthorize("@ss.hasPermi('business:staff:query')")
-    @GetMapping(value = "/{staffId}")
-    public AjaxResult getInfo(@PathVariable("staffId") Long staffId)
+    @GetMapping(value = {"/","/{staffId}"})
+    public AjaxResult getInfo(@PathVariable(value = "staffId",required = false) Long staffId)
     {
-        return AjaxResult.success(baseStaffService.selectBaseStaffByStaffId(staffId));
+        AjaxResult success = AjaxResult.success(baseStaffService.selectBaseStaffByStaffId(staffId));
+
+        BaseRole baseRole = new BaseRole();
+        baseRole.setHotelId(SecurityUtils.getHotelId());
+        List<BaseRole> baseRoles = baseRoleService.selectBaseRoleList(baseRole);
+        success.put("roleList",baseRoles);
+
+        List<Long> roles = baseRoleService.selectBaseRoleByStaffId(staffId).stream().map(BaseRole::getRoleId).collect(Collectors.toList());
+        success.put("roles",roles);
+
+        return success;
     }
 
     /**

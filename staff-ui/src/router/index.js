@@ -73,9 +73,27 @@ export const constantRoutes = [
         component: () => import('@/views/system/user/profile/index'),
         name: 'Profile',
         meta: { title: '个人中心', icon: 'user' }
-      }
+      },
+      {
+        path: '/contractList',
+        component: () => import('@/views/business/model/index'),
+      },
+      {
+        path: '/electronicContract',
+        component: () => import('@/views/business/ElectronicContract'),
+      },
+      {
+        path: '/historyContracts',
+        component: () => import('@/views/business/contract/index'),
+      },
+      {
+        path: '/hotel',
+        component: () => import('@/views/business/hotel/index'),
+      },
     ]
-  }
+  },
+
+
 ]
 
 // 动态路由，基于用户权限动态去加载
@@ -95,7 +113,8 @@ export const dynamicRoutes = [
         name: 'Index',
         permissions: ['system:user:list'],
         meta: { title: '首页', icon: 'dashboard', affix: true }
-      }
+      },
+
     ]
   },
   //酒店管理员

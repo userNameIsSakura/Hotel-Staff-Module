@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BizContractMapper">
+
+    <resultMap type="BizContract" id="BizContractResult">
+        <result property="contractId"    column="contract_id"    />
+        <result property="hotelId"    column="hotel_id"    />
+        <result property="contractName"    column="contract_name"    />
+        <result property="contractFile"    column="contract_file"    />
+        <result property="contractSign"    column="contract_sign"    />
+        <result property="contractEffect"    column="contract_effect"    />
+        <result property="contractInvalid"    column="contract_invalid"    />
+        <result property="remark"    column="remark"    />
+        <result property="contractState"    column="contract_state"    />
+        <result property="modelId"    column="model_id"    />
+    </resultMap>
+
+    <sql id="selectBizContractVo">
+        select contract_id, hotel_id, contract_name, contract_file, contract_sign, contract_effect, contract_invalid, remark, contract_state, model_id from biz_contract
+    </sql>
+
+    <select id="selectBizContractList" parameterType="BizContract" resultMap="BizContractResult">
+        <include refid="selectBizContractVo"/>
+        <where>
+            <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
+            <if test="contractName != null  and contractName != ''"> and contract_name like concat('%', #{contractName}, '%')</if>
+            <if test="contractFile != null  and contractFile != ''"> and contract_file = #{contractFile}</if>
+            <if test="contractSign != null "> and contract_sign = #{contractSign}</if>
+            <if test="contractEffect != null "> and contract_effect = #{contractEffect}</if>
+            <if test="contractInvalid != null "> and contract_invalid = #{contractInvalid}</if>
+            <if test="contractState != null  and contractState != ''"> and contract_state = #{contractState}</if>
+            <if test="modelId != null "> and model_id = #{modelId}</if>
+        </where>
+    </select>
+
+    <select id="selectBizContractByContractId" parameterType="Long" resultMap="BizContractResult">
+        <include refid="selectBizContractVo"/>
+        where contract_id = #{contractId}
+    </select>
+
+    <insert id="insertBizContract" parameterType="BizContract" useGeneratedKeys="true" keyProperty="contractId">
+        insert into biz_contract
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="hotelId != null">hotel_id,</if>
+            <if test="contractName != null and contractName != ''">contract_name,</if>
+            <if test="contractFile != null and contractFile != ''">contract_file,</if>
+            <if test="contractSign != null">contract_sign,</if>
+            <if test="contractEffect != null">contract_effect,</if>
+            <if test="contractInvalid != null">contract_invalid,</if>
+            <if test="remark != null">remark,</if>
+            <if test="contractState != null and contractState != ''">contract_state,</if>
+            <if test="modelId != null">model_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="hotelId != null">#{hotelId},</if>
+            <if test="contractName != null and contractName != ''">#{contractName},</if>
+            <if test="contractFile != null and contractFile != ''">#{contractFile},</if>
+            <if test="contractSign != null">#{contractSign},</if>
+            <if test="contractEffect != null">#{contractEffect},</if>
+            <if test="contractInvalid != null">#{contractInvalid},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="contractState != null and contractState != ''">#{contractState},</if>
+            <if test="modelId != null">#{modelId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizContract" parameterType="BizContract">
+        update biz_contract
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="hotelId != null">hotel_id = #{hotelId},</if>
+            <if test="contractName != null and contractName != ''">contract_name = #{contractName},</if>
+            <if test="contractFile != null and contractFile != ''">contract_file = #{contractFile},</if>
+            <if test="contractSign != null">contract_sign = #{contractSign},</if>
+            <if test="contractEffect != null">contract_effect = #{contractEffect},</if>
+            <if test="contractInvalid != null">contract_invalid = #{contractInvalid},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="contractState != null and contractState != ''">contract_state = #{contractState},</if>
+            <if test="modelId != null">model_id = #{modelId},</if>
+        </trim>
+        where contract_id = #{contractId}
+    </update>
+
+    <delete id="deleteBizContractByContractId" parameterType="Long">
+        delete from biz_contract where contract_id = #{contractId}
+    </delete>
+
+    <delete id="deleteBizContractByContractIds" parameterType="String">
+        delete from biz_contract where contract_id in
+        <foreach item="contractId" collection="array" open="(" separator="," close=")">
+            #{contractId}
+        </foreach>
+    </delete>
+</mapper>

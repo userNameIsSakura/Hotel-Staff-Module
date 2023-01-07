@@ -9,6 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="staffName"    column="staff_name"    />
         <result property="staffPhone"    column="staff_phone"    />
         <result property="hotelId"    column="hotel_id"    />
+        <result property="hotelName"    column="hotel_name"    />
         <result property="departmentId"    column="department_id"    />
         <result property="departmentName"    column="department_name"    />
         <result property="staffPassword"    column="staff_password"    />
@@ -28,13 +29,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectBaseStaffVo">
-        select staff_id, staff_name, staff_phone, hotel_id, department_id, staff_password, remark from base_staff
+        select staff_id, staff_name, staff_phone, hotel_id,hotel_name, department_id, staff_password, remark from base_staff
     </sql>
 
     <select id="selectBaseStaffList" parameterType="BaseStaff" resultMap="BaseStaffResult">
-        select staff_id, staff_name, staff_phone, s.hotel_id, s.department_id, staff_password, s.remark, d.department_name from base_staff s,base_department d
+        select staff_id, staff_name, staff_phone, s.hotel_id, s.department_id, staff_password, s.remark, d.department_name,h.hotel_name from base_staff s,base_department d,base_hotel h
         <where>
-            s.department_id = d.department_id
+            s.department_id = d.department_id and s.hotel_id = h.hotel_id
             <if test="staffId != null  and staffId != ''"> and staff_id = #{staffId}</if>
             <if test="staffName != null  and staffName != ''"> and staff_name like concat('%', #{staffName}, '%')</if>
             <if test="staffPhone != null  and staffPhone != ''"> and staff_phone = #{staffPhone}</if>
@@ -105,6 +106,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         delete from staff_position_relationships where staff_id = #{staffId}
     </delete>
 
+    <delete id="deleteStaffRoleByStaffId" parameterType="Long">
+        delete from staff_role_relationships r
+        where r.staff_id = #{id}
+    </delete>
 
+    <insert id="batchStaffRole">
+        insert into staff_role_relationships(staff_id, role_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.staffId},#{item.roleId})
+        </foreach>
+    </insert>
+
+    <select id="checkUrl" resultType="java.lang.Integer">
+        select count(*) from staff_role_relationships sr, base_role r, role_auth_relationships ra, base_auth a
+        where a.url = #{url}
+            and a.auth_id = ra.auth_id
+            and ra.role_id = r.role_id
+            and r.role_id = sr.role_id
+            and sr.staff_id = #{staffId}
+    </select>
 
 </mapper>

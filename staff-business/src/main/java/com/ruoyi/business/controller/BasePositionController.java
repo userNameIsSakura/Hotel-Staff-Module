@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.business.mapper.BasePositionMapper;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,6 +47,7 @@ public class BasePositionController extends BaseController
     public TableDataInfo list(BasePosition basePosition)
     {
         startPage();
+        basePosition.setHotelId(SecurityUtils.getHotelId());
         List<BasePosition> list = basePositionService.selectBasePositionList(basePosition);
         return getDataTable(list);
     }
@@ -56,7 +58,9 @@ public class BasePositionController extends BaseController
     @GetMapping("/listAll")
     public List<BasePosition> list()
     {
-        return basePositionService.selectBasePositionList(new BasePosition());
+        BasePosition basePosition = new BasePosition();
+        basePosition.setHotelId(SecurityUtils.getHotelId());
+        return basePositionService.selectBasePositionList(basePosition);
     }
 
     /**
@@ -103,6 +107,7 @@ public class BasePositionController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody BasePosition basePosition)
     {
+        basePosition.setHotelId(SecurityUtils.getHotelId());
         return toAjax(basePositionService.insertBasePosition(basePosition));
     }
 
@@ -114,6 +119,7 @@ public class BasePositionController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody BasePosition basePosition)
     {
+        basePosition.setHotelId(SecurityUtils.getHotelId());
         return toAjax(basePositionService.updateBasePosition(basePosition));
     }
 

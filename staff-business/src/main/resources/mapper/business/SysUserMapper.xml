@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.business.mapper.SysUserMapper">
-    
+
     <resultMap type="SysUser" id="SysUserResult">
         <result property="userId"    column="user_id"    />
         <result property="hotelId"    column="hotel_id"    />
@@ -34,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectSysUserList" parameterType="SysUser" resultMap="SysUserResult">
         <include refid="selectSysUserVo"/>
-        <where>  
+        <where>
             <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
             <if test="superAdministrator != null "> and super_administrator = #{superAdministrator}</if>
             <if test="deptId != null "> and dept_id = #{deptId}</if>
@@ -51,12 +51,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="loginDate != null "> and login_date = #{loginDate}</if>
         </where>
     </select>
-    
+
     <select id="selectSysUserByUserId" parameterType="Long" resultMap="SysUserResult">
         <include refid="selectSysUserVo"/>
         where user_id = #{userId}
     </select>
-        
+
     <insert id="insertSysUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
         insert into sys_user
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -137,7 +137,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSysUserByUserIds" parameterType="String">
-        delete from sys_user where user_id in 
+        delete from sys_user where user_id in
         <foreach item="userId" collection="array" open="(" separator="," close=")">
             #{userId}
         </foreach>

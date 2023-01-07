@@ -1,5 +1,6 @@
 package com.ruoyi.business.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ruoyi.business.domain.*;
@@ -23,6 +24,12 @@ public class BaseStaffServiceImpl implements IBaseStaffService
     private BaseStaffMapper baseStaffMapper;
     @Autowired
     private StaffPositionRelationshipsMapper staffPositionRelationshipsMapper;
+
+
+    @Override
+    public int checkUrl(Long staffId, String url) {
+        return baseStaffMapper.checkUrl(staffId, url);
+    }
 
     /**
      * 查询员工信息
@@ -59,6 +66,8 @@ public class BaseStaffServiceImpl implements IBaseStaffService
     {
         int n = baseStaffMapper.insertBaseStaff(baseStaff);
         insertSRP(baseStaff);
+        /*新增员工角色关联信息*/
+        insertStaffRole(baseStaff);
         return n;
     }
 
@@ -72,6 +81,11 @@ public class BaseStaffServiceImpl implements IBaseStaffService
     public int updateBaseStaff(BaseStaff baseStaff)
     {
         baseStaffMapper.deleteSRPByStaffId(baseStaff.getStaffId());
+        /*删除员工角色关联信息*/
+        baseStaffMapper.deleteStaffRoleByStaffId(baseStaff.getStaffId());
+        /*新增员工角色关联信息*/
+        insertStaffRole(baseStaff);
+
         insertSRP(baseStaff);
         return baseStaffMapper.updateBaseStaff(baseStaff);
     }
@@ -123,6 +137,19 @@ public class BaseStaffServiceImpl implements IBaseStaffService
         }
     }
 
+    public void insertStaffRole(BaseStaff baseStaff) {
+        Long[] roles = baseStaff.getRoles();
+        if(roles.length != 0) {
+            List<StaffRoleRelationships> list = new ArrayList<>();
+            for (Long role : roles) {
+                StaffRoleRelationships staffRoleRelationships = new StaffRoleRelationships();
+                staffRoleRelationships.setRoleId(role);
+                staffRoleRelationships.setStaffId(baseStaff.getStaffId());
+                list.add(staffRoleRelationships);
+            }
+            baseStaffMapper.batchStaffRole(list);
+        }
+    }
 
 
 }

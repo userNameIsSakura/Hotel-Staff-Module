@@ -63,7 +63,6 @@
 
     <el-table v-loading="loading" :data="positionList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column label="职位ID" align="center" prop="positionId" />
       <el-table-column label="职位名" align="center" prop="positionName" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -85,7 +84,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"

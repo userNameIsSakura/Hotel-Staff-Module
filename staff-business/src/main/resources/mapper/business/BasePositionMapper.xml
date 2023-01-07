@@ -6,18 +6,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <resultMap type="BasePosition" id="BasePositionResult">
         <result property="positionId"    column="position_id"    />
+        <result property="hotelId"    column="hotel_id"    />
         <result property="positionName"    column="position_name"    />
         <result property="remark"    column="remark"    />
     </resultMap>
 
     <sql id="selectBasePositionVo">
-        select position_id, position_name, remark from base_position
+        select position_id,hotel_id, position_name, remark from base_position
     </sql>
 
     <select id="selectBasePositionList" parameterType="BasePosition" resultMap="BasePositionResult">
         <include refid="selectBasePositionVo"/>
         <where>
             <if test="positionName != null  and positionName != ''"> and position_name like concat('%', #{positionName}, '%')</if>
+            <if test="hotelId != null  and hotelId != ''"> and hotel_id = #{hotelId}</if>
         </where>
     </select>
 
@@ -27,7 +29,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <select id="selectBasePositionByDepartmentId" parameterType="Long" resultMap="BasePositionResult">
-        select p.position_id, position_name, remark from base_position p,department_function_relationships r
+        select p.position_id,p.hotel_id, position_name, remark from base_position p,department_function_relationships r
         where r.department_id = #{departmentId} and r.position_id = p.position_id
     </select>
 
@@ -37,10 +39,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         insert into base_position
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="positionName != null and positionName != ''">position_name,</if>
+            <if test="hotelId != null and hotelId != ''">hotel_id,</if>
             <if test="remark != null">remark,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="positionName != null and positionName != ''">#{positionName},</if>
+            <if test="hotelId != null and hotelId != ''">#{hotelId},</if>
             <if test="remark != null">#{remark},</if>
          </trim>
     </insert>
@@ -49,6 +53,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         update base_position
         <trim prefix="SET" suffixOverrides=",">
             <if test="positionName != null and positionName != ''">position_name = #{positionName},</if>
+            <if test="hotelId != null and hotelId != ''">hotel_id = #{hotelId},</if>
             <if test="remark != null">remark = #{remark},</if>
         </trim>
         where position_id = #{positionId}

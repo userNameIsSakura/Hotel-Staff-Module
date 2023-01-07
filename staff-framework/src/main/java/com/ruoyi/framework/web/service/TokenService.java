@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
+
+import com.ruoyi.common.core.domain.model.StaffUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -77,6 +79,35 @@ public class TokenService
         return null;
     }
 
+
+
+    /**
+     * 获取员工身份信息
+     *
+     * @return 用户信息
+     */
+    public StaffUser getStaffUser(HttpServletRequest request)
+    {
+        // 获取请求携带的令牌
+        String token = getToken(request);
+        if (StringUtils.isNotEmpty(token))
+        {
+            try
+            {
+                Claims claims = parseToken(token);
+                // 解析对应的权限以及用户信息
+                String uuid = (String) claims.get(Constants.STAFF_KEY);
+                String userKey = getStaffTokenKey(uuid);
+                StaffUser user = redisCache.getCacheObject(userKey);
+                return user;
+            }
+            catch (Exception e)
+            {
+            }
+        }
+        return null;
+    }
+
     /**
      * 设置用户身份信息
      */
@@ -115,13 +146,36 @@ public class TokenService
 
         Map<String, Object> claims = new HashMap<>();
         claims.put(Constants.LOGIN_USER_KEY, token);
+
         return createToken(claims);
     }
+
+    public String createStaffToken(Long staffId) {
+        String token = IdUtils.fastUUID();
+        StaffUser staffUser = new StaffUser();
+        staffUser.setStaffId(staffId);
+        staffUser.setToken(token);
+
+        refreshStaffToken(staffUser);
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(Constants.STAFF_KEY, token);
+        return createToken(claims);
+    }
+
+    public void refreshStaffToken(StaffUser staffUser) {
+        // 根据uuid将staffUser缓存
+        String userKey = getStaffTokenKey(staffUser.getToken());
+        redisCache.setCacheObject(userKey, staffUser, expireTime, TimeUnit.MINUTES);
+    }
+
+
 
     /**
      * 验证令牌有效期，相差不足20分钟，自动刷新缓存
      *
      * @param loginUser
+     *
      * @return 令牌
      */
     public void verifyToken(LoginUser loginUser)
@@ -210,7 +264,7 @@ public class TokenService
      * @param request
      * @return token
      */
-    private String getToken(HttpServletRequest request)
+    public String getToken(HttpServletRequest request)
     {
         String token = request.getHeader(header);
         if (StringUtils.isNotEmpty(token) && token.startsWith(Constants.TOKEN_PREFIX))
@@ -224,4 +278,9 @@ public class TokenService
     {
         return CacheConstants.LOGIN_TOKEN_KEY + uuid;
     }
+
+    private String getStaffTokenKey(String uuid) {
+        return CacheConstants.STAFF_KEY + uuid;
+    }
+
 }

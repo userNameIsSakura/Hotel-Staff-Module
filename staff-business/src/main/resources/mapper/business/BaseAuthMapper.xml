@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BaseAuthMapper">
+
+    <resultMap type="BaseAuth" id="BaseAuthResult">
+        <result property="authId"    column="auth_id"    />
+        <result property="url"    column="url"    />
+        <result property="authName"    column="auth_name"    />
+        <result property="hotelId"    column="hotel_id"    />
+    </resultMap>
+
+    <sql id="selectBaseAuthVo">
+        select auth_id, url, auth_name, hotel_id from base_auth
+    </sql>
+
+    <select id="selectBaseAuthList" parameterType="BaseAuth" resultMap="BaseAuthResult">
+        <include refid="selectBaseAuthVo"/>
+        <where>
+            <if test="url != null  and url != ''"> and url = #{url}</if>
+            <if test="authName != null  and authName != ''"> and auth_name like concat('%', #{authName}, '%')</if>
+            <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
+        </where>
+    </select>
+
+    <select id="selectBaseAuthByAuthId" parameterType="Long" resultMap="BaseAuthResult">
+        <include refid="selectBaseAuthVo"/>
+        where auth_id = #{authId}
+    </select>
+
+    <insert id="insertBaseAuth" parameterType="BaseAuth" useGeneratedKeys="true" keyProperty="authId">
+        insert into base_auth
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="url != null and url != ''">url,</if>
+            <if test="authName != null and authName != ''">auth_name,</if>
+            <if test="hotelId != null">hotel_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="url != null and url != ''">#{url},</if>
+            <if test="authName != null and authName != ''">#{authName},</if>
+            <if test="hotelId != null">#{hotelId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBaseAuth" parameterType="BaseAuth">
+        update base_auth
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="url != null and url != ''">url = #{url},</if>
+            <if test="authName != null and authName != ''">auth_name = #{authName},</if>
+            <if test="hotelId != null">hotel_id = #{hotelId},</if>
+        </trim>
+        where auth_id = #{authId}
+    </update>
+
+    <delete id="deleteBaseAuthByAuthId" parameterType="Long">
+        delete from base_auth where auth_id = #{authId}
+    </delete>
+
+    <delete id="deleteBaseAuthByAuthIds" parameterType="String">
+        delete from base_auth where auth_id in
+        <foreach item="authId" collection="array" open="(" separator="," close=")">
+            #{authId}
+        </foreach>
+    </delete>
+
+    <select id="selectBaseAuthByRoleId" parameterType="Long" resultMap="BaseAuthResult">
+        select a.* from base_auth a left join role_auth_relationships r on a.auth_id = r.auth_id
+        where r.role_id = #{id}
+    </select>
+
+</mapper>
