@@ -2,19 +2,18 @@ package com.ruoyi.business.controller;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Font;
-import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.*;
-import com.ruoyi.business.domain.BaseHotel;
+import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
 import com.ruoyi.business.domain.BaseModel;
 import com.ruoyi.business.domain.BizContract;
 import com.ruoyi.business.service.IBaseHotelService;
 import com.ruoyi.business.service.IBaseModelService;
 import com.ruoyi.business.service.IBizContractService;
+import com.ruoyi.business.utils.TestRenderListener;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.common.utils.http.HttpUtils;
 import com.ruoyi.system.service.ISysUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,10 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RestController
 @RequestMapping(("/hotel"))
@@ -95,7 +92,6 @@ public class HotelController {
             AjaxResult error = AjaxResult.error("管理员酒店信息查询异常");
             return error;
         }*/
-        /*ssssssssssssssss*/
         SysUser sysUser = sysUserService.selectUserById(SecurityUtils.getUserId());
         Long hotelId = sysUser.getHotelId();
 
@@ -166,6 +162,26 @@ public class HotelController {
             PdfReader pdfReader = new PdfReader(bufferedInputStream);
             int sum = pdfReader.getNumberOfPages();
 
+            //创建pdf解析类
+            PdfReaderContentParser parser = new PdfReaderContentParser(pdfReader);
+            TestRenderListener listener = new TestRenderListener();
+
+            //是否需要加页
+            AtomicBoolean addPage = new AtomicBoolean(false);
+
+            // 解析PDF，并处理里面的文字
+            parser.processContent(sum, listener);
+            // 获取文字的矩形边框
+/*            List<Rectangle2D.Float> rectText = listener.rectText;
+            List<String> textList = listener.textList;*/
+            List<Float> listY = listener.listY;
+            listY.forEach(y -> {
+                if(y < 160) {
+                    addPage.set(true);
+                }
+            });
+
+
             List<PdfImportedPage> pdfImportedPages = new ArrayList<>();
             for (int i = 0; i < sum; i++) {
                 PdfImportedPage page = writer.getImportedPage(pdfReader, i+1);
@@ -178,23 +194,46 @@ public class HotelController {
             });
 
 
-            cb.beginText();
-            cb.setFontAndSize(bfChinese,10);
+            if(addPage.get()) {
+                //需要加页
+                document.newPage();
+                cb.beginText();
+                cb.setFontAndSize(bfChinese,10);
 
-            cb.setTextMatrix(400,160);
-            cb.showText("甲方: " + partAName);
+                cb.setTextMatrix(400,750);
+                cb.showText("甲方: " + partAName);
 
-            cb.setTextMatrix(400,140);
-            cb.showText("乙方: " + hotelName);
+                cb.setTextMatrix(400,730);
+                cb.showText("乙方: " + hotelName);
 
-            cb.setTextMatrix(400,120);
-            cb.showText("生效时间: " + DateUtils.getDateByCalender(calendar));
+                cb.setTextMatrix(400,710);
+                cb.showText("生效时间: " + DateUtils.getDateByCalender(calendar));
 
-            cb.setTextMatrix(400,100);
-            cb.showText("失效时间: " + DateUtils.getDateByCalender(calendar1));
+                cb.setTextMatrix(400,690);
+                cb.showText("失效时间: " + DateUtils.getDateByCalender(calendar1));
 
-            cb.endText();
-            document.add(new Paragraph("这是一个测试"));
+                cb.endText();
+            }else {
+                //无需加页
+                cb.beginText();
+                cb.setFontAndSize(bfChinese,10);
+
+                cb.setTextMatrix(400,160);
+                cb.showText("甲方: " + partAName);
+
+                cb.setTextMatrix(400,140);
+                cb.showText("乙方: " + hotelName);
+
+                cb.setTextMatrix(400,120);
+                cb.showText("生效时间: " + DateUtils.getDateByCalender(calendar));
+
+                cb.setTextMatrix(400,100);
+                cb.showText("失效时间: " + DateUtils.getDateByCalender(calendar1));
+
+                cb.endText();
+            }
+
+
 
             /* 维护合同表 */
             bizContract = new BizContract();
