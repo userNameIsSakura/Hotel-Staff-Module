@@ -11,11 +11,33 @@
  Target Server Version : 80026
  File Encoding         : 65001
 
- Date: 09/12/2022 12:36:46
+ Date: 08/01/2023 15:14:06
 */
 
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for base_auth
+-- ----------------------------
+DROP TABLE IF EXISTS `base_auth`;
+CREATE TABLE `base_auth`  (
+  `auth_id` int(0) NOT NULL AUTO_INCREMENT,
+  `url` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `auth_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `hotel_id` int(0) NOT NULL,
+  PRIMARY KEY (`auth_id`) USING BTREE,
+  INDEX `FK_Reference_8`(`hotel_id`) USING BTREE,
+  CONSTRAINT `FK_Reference_8` FOREIGN KEY (`hotel_id`) REFERENCES `base_hotel` (`hotel_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of base_auth
+-- ----------------------------
+INSERT INTO `base_auth` VALUES (1, 'www.baidu.com', '订购产品', 2);
+INSERT INTO `base_auth` VALUES (2, 'www.csdn.com', '签订合同', 2);
+INSERT INTO `base_auth` VALUES (3, 'www.runoob.com', '订购信息', 2);
+INSERT INTO `base_auth` VALUES (4, 'www.hetong.com', '签订合同', 1);
 
 -- ----------------------------
 -- Table structure for base_department
@@ -34,10 +56,10 @@ CREATE TABLE `base_department`  (
 -- ----------------------------
 -- Records of base_department
 -- ----------------------------
-INSERT INTO `base_department` VALUES (1, NULL, 1, '1酒店1部门', NULL);
+INSERT INTO `base_department` VALUES (1, -1, 1, '营销部', NULL);
 INSERT INTO `base_department` VALUES (2, -1, 2, '营销部', NULL);
-INSERT INTO `base_department` VALUES (4, 2, 2, '公关部', NULL);
-INSERT INTO `base_department` VALUES (5, 2, 2, '销售部', NULL);
+INSERT INTO `base_department` VALUES (4, -1, 2, '公关部', NULL);
+INSERT INTO `base_department` VALUES (5, -1, 2, '销售部', NULL);
 
 -- ----------------------------
 -- Table structure for base_function
@@ -45,21 +67,20 @@ INSERT INTO `base_department` VALUES (5, 2, 2, '销售部', NULL);
 DROP TABLE IF EXISTS `base_function`;
 CREATE TABLE `base_function`  (
   `function_id` int(0) NOT NULL AUTO_INCREMENT,
-  `function_value` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `function_value` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`function_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 104 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 111 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of base_function
 -- ----------------------------
-INSERT INTO `base_function` VALUES (94, '营销总监', '测试');
-INSERT INTO `base_function` VALUES (98, '公关部经理', '测试');
-INSERT INTO `base_function` VALUES (99, '宣传专员', '测试');
-INSERT INTO `base_function` VALUES (100, '设计美工', '测试');
-INSERT INTO `base_function` VALUES (101, '销售部经理', '测试');
-INSERT INTO `base_function` VALUES (102, '商务销售专员', '测试');
-INSERT INTO `base_function` VALUES (103, '会议销售专员', '测试');
+INSERT INTO `base_function` VALUES (137, '公关部经理', '');
+INSERT INTO `base_function` VALUES (138, '营销总监', '');
+INSERT INTO `base_function` VALUES (139, '销售部经理', '');
+INSERT INTO `base_function` VALUES (140, '商务销售专员', '');
+INSERT INTO `base_function` VALUES (141, '会议销售专员', '');
+INSERT INTO `base_function` VALUES (143, NULL, '');
 
 -- ----------------------------
 -- Table structure for base_hotel
@@ -67,14 +88,18 @@ INSERT INTO `base_function` VALUES (103, '会议销售专员', '测试');
 DROP TABLE IF EXISTS `base_hotel`;
 CREATE TABLE `base_hotel`  (
   `hotel_id` int(0) NOT NULL AUTO_INCREMENT,
-  `hotel_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `remark` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `hotel_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `remark` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `hotel_number` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   PRIMARY KEY (`hotel_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of base_hotel
 -- ----------------------------
+INSERT INTO `base_hotel` VALUES (1, '德优酒店', NULL, '3706130001');
+INSERT INTO `base_hotel` VALUES (2, '万达酒店', NULL, '3704810002');
+INSERT INTO `base_hotel` VALUES (3, '豪泰酒店', NULL, '3701020003');
 
 -- ----------------------------
 -- Table structure for base_model
@@ -82,15 +107,17 @@ CREATE TABLE `base_hotel`  (
 DROP TABLE IF EXISTS `base_model`;
 CREATE TABLE `base_model`  (
   `model_id` int(0) NOT NULL AUTO_INCREMENT,
-  `model_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `model_file` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `remark` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `model_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `model_file` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `remark` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
   PRIMARY KEY (`model_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of base_model
 -- ----------------------------
+INSERT INTO `base_model` VALUES (1, '软件合同', 'C:/Users/19059/Desktop/软件合同模板.pdf', NULL);
+INSERT INTO `base_model` VALUES (2, '产品合同', 'C:\\Users\\19059\\Desktop\\产品合同模板.pdf', NULL);
 
 -- ----------------------------
 -- Table structure for base_position
@@ -98,21 +125,25 @@ CREATE TABLE `base_model`  (
 DROP TABLE IF EXISTS `base_position`;
 CREATE TABLE `base_position`  (
   `position_id` int(0) NOT NULL AUTO_INCREMENT,
+  `hotel_id` int(0) NOT NULL,
   `position_name` varchar(63) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `remark` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
-  PRIMARY KEY (`position_id`) USING BTREE
+  PRIMARY KEY (`position_id`) USING BTREE,
+  INDEX `FK_Position_Hotel`(`hotel_id`) USING BTREE,
+  CONSTRAINT `FK_Position_Hotel` FOREIGN KEY (`hotel_id`) REFERENCES `base_hotel` (`hotel_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of base_position
 -- ----------------------------
-INSERT INTO `base_position` VALUES (1, '营销总监', '测试');
-INSERT INTO `base_position` VALUES (2, '公关部经理', '测试');
-INSERT INTO `base_position` VALUES (3, '销售部经理', '测试');
-INSERT INTO `base_position` VALUES (4, '宣传专员', '测试');
-INSERT INTO `base_position` VALUES (5, '设计美工', '测试');
-INSERT INTO `base_position` VALUES (6, '商务销售专员', '测试');
-INSERT INTO `base_position` VALUES (7, '会议销售专员', '测试');
+INSERT INTO `base_position` VALUES (1, 2, '营销总监', '测试');
+INSERT INTO `base_position` VALUES (2, 2, '公关部经理', '测试');
+INSERT INTO `base_position` VALUES (3, 2, '销售部经理', '测试');
+INSERT INTO `base_position` VALUES (4, 2, '宣传专员', '测试');
+INSERT INTO `base_position` VALUES (5, 2, '设计美工', '测试');
+INSERT INTO `base_position` VALUES (6, 2, '商务销售专员', '测试');
+INSERT INTO `base_position` VALUES (7, 2, '会议销售专员', '测试');
+INSERT INTO `base_position` VALUES (8, 1, '营销部长', NULL);
 
 -- ----------------------------
 -- Table structure for base_record
@@ -134,6 +165,26 @@ CREATE TABLE `base_record`  (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for base_role
+-- ----------------------------
+DROP TABLE IF EXISTS `base_role`;
+CREATE TABLE `base_role`  (
+  `role_id` int(0) NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `hotel_id` int(0) NOT NULL,
+  PRIMARY KEY (`role_id`) USING BTREE,
+  INDEX `FK_Reference_9`(`hotel_id`) USING BTREE,
+  CONSTRAINT `FK_Reference_9` FOREIGN KEY (`hotel_id`) REFERENCES `base_hotel` (`hotel_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of base_role
+-- ----------------------------
+INSERT INTO `base_role` VALUES (1, '合同专员', 2);
+INSERT INTO `base_role` VALUES (2, '产品专员', 2);
+INSERT INTO `base_role` VALUES (5, '合同专员', 1);
+
+-- ----------------------------
 -- Table structure for base_staff
 -- ----------------------------
 DROP TABLE IF EXISTS `base_staff`;
@@ -148,15 +199,16 @@ CREATE TABLE `base_staff`  (
   PRIMARY KEY (`staff_id`) USING BTREE,
   INDEX `FK_Reference_4`(`department_id`) USING BTREE,
   CONSTRAINT `FK_Reference_4` FOREIGN KEY (`department_id`) REFERENCES `base_department` (`department_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of base_staff
 -- ----------------------------
-INSERT INTO `base_staff` VALUES (10, '张三', '17322221111', 2, 2, '123', '测试-营销部-营销总监');
-INSERT INTO `base_staff` VALUES (12, '李四', '13590907872', 2, 4, '123', '测试-公安部-公安部经理');
+INSERT INTO `base_staff` VALUES (10, '张三', '17322221111', 2, 2, '$2a$10$bdbweKkASBA/dGo8NTQ2ou2ysEeEMMxh4LblEvvsHRGfnoCDvVJWe', '测试-营销部-营销总监');
+INSERT INTO `base_staff` VALUES (12, '李四', '13590907872', 2, 4, '123477', '测试-公安部-公安部经理');
 INSERT INTO `base_staff` VALUES (13, '王五', '13890902323', 2, 5, '123', '测试-销售部-销售部经理');
-INSERT INTO `base_staff` VALUES (14, '陈六', '13678783636', 2, 5, '123', '测试');
+INSERT INTO `base_staff` VALUES (15, '王雨', '13153328989', 1, 1, 'aaaaaa', NULL);
+INSERT INTO `base_staff` VALUES (19, '赵六', '13590908987', 2, 5, '$2a$10$5FtfzSN76cgCNw1OCOrusuiH7e.Z0uA4HN8XDIKPo.uSo/8B7/BQG', '测试-销售部-专员');
 
 -- ----------------------------
 -- Table structure for biz_contract
@@ -165,23 +217,47 @@ DROP TABLE IF EXISTS `biz_contract`;
 CREATE TABLE `biz_contract`  (
   `contract_id` int(0) NOT NULL AUTO_INCREMENT,
   `hotel_id` int(0) NOT NULL,
-  `contract_name` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `contract_file` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `contract_name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `contract_file` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `contract_sign` datetime(0) NOT NULL,
   `contract_effect` datetime(0) NOT NULL,
   `contract_invalid` datetime(0) NOT NULL,
-  `remark` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `contract_state` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `remark` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `contract_state` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `model_id` int(0) NOT NULL,
   PRIMARY KEY (`contract_id`) USING BTREE,
-  INDEX `FK_Reference_3`(`hotel_id`) USING BTREE,
-  INDEX `FK_Reference_4`(`model_id`) USING BTREE,
-  CONSTRAINT `biz_contract_ibfk_1` FOREIGN KEY (`hotel_id`) REFERENCES `base_hotel` (`hotel_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
-  CONSTRAINT `biz_contract_ibfk_2` FOREIGN KEY (`model_id`) REFERENCES `base_model` (`model_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+  INDEX `FK_Contract_Hotel`(`hotel_id`) USING BTREE,
+  INDEX `FK_Contract_Model`(`model_id`) USING BTREE,
+  CONSTRAINT `FK_Contract_Hotel` FOREIGN KEY (`hotel_id`) REFERENCES `base_hotel` (`hotel_id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  CONSTRAINT `FK_Contract_Model` FOREIGN KEY (`model_id`) REFERENCES `base_model` (`model_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of biz_contract
+-- ----------------------------
+INSERT INTO `biz_contract` VALUES (10, 2, '万达酒店-软件合同-2023年1月9日-2024年1月9日.pdf', 'D:\\Hotel-System\\pdf\\万达酒店\\万达酒店-软件合同-2023年1月9日-2024年1月9日.pdf', '2023-01-08 14:16:45', '2023-01-09 00:00:01', '2024-01-09 00:00:01', NULL, '已签字', 1);
+INSERT INTO `biz_contract` VALUES (11, 2, '万达酒店-产品合同-2023年1月9日-2024年1月9日.pdf', 'D:\\Hotel-System\\pdf\\万达酒店\\万达酒店-产品合同-2023年1月9日-2024年1月9日.pdf', '2023-01-08 14:18:03', '2023-01-09 00:00:00', '2024-01-09 00:00:00', NULL, '已签字', 2);
+INSERT INTO `biz_contract` VALUES (12, 1, '德优酒店-软件合同-2023年1月9日-2024年1月9日.pdf', 'D:\\Hotel-System\\pdf\\德优酒店\\德优酒店-软件合同-2023年1月9日-2024年1月9日.pdf', '2023-01-08 15:06:58', '2023-01-09 00:00:00', '2024-01-09 00:00:00', NULL, '已签字', 1);
+INSERT INTO `biz_contract` VALUES (13, 1, '德优酒店-产品合同-2023年1月9日-2024年1月9日.pdf', 'D:\\Hotel-System\\pdf\\德优酒店\\德优酒店-产品合同-2023年1月9日-2024年1月9日.pdf', '2023-01-08 15:11:25', '2023-01-09 00:00:00', '2024-01-09 00:00:00', NULL, '已签字', 2);
+
+-- ----------------------------
+-- Table structure for biz_subscribe
+-- ----------------------------
+DROP TABLE IF EXISTS `biz_subscribe`;
+CREATE TABLE `biz_subscribe`  (
+  `subscribe_id` int(0) NOT NULL AUTO_INCREMENT,
+  `hotel_id` int(0) NOT NULL,
+  `subscribe_content` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+  `subscribe_time` datetime(0) NOT NULL,
+  `subscribe_frequency` datetime(0) NOT NULL,
+  `remark` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`subscribe_id`) USING BTREE,
+  INDEX `FK_subscribe_hotel`(`hotel_id`) USING BTREE,
+  CONSTRAINT `FK_subscribe_hotel` FOREIGN KEY (`hotel_id`) REFERENCES `base_hotel` (`hotel_id`) ON DELETE RESTRICT ON UPDATE RESTRICT
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of biz_subscribe
 -- ----------------------------
 
 -- ----------------------------
@@ -200,18 +276,17 @@ CREATE TABLE `department_function_relationships`  (
   CONSTRAINT `FK_Reference_2` FOREIGN KEY (`department_id`) REFERENCES `base_department` (`department_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_Reference_3` FOREIGN KEY (`function_id`) REFERENCES `base_function` (`function_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_Reference_7` FOREIGN KEY (`position_id`) REFERENCES `base_position` (`position_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 97 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 105 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of department_function_relationships
 -- ----------------------------
-INSERT INTO `department_function_relationships` VALUES (88, 2, 1, 94);
-INSERT INTO `department_function_relationships` VALUES (92, 4, 2, 98);
-INSERT INTO `department_function_relationships` VALUES (93, 4, 4, 99);
-INSERT INTO `department_function_relationships` VALUES (94, 4, 5, 100);
-INSERT INTO `department_function_relationships` VALUES (95, 5, 3, 101);
-INSERT INTO `department_function_relationships` VALUES (96, 5, 6, 102);
-INSERT INTO `department_function_relationships` VALUES (97, 5, 7, 103);
+INSERT INTO `department_function_relationships` VALUES (131, 4, 2, 137);
+INSERT INTO `department_function_relationships` VALUES (132, 2, 1, 138);
+INSERT INTO `department_function_relationships` VALUES (133, 5, 3, 139);
+INSERT INTO `department_function_relationships` VALUES (134, 5, 6, 140);
+INSERT INTO `department_function_relationships` VALUES (135, 5, 7, 141);
+INSERT INTO `department_function_relationships` VALUES (137, 1, 8, 143);
 
 -- ----------------------------
 -- Table structure for gen_table
@@ -239,7 +314,7 @@ CREATE TABLE `gen_table`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`table_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 16 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '代码生成业务表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '代码生成业务表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of gen_table
@@ -254,8 +329,13 @@ INSERT INTO `gen_table` VALUES (10, 'sys_user', '用户信息表', NULL, NULL, '
 INSERT INTO `gen_table` VALUES (11, 'base_function', '职能表', NULL, NULL, 'BaseFunction', 'crud', 'com.ruoyi.business', 'business', 'function', '职能信息', 'ruoyi', '0', '/', '{}', 'ry', '2022-11-16 09:15:24', '', '2022-11-18 16:17:34', NULL);
 INSERT INTO `gen_table` VALUES (12, 'department_function_relationships', '部门职能连接信息表', NULL, NULL, 'DepartmentFunctionRelationships', 'crud', 'com.ruoyi.business', 'business', 'relationships', '部门职能连接信息', 'ruoyi', '0', '/', '{}', '2酒店管理员', '2022-11-18 16:49:08', '', '2022-11-18 16:49:54', NULL);
 INSERT INTO `gen_table` VALUES (13, 'base_model', '范本表', NULL, NULL, 'BaseModel', 'crud', 'com.hotel.business', 'business', 'model', '范本列表', 'ruoyi', '0', '/', '{}', '王一', '2022-12-03 19:55:24', '', '2022-12-03 19:57:31', NULL);
-INSERT INTO `gen_table` VALUES (14, 'base_hotel', '酒店表', NULL, NULL, 'BaseHotel', 'crud', 'com.ruoyi.business', 'business', 'hotel', '酒店列表', 'ruoyi', '0', '/', '{}', '王一', '2022-12-07 14:25:07', '', '2022-12-07 19:51:16', NULL);
 INSERT INTO `gen_table` VALUES (15, 'biz_contract', '合同记录表', NULL, NULL, 'BizContract', 'crud', 'com.hotel.business', 'business', 'contract', '合同记录', 'ruoyi', '0', '/', '{}', '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22', NULL);
+INSERT INTO `gen_table` VALUES (16, 'base_hotel', '酒店表', NULL, NULL, 'BaseHotel', 'crud', 'com.ruoyi.business', 'business', 'hotel', '酒店列表', 'ruoyi', '0', '/', '{}', '王一', '2023-01-06 22:13:59', '', '2023-01-06 22:30:31', NULL);
+INSERT INTO `gen_table` VALUES (17, 'sys_region', '区域表', NULL, NULL, 'SysRegion', 'crud', 'com.ruoyi.business', 'business', 'region', '区域列表', 'ruoyi', '0', '/', '{}', '王一', '2023-01-07 13:23:54', '', '2023-01-07 13:24:38', NULL);
+INSERT INTO `gen_table` VALUES (18, 'base_auth', '权限表', '', '', 'BaseAuth', 'crud', 'com.ruoyi.business', 'business', 'auth', '权限信息', 'ruoyi', '0', '/', '{}', '王一', '2023-01-07 15:19:50', '', '2023-01-07 15:21:26', NULL);
+INSERT INTO `gen_table` VALUES (19, 'base_role', '角色表', '', '', 'BaseRole', 'crud', 'com.ruoyi.business', 'business', 'role', '角色信息', 'ruoyi', '0', '/', '{}', '王一', '2023-01-07 15:19:50', '', '2023-01-07 15:22:46', NULL);
+INSERT INTO `gen_table` VALUES (20, 'role_auth_relationships', '角色权限关联表', NULL, NULL, 'RoleAuthRelationships', 'crud', 'com.ruoyi.business', 'business', 'relationships', '角色权限关联信息', 'ruoyi', '0', '/', '{}', '王一', '2023-01-07 20:31:49', '', '2023-01-07 20:32:33', NULL);
+INSERT INTO `gen_table` VALUES (21, 'staff_role_relationships', '员工角色关联表', NULL, NULL, 'StaffRoleRelationships', 'crud', 'com.ruoyi.business', 'business', 'relationships', '员工角色关联信息', 'ruoyi', '0', '/', '{}', '王一', '2023-01-07 20:31:49', '', '2023-01-07 20:33:16', NULL);
 
 -- ----------------------------
 -- Table structure for gen_table_column
@@ -285,7 +365,7 @@ CREATE TABLE `gen_table_column`  (
   `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`column_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 104 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '代码生成业务表字段' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 124 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '代码生成业务表字段' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of gen_table_column
@@ -352,9 +432,6 @@ INSERT INTO `gen_table_column` VALUES (87, '13', 'model_id', '范本ID', 'int', 
 INSERT INTO `gen_table_column` VALUES (88, '13', 'model_name', '范本名', 'varchar(20)', 'String', 'modelName', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 2, '王一', '2022-12-03 19:55:24', '', '2022-12-03 19:57:31');
 INSERT INTO `gen_table_column` VALUES (89, '13', 'model_file', '范本文件地址', 'varchar(100)', 'String', 'modelFile', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'fileUpload', '', 3, '王一', '2022-12-03 19:55:24', '', '2022-12-03 19:57:31');
 INSERT INTO `gen_table_column` VALUES (90, '13', 'remark', '备注', 'varchar(50)', 'String', 'remark', '0', '0', NULL, '1', '1', '1', NULL, 'EQ', 'input', '', 4, '王一', '2022-12-03 19:55:24', '', '2022-12-03 19:57:31');
-INSERT INTO `gen_table_column` VALUES (91, '14', 'hotel_id', '酒店ID', 'int', 'Long', 'hotelId', '1', '1', NULL, '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, '王一', '2022-12-07 14:25:07', '', '2022-12-07 19:51:16');
-INSERT INTO `gen_table_column` VALUES (92, '14', 'hotel_name', '酒店名', 'varchar(20)', 'String', 'hotelName', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 2, '王一', '2022-12-07 14:25:07', '', '2022-12-07 19:51:16');
-INSERT INTO `gen_table_column` VALUES (93, '14', 'remark', '备注', 'varchar(50)', 'String', 'remark', '0', '0', NULL, '1', '1', '1', NULL, 'EQ', 'input', '', 3, '王一', '2022-12-07 14:25:07', '', '2022-12-07 19:51:16');
 INSERT INTO `gen_table_column` VALUES (94, '15', 'contract_id', '合同id', 'int', 'Long', 'contractId', '1', '1', NULL, '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
 INSERT INTO `gen_table_column` VALUES (95, '15', 'hotel_id', '酒店id', 'int', 'Long', 'hotelId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 2, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
 INSERT INTO `gen_table_column` VALUES (96, '15', 'contract_name', '合同名', 'varchar(20)', 'String', 'contractName', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 3, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
@@ -365,6 +442,26 @@ INSERT INTO `gen_table_column` VALUES (100, '15', 'contract_invalid', '到期时
 INSERT INTO `gen_table_column` VALUES (101, '15', 'remark', '备注', 'varchar(50)', 'String', 'remark', '0', '0', NULL, '1', '1', '1', NULL, 'EQ', 'input', '', 8, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
 INSERT INTO `gen_table_column` VALUES (102, '15', 'contract_state', '合同状态', 'varchar(10)', 'String', 'contractState', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 9, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
 INSERT INTO `gen_table_column` VALUES (103, '15', 'model_id', '范本id', 'int', 'Long', 'modelId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 10, '王一', '2022-12-07 14:26:45', '', '2022-12-07 14:35:22');
+INSERT INTO `gen_table_column` VALUES (104, '16', 'hotel_id', '酒店ID', 'int', 'Long', 'hotelId', '1', '1', NULL, '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, '王一', '2023-01-06 22:13:59', '', '2023-01-06 22:30:31');
+INSERT INTO `gen_table_column` VALUES (105, '16', 'hotel_name', '酒店名', 'varchar(20)', 'String', 'hotelName', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 2, '王一', '2023-01-06 22:13:59', '', '2023-01-06 22:30:31');
+INSERT INTO `gen_table_column` VALUES (106, '16', 'remark', '备注', 'varchar(50)', 'String', 'remark', '0', '0', NULL, '1', '1', '1', NULL, 'EQ', 'input', '', 3, '王一', '2023-01-06 22:13:59', '', '2023-01-06 22:30:31');
+INSERT INTO `gen_table_column` VALUES (107, '16', 'hotel_number', '酒店编号', 'varchar(10)', 'String', 'hotelNumber', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 4, '王一', '2023-01-06 22:13:59', '', '2023-01-06 22:30:31');
+INSERT INTO `gen_table_column` VALUES (108, '17', 'id', '区域ID', 'int', 'Long', 'id', '1', '0', NULL, '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, '王一', '2023-01-07 13:23:54', '', '2023-01-07 13:24:38');
+INSERT INTO `gen_table_column` VALUES (109, '17', 'name', '区域名', 'varchar(50)', 'String', 'name', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 2, '王一', '2023-01-07 13:23:54', '', '2023-01-07 13:24:38');
+INSERT INTO `gen_table_column` VALUES (110, '17', 'parent_id', '上级ID', 'int', 'Long', 'parentId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 3, '王一', '2023-01-07 13:23:54', '', '2023-01-07 13:24:38');
+INSERT INTO `gen_table_column` VALUES (111, '18', 'auth_id', '权限ID', 'int', 'Long', 'authId', '1', '1', NULL, '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, '王一', '2023-01-07 15:19:50', '', '2023-01-07 15:21:26');
+INSERT INTO `gen_table_column` VALUES (112, '18', 'url', 'URL', 'varchar(255)', 'String', 'url', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 2, '王一', '2023-01-07 15:19:50', '', '2023-01-07 15:21:26');
+INSERT INTO `gen_table_column` VALUES (113, '18', 'auth_name', '权限名', 'varchar(50)', 'String', 'authName', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 3, '王一', '2023-01-07 15:19:50', '', '2023-01-07 15:21:26');
+INSERT INTO `gen_table_column` VALUES (114, '18', 'hotel_id', '酒店ID', 'int', 'Long', 'hotelId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 4, '王一', '2023-01-07 15:19:50', '', '2023-01-07 15:21:26');
+INSERT INTO `gen_table_column` VALUES (115, '19', 'role_id', '角色ID', 'int', 'Long', 'roleId', '1', '1', NULL, '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, '王一', '2023-01-07 15:19:50', '', '2023-01-07 15:22:46');
+INSERT INTO `gen_table_column` VALUES (116, '19', 'role_name', '角色名', 'varchar(50)', 'String', 'roleName', '0', '0', '1', '1', '1', '1', '1', 'LIKE', 'input', '', 2, '王一', '2023-01-07 15:19:50', '', '2023-01-07 15:22:46');
+INSERT INTO `gen_table_column` VALUES (117, '19', 'hotel_id', '酒店ID', 'int', 'Long', 'hotelId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 3, '王一', '2023-01-07 15:19:50', '', '2023-01-07 15:22:46');
+INSERT INTO `gen_table_column` VALUES (118, '20', 'id', 'ID', 'int', 'Long', 'id', '1', '1', NULL, '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, '王一', '2023-01-07 20:31:49', '', '2023-01-07 20:32:33');
+INSERT INTO `gen_table_column` VALUES (119, '20', 'role_id', '角色ID', 'int', 'Long', 'roleId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 2, '王一', '2023-01-07 20:31:49', '', '2023-01-07 20:32:33');
+INSERT INTO `gen_table_column` VALUES (120, '20', 'auth_id', '权限ID', 'int', 'Long', 'authId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 3, '王一', '2023-01-07 20:31:49', '', '2023-01-07 20:32:33');
+INSERT INTO `gen_table_column` VALUES (121, '21', 'ID', 'ID', 'int', 'Long', 'id', '1', '1', NULL, '1', NULL, NULL, NULL, 'EQ', 'input', '', 1, '王一', '2023-01-07 20:31:49', '', '2023-01-07 20:33:16');
+INSERT INTO `gen_table_column` VALUES (122, '21', 'staff_id', '员工ID', 'int', 'Long', 'staffId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 2, '王一', '2023-01-07 20:31:49', '', '2023-01-07 20:33:16');
+INSERT INTO `gen_table_column` VALUES (123, '21', 'role_id', '角色ID', 'int', 'Long', 'roleId', '0', '0', '1', '1', '1', '1', '1', 'EQ', 'input', '', 3, '王一', '2023-01-07 20:31:49', '', '2023-01-07 20:33:16');
 
 -- ----------------------------
 -- Table structure for qrtz_blob_triggers
@@ -584,6 +681,29 @@ CREATE TABLE `qrtz_triggers`  (
 -- ----------------------------
 
 -- ----------------------------
+-- Table structure for role_auth_relationships
+-- ----------------------------
+DROP TABLE IF EXISTS `role_auth_relationships`;
+CREATE TABLE `role_auth_relationships`  (
+  `id` int(0) NOT NULL AUTO_INCREMENT,
+  `role_id` int(0) NOT NULL,
+  `auth_id` int(0) NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `FK_Auth_Role`(`auth_id`) USING BTREE,
+  INDEX `FK_Role_Auth`(`role_id`) USING BTREE,
+  CONSTRAINT `FK_Auth_Role` FOREIGN KEY (`auth_id`) REFERENCES `base_auth` (`auth_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_Role_Auth` FOREIGN KEY (`role_id`) REFERENCES `base_role` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of role_auth_relationships
+-- ----------------------------
+INSERT INTO `role_auth_relationships` VALUES (21, 1, 2);
+INSERT INTO `role_auth_relationships` VALUES (22, 2, 1);
+INSERT INTO `role_auth_relationships` VALUES (23, 2, 3);
+INSERT INTO `role_auth_relationships` VALUES (24, 5, 4);
+
+-- ----------------------------
 -- Table structure for staff_position_relationships
 -- ----------------------------
 DROP TABLE IF EXISTS `staff_position_relationships`;
@@ -596,19 +716,42 @@ CREATE TABLE `staff_position_relationships`  (
   INDEX `FK_Reference_6`(`position_id`) USING BTREE,
   CONSTRAINT `FK_Reference_5` FOREIGN KEY (`staff_id`) REFERENCES `base_staff` (`staff_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_Reference_6` FOREIGN KEY (`position_id`) REFERENCES `base_position` (`position_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 78 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 98 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of staff_position_relationships
 -- ----------------------------
-INSERT INTO `staff_position_relationships` VALUES (65, 10, 1);
 INSERT INTO `staff_position_relationships` VALUES (67, 13, 3);
-INSERT INTO `staff_position_relationships` VALUES (68, 12, 2);
-INSERT INTO `staff_position_relationships` VALUES (69, 12, 4);
-INSERT INTO `staff_position_relationships` VALUES (70, 12, 5);
-INSERT INTO `staff_position_relationships` VALUES (76, 14, 6);
-INSERT INTO `staff_position_relationships` VALUES (77, 14, 7);
-INSERT INTO `staff_position_relationships` VALUES (78, 14, 7);
+INSERT INTO `staff_position_relationships` VALUES (95, 12, 2);
+INSERT INTO `staff_position_relationships` VALUES (96, 12, 4);
+INSERT INTO `staff_position_relationships` VALUES (97, 12, 5);
+INSERT INTO `staff_position_relationships` VALUES (138, 19, 6);
+INSERT INTO `staff_position_relationships` VALUES (139, 19, 7);
+INSERT INTO `staff_position_relationships` VALUES (140, 10, 1);
+INSERT INTO `staff_position_relationships` VALUES (142, 15, 8);
+
+-- ----------------------------
+-- Table structure for staff_role_relationships
+-- ----------------------------
+DROP TABLE IF EXISTS `staff_role_relationships`;
+CREATE TABLE `staff_role_relationships`  (
+  `ID` int(0) NOT NULL AUTO_INCREMENT,
+  `staff_id` int(0) NOT NULL,
+  `role_id` int(0) NOT NULL,
+  PRIMARY KEY (`ID`) USING BTREE,
+  INDEX `FK_Role_Staff`(`role_id`) USING BTREE,
+  INDEX `FK_Staff_Role`(`staff_id`) USING BTREE,
+  CONSTRAINT `FK_Role_Staff` FOREIGN KEY (`role_id`) REFERENCES `base_role` (`role_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `FK_Staff_Role` FOREIGN KEY (`staff_id`) REFERENCES `base_staff` (`staff_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of staff_role_relationships
+-- ----------------------------
+INSERT INTO `staff_role_relationships` VALUES (37, 19, 2);
+INSERT INTO `staff_role_relationships` VALUES (38, 10, 1);
+INSERT INTO `staff_role_relationships` VALUES (39, 10, 2);
+INSERT INTO `staff_role_relationships` VALUES (40, 15, 5);
 
 -- ----------------------------
 -- Table structure for sys_config
@@ -642,7 +785,7 @@ INSERT INTO `sys_config` VALUES (5, '账号自助-是否开启用户注册功能
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_dept`;
 CREATE TABLE `sys_dept`  (
-  `dept_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '部门id',
+  `department_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '部门id',
   `parent_id` bigint(0) NULL DEFAULT 0 COMMENT '父部门id',
   `ancestors` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '祖级列表',
   `dept_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '部门名称',
@@ -656,7 +799,7 @@ CREATE TABLE `sys_dept`  (
   `create_time` datetime(0) NULL DEFAULT NULL COMMENT '创建时间',
   `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
-  PRIMARY KEY (`dept_id`) USING BTREE
+  PRIMARY KEY (`department_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 200 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '部门表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -826,7 +969,7 @@ CREATE TABLE `sys_logininfor`  (
   `msg` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '提示消息',
   `login_time` datetime(0) NULL DEFAULT NULL COMMENT '访问时间',
   PRIMARY KEY (`info_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 624 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统访问记录' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 749 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '系统访问记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_logininfor
@@ -1418,6 +1561,96 @@ INSERT INTO `sys_logininfor` VALUES (683, '王一', '127.0.0.1', '内网IP', 'Ch
 INSERT INTO `sys_logininfor` VALUES (684, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 12:01:02');
 INSERT INTO `sys_logininfor` VALUES (685, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-09 12:01:21');
 INSERT INTO `sys_logininfor` VALUES (686, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-09 12:01:26');
+INSERT INTO `sys_logininfor` VALUES (687, 'admin', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '登录用户：admin 不存在', '2022-12-29 17:34:21');
+INSERT INTO `sys_logininfor` VALUES (688, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-29 17:34:29');
+INSERT INTO `sys_logininfor` VALUES (689, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-29 17:39:09');
+INSERT INTO `sys_logininfor` VALUES (690, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-29 17:39:17');
+INSERT INTO `sys_logininfor` VALUES (691, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2022-12-29 18:17:49');
+INSERT INTO `sys_logininfor` VALUES (692, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-29 18:17:55');
+INSERT INTO `sys_logininfor` VALUES (693, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-30 14:33:09');
+INSERT INTO `sys_logininfor` VALUES (694, 'admin', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-30 14:45:24');
+INSERT INTO `sys_logininfor` VALUES (695, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-30 14:45:30');
+INSERT INTO `sys_logininfor` VALUES (696, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-30 15:02:14');
+INSERT INTO `sys_logininfor` VALUES (697, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2022-12-30 15:02:39');
+INSERT INTO `sys_logininfor` VALUES (698, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-30 15:04:43');
+INSERT INTO `sys_logininfor` VALUES (699, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-30 15:04:44');
+INSERT INTO `sys_logininfor` VALUES (700, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-30 15:05:26');
+INSERT INTO `sys_logininfor` VALUES (701, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-30 16:38:00');
+INSERT INTO `sys_logininfor` VALUES (702, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-30 16:44:53');
+INSERT INTO `sys_logininfor` VALUES (703, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-30 16:44:57');
+INSERT INTO `sys_logininfor` VALUES (704, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-30 16:45:01');
+INSERT INTO `sys_logininfor` VALUES (705, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2022-12-30 16:45:11');
+INSERT INTO `sys_logininfor` VALUES (706, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2022-12-30 16:57:57');
+INSERT INTO `sys_logininfor` VALUES (707, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-04 12:28:33');
+INSERT INTO `sys_logininfor` VALUES (708, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-06 19:29:11');
+INSERT INTO `sys_logininfor` VALUES (709, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2023-01-06 20:56:38');
+INSERT INTO `sys_logininfor` VALUES (710, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-06 20:56:41');
+INSERT INTO `sys_logininfor` VALUES (711, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-06 20:56:53');
+INSERT INTO `sys_logininfor` VALUES (712, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-06 20:56:59');
+INSERT INTO `sys_logininfor` VALUES (713, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-06 21:50:56');
+INSERT INTO `sys_logininfor` VALUES (714, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-06 21:51:01');
+INSERT INTO `sys_logininfor` VALUES (715, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-06 22:05:09');
+INSERT INTO `sys_logininfor` VALUES (716, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-06 22:05:18');
+INSERT INTO `sys_logininfor` VALUES (717, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-06 22:07:34');
+INSERT INTO `sys_logininfor` VALUES (718, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2023-01-06 22:07:38');
+INSERT INTO `sys_logininfor` VALUES (719, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2023-01-06 22:07:41');
+INSERT INTO `sys_logininfor` VALUES (720, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-06 22:07:44');
+INSERT INTO `sys_logininfor` VALUES (721, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-06 22:08:31');
+INSERT INTO `sys_logininfor` VALUES (722, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-06 22:08:34');
+INSERT INTO `sys_logininfor` VALUES (723, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-06 22:23:14');
+INSERT INTO `sys_logininfor` VALUES (724, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2023-01-06 22:23:18');
+INSERT INTO `sys_logininfor` VALUES (725, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-06 22:23:20');
+INSERT INTO `sys_logininfor` VALUES (726, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 12:28:13');
+INSERT INTO `sys_logininfor` VALUES (727, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 13:09:11');
+INSERT INTO `sys_logininfor` VALUES (728, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-07 14:28:00');
+INSERT INTO `sys_logininfor` VALUES (729, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 14:28:07');
+INSERT INTO `sys_logininfor` VALUES (730, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-07 14:45:53');
+INSERT INTO `sys_logininfor` VALUES (731, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 14:46:00');
+INSERT INTO `sys_logininfor` VALUES (732, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-07 14:46:45');
+INSERT INTO `sys_logininfor` VALUES (733, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 14:46:49');
+INSERT INTO `sys_logininfor` VALUES (734, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-07 15:18:55');
+INSERT INTO `sys_logininfor` VALUES (735, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 15:19:01');
+INSERT INTO `sys_logininfor` VALUES (736, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-07 15:19:07');
+INSERT INTO `sys_logininfor` VALUES (737, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 15:19:14');
+INSERT INTO `sys_logininfor` VALUES (738, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-07 15:27:42');
+INSERT INTO `sys_logininfor` VALUES (739, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 15:27:49');
+INSERT INTO `sys_logininfor` VALUES (740, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-07 15:29:31');
+INSERT INTO `sys_logininfor` VALUES (741, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 15:29:35');
+INSERT INTO `sys_logininfor` VALUES (742, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 17:44:23');
+INSERT INTO `sys_logininfor` VALUES (743, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 18:44:31');
+INSERT INTO `sys_logininfor` VALUES (744, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 20:31:36');
+INSERT INTO `sys_logininfor` VALUES (745, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-07 20:39:38');
+INSERT INTO `sys_logininfor` VALUES (746, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 20:39:43');
+INSERT INTO `sys_logininfor` VALUES (747, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-07 21:55:29');
+INSERT INTO `sys_logininfor` VALUES (748, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 21:55:35');
+INSERT INTO `sys_logininfor` VALUES (749, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 22:27:19');
+INSERT INTO `sys_logininfor` VALUES (750, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-07 23:39:38');
+INSERT INTO `sys_logininfor` VALUES (751, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-07 23:39:45');
+INSERT INTO `sys_logininfor` VALUES (752, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-08 12:25:22');
+INSERT INTO `sys_logininfor` VALUES (753, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-08 12:25:38');
+INSERT INTO `sys_logininfor` VALUES (754, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-08 12:25:46');
+INSERT INTO `sys_logininfor` VALUES (755, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-08 14:49:18');
+INSERT INTO `sys_logininfor` VALUES (756, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-08 14:49:25');
+INSERT INTO `sys_logininfor` VALUES (757, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-08 14:57:34');
+INSERT INTO `sys_logininfor` VALUES (758, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2023-01-08 14:57:41');
+INSERT INTO `sys_logininfor` VALUES (759, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-08 14:57:46');
+INSERT INTO `sys_logininfor` VALUES (760, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-08 14:59:39');
+INSERT INTO `sys_logininfor` VALUES (761, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-08 14:59:56');
+INSERT INTO `sys_logininfor` VALUES (762, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-08 15:01:01');
+INSERT INTO `sys_logininfor` VALUES (763, '赵文', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-08 15:01:12');
+INSERT INTO `sys_logininfor` VALUES (764, '赵文', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-08 15:09:32');
+INSERT INTO `sys_logininfor` VALUES (765, '赵文', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-08 15:09:37');
+INSERT INTO `sys_logininfor` VALUES (766, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-08 15:09:45');
+INSERT INTO `sys_logininfor` VALUES (767, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-08 15:10:13');
+INSERT INTO `sys_logininfor` VALUES (768, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '密码输入错误1次', '2023-01-08 15:10:15');
+INSERT INTO `sys_logininfor` VALUES (769, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '用户不存在/密码错误', '2023-01-08 15:10:15');
+INSERT INTO `sys_logininfor` VALUES (770, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-08 15:10:23');
+INSERT INTO `sys_logininfor` VALUES (771, '王一', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-08 15:10:28');
+INSERT INTO `sys_logininfor` VALUES (772, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2023-01-08 15:10:36');
+INSERT INTO `sys_logininfor` VALUES (773, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-08 15:10:39');
+INSERT INTO `sys_logininfor` VALUES (774, '刘七', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '退出成功', '2023-01-08 15:10:47');
+INSERT INTO `sys_logininfor` VALUES (775, '赵文', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '1', '验证码错误', '2023-01-08 15:10:56');
+INSERT INTO `sys_logininfor` VALUES (776, '赵文', '127.0.0.1', '内网IP', 'Chrome 10', 'Windows 10', '0', '登录成功', '2023-01-08 15:10:59');
 
 -- ----------------------------
 -- Table structure for sys_menu
@@ -1444,7 +1677,7 @@ CREATE TABLE `sys_menu`  (
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '备注',
   PRIMARY KEY (`menu_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2026 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2047 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '菜单权限表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_menu
@@ -1553,9 +1786,27 @@ INSERT INTO `sys_menu` VALUES (2022, '职位信息新增', 2020, 2, '#', '', NUL
 INSERT INTO `sys_menu` VALUES (2023, '职位信息修改', 2020, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:position:edit', '#', 'admin', '2022-11-18 17:32:55', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2024, '职位信息删除', 2020, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:position:remove', '#', 'admin', '2022-11-18 17:32:55', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2025, '职位信息导出', 2020, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:position:export', '#', 'admin', '2022-11-18 17:32:55', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2026, '合同列表', 0, 1, 'model', 'business/model/index', NULL, 1, 0, 'C', '0', '0', 'business:model', 'list', 'admin', '2022-12-08 00:00:00', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2026, '合同列表', 0, 1, 'model', 'business/model/index', NULL, 1, 0, 'C', '0', '0', 'business:model', 'cascader', 'admin', '2022-12-08 00:00:00', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2027, '历史合同', 0, 2, 'contract', 'business/contract/index', NULL, 1, 0, 'C', '0', '0', 'business:contract', 'table', 'admin', '2022-12-08 00:00:00', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2028, '酒店信息', 0, 0, 'hotel', '', NULL, 1, 0, 'F', '0', '0', 'business:hotel', '#', 'admin', '2022-12-09 00:00:00', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2028, '酒店信息', 0, 3, 'hotel', 'business/hotel/index', NULL, 1, 0, 'C', '0', '0', 'business:hotel', 'user', 'admin', '2022-12-09 00:00:00', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2029, '酒店列表', 3, 1, 'hotel', 'business/hotel/index', NULL, 1, 0, 'C', '0', '0', 'business:hotel:list', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '酒店列表菜单');
+INSERT INTO `sys_menu` VALUES (2030, '酒店列表查询', 2029, 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:hotel:query', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2031, '酒店列表新增', 2029, 2, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:hotel:add', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2032, '酒店列表修改', 2029, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:hotel:edit', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2033, '酒店列表删除', 2029, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:hotel:remove', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2034, '酒店列表导出', 2029, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:hotel:export', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2035, '角色信息', 2000, 1, 'role', 'business/role/index', NULL, 1, 0, 'C', '0', '0', 'business:role:list', 'build', 'admin', '2023-01-07 15:24:04', '', NULL, '角色信息菜单');
+INSERT INTO `sys_menu` VALUES (2036, '角色信息查询', 2035, 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:role:query', '#', 'admin', '2023-01-07 15:24:04', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2037, '角色信息新增', 2035, 2, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:role:add', '#', 'admin', '2023-01-07 15:24:04', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2038, '角色信息修改', 2035, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:role:edit', '#', 'admin', '2023-01-07 15:24:04', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2039, '角色信息删除', 2035, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:role:remove', '#', 'admin', '2023-01-07 15:24:04', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2040, '角色信息导出', 2035, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:role:export', '#', 'admin', '2023-01-07 15:24:04', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2041, '权限信息', 2000, 1, 'auth', 'business/auth/index', NULL, 1, 0, 'C', '0', '0', 'business:auth:list', 'guide', 'admin', '2023-01-07 15:26:45', '', NULL, '权限信息菜单');
+INSERT INTO `sys_menu` VALUES (2042, '权限信息查询', 2041, 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:auth:query', '#', 'admin', '2023-01-07 15:26:45', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2043, '权限信息新增', 2041, 2, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:auth:add', '#', 'admin', '2023-01-07 15:26:45', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2044, '权限信息修改', 2041, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:auth:edit', '#', 'admin', '2023-01-07 15:26:45', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2045, '权限信息删除', 2041, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:auth:remove', '#', 'admin', '2023-01-07 15:26:45', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2046, '权限信息导出', 2041, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:auth:export', '#', 'admin', '2023-01-07 15:26:45', '', NULL, '');
 
 -- ----------------------------
 -- Table structure for sys_notice
@@ -1603,7 +1854,7 @@ CREATE TABLE `sys_oper_log`  (
   `error_msg` varchar(2000) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '错误消息',
   `oper_time` datetime(0) NULL DEFAULT NULL COMMENT '操作时间',
   PRIMARY KEY (`oper_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 439 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '操作日志记录' ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 529 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '操作日志记录' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_oper_log
@@ -1971,6 +2222,165 @@ INSERT INTO `sys_oper_log` VALUES (459, '用户管理', 3, 'com.ruoyi.web.contro
 INSERT INTO `sys_oper_log` VALUES (460, '用户管理', 1, 'com.ruoyi.web.controller.system.SysUserController.add()', 'POST', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"createBy\":\"王一\",\"params\":{},\"phonenumber\":\"13567673737\",\"postIds\":[],\"roleIds\":[],\"status\":\"0\",\"superAdministrator\":1,\"userId\":109,\"userName\":\"测试\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:31:29');
 INSERT INTO `sys_oper_log` VALUES (461, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.resetPwd()', 'PUT', 1, '王一', NULL, '/system/user/resetPwd', '127.0.0.1', '内网IP', '{\"admin\":false,\"params\":{},\"updateBy\":\"王一\",\"userId\":109}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:31:40');
 INSERT INTO `sys_oper_log` VALUES (462, '用户管理', 3, 'com.ruoyi.web.controller.system.SysUserController.remove()', 'DELETE', 1, '王一', NULL, '/system/user/109', '127.0.0.1', '内网IP', '{userIds=109}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-09 11:31:51');
+INSERT INTO `sys_oper_log` VALUES (463, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"staffId\":10,\"staffName\":\"张三2\",\"staffPassword\":\"123\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-30 14:45:42');
+INSERT INTO `sys_oper_log` VALUES (464, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"staffId\":10,\"staffName\":\"张三23\",\"staffPassword\":\"123\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-30 14:45:48');
+INSERT INTO `sys_oper_log` VALUES (465, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":1,\"positionName\":\"销售部经理\",\"remark\":\"测试\"},{\"functionValue\":\"商务销售专员\",\"params\":{},\"positionId\":3,\"positionName\":\"商务销售专员\",\"remark\":\"测试\"},{\"functionValue\":\"会议销售专员\",\"params\":{},\"positionId\":6,\"positionName\":\"会议销售专员\",\"remark\":\"测试\"}],\"departmentId\":5,\"departmentName\":\"销售部\",\"hotelId\":2,\"params\":{},\"superiorId\":2}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-30 14:48:57');
+INSERT INTO `sys_oper_log` VALUES (466, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"商务销售专员\",\"params\":{},\"positionId\":3,\"positionName\":\"销售部经理\",\"remark\":\"测试\"},{\"functionValue\":\"会议销售专员\",\"params\":{},\"positionId\":6,\"positionName\":\"商务销售专员\",\"remark\":\"测试\"}],\"departmentId\":5,\"departmentName\":\"销售部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-30 14:49:38');
+INSERT INTO `sys_oper_log` VALUES (467, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"公关部经理\",\"params\":{},\"positionId\":2,\"positionName\":\"公关部经理\",\"remark\":\"测试\"},{\"functionValue\":\"宣传专员\",\"params\":{},\"positionId\":4,\"positionName\":\"宣传专员\",\"remark\":\"测试\"},{\"functionValue\":\"设计美工\",\"params\":{},\"positionId\":5,\"positionName\":\"设计美工\",\"remark\":\"测试\"}],\"departmentId\":4,\"hotelId\":2,\"params\":{},\"remark\":\"测试-公安部-公安部经理\",\"staffId\":12,\"staffName\":\"李四\",\"staffPassword\":\"1234\",\"staffPhone\":\"13590907872\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-30 16:39:47');
+INSERT INTO `sys_oper_log` VALUES (468, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"staffId\":10,\"staffName\":\"张三23\",\"staffPassword\":\"12345\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-30 16:40:06');
+INSERT INTO `sys_oper_log` VALUES (469, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"公关部经理\",\"params\":{},\"positionId\":2,\"positionName\":\"公关部经理\",\"remark\":\"测试\"},{\"functionValue\":\"宣传专员\",\"params\":{},\"positionId\":4,\"positionName\":\"宣传专员\",\"remark\":\"测试\"},{\"functionValue\":\"设计美工\",\"params\":{},\"positionId\":5,\"positionName\":\"设计美工\",\"remark\":\"测试\"}],\"departmentId\":4,\"hotelId\":2,\"params\":{},\"remark\":\"测试-公安部-公安部经理\",\"staffId\":12,\"staffName\":\"李四\",\"staffPassword\":\"123477\",\"staffPhone\":\"13590907872\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2022-12-30 16:40:17');
+INSERT INTO `sys_oper_log` VALUES (470, '代码生成', 3, 'com.ruoyi.generator.controller.GenController.remove()', 'DELETE', 1, '王一', NULL, '/tool/gen/14', '127.0.0.1', '内网IP', '{tableIds=14}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-06 22:13:53');
+INSERT INTO `sys_oper_log` VALUES (471, '代码生成', 6, 'com.ruoyi.generator.controller.GenController.importTableSave()', 'POST', 1, '王一', NULL, '/tool/gen/importTable', '127.0.0.1', '内网IP', '\"base_hotel\"', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-06 22:13:59');
+INSERT INTO `sys_oper_log` VALUES (472, '代码生成', 2, 'com.ruoyi.generator.controller.GenController.editSave()', 'PUT', 1, '王一', NULL, '/tool/gen', '127.0.0.1', '内网IP', '{\"businessName\":\"hotel\",\"className\":\"BaseHotel\",\"columns\":[{\"capJavaField\":\"HotelId\",\"columnComment\":\"酒店ID\",\"columnId\":104,\"columnName\":\"hotel_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-06 22:13:59\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":true,\"insert\":true,\"isIncrement\":\"1\",\"isInsert\":\"1\",\"isPk\":\"1\",\"javaField\":\"hotelId\",\"javaType\":\"Long\",\"list\":false,\"params\":{},\"pk\":true,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":1,\"superColumn\":false,\"tableId\":16,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"HotelName\",\"columnComment\":\"酒店名\",\"columnId\":105,\"columnName\":\"hotel_name\",\"columnType\":\"varchar(20)\",\"createBy\":\"王一\",\"createTime\":\"2023-01-06 22:13:59\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"hotelName\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"LIKE\",\"required\":true,\"sort\":2,\"superColumn\":false,\"tableId\":16,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"Remark\",\"columnComment\":\"备注\",\"columnId\":106,\"columnName\":\"remark\",\"columnType\":\"varchar(50)\",\"createBy\":\"王一\",\"createTime\":\"2023-01-06 22:13:59\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"javaField\":\"remark\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":3,\"superColumn\":true,\"tableId\":16,\"updateBy\":\"\",\"usableColumn\":true},{\"capJavaField\":\"HotelNumber\",\"columnComment\":\"酒店编号\",\"columnId\":107,\"columnName\":\"hotel_number\",\"columnType\":\"varchar(10)\",\"createBy\":\"王一\",\"createTime\":\"2023-01-06 22:13:59\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"hotelNumber\",\"javaType\":\"String\",\"li', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-06 22:14:49');
+INSERT INTO `sys_oper_log` VALUES (473, '酒店列表', 2, 'com.ruoyi.business.controller.BaseHotelController.edit()', 'PUT', 1, '王一', NULL, '/business/hotel', '127.0.0.1', '内网IP', '{\"hotelId\":1,\"hotelName\":\"德优酒店\",\"hotelNumber\":\"2222222222\",\"params\":{}}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-06 22:23:40');
+INSERT INTO `sys_oper_log` VALUES (474, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, '王一', NULL, '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{}', NULL, 0, NULL, '2023-01-06 22:26:54');
+INSERT INTO `sys_oper_log` VALUES (475, '代码生成', 2, 'com.ruoyi.generator.controller.GenController.editSave()', 'PUT', 1, '王一', NULL, '/tool/gen', '127.0.0.1', '内网IP', '{\"businessName\":\"hotel\",\"className\":\"BaseHotel\",\"columns\":[{\"capJavaField\":\"HotelId\",\"columnComment\":\"酒店ID\",\"columnId\":104,\"columnName\":\"hotel_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-06 22:13:59\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":true,\"insert\":true,\"isIncrement\":\"1\",\"isInsert\":\"1\",\"isPk\":\"1\",\"javaField\":\"hotelId\",\"javaType\":\"Long\",\"list\":false,\"params\":{},\"pk\":true,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":1,\"superColumn\":false,\"tableId\":16,\"updateBy\":\"\",\"updateTime\":\"2023-01-06 22:14:48\",\"usableColumn\":false},{\"capJavaField\":\"HotelName\",\"columnComment\":\"酒店名\",\"columnId\":105,\"columnName\":\"hotel_name\",\"columnType\":\"varchar(20)\",\"createBy\":\"王一\",\"createTime\":\"2023-01-06 22:13:59\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"hotelName\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"LIKE\",\"required\":true,\"sort\":2,\"superColumn\":false,\"tableId\":16,\"updateBy\":\"\",\"updateTime\":\"2023-01-06 22:14:48\",\"usableColumn\":false},{\"capJavaField\":\"Remark\",\"columnComment\":\"备注\",\"columnId\":106,\"columnName\":\"remark\",\"columnType\":\"varchar(50)\",\"createBy\":\"王一\",\"createTime\":\"2023-01-06 22:13:59\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"javaField\":\"remark\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":3,\"superColumn\":true,\"tableId\":16,\"updateBy\":\"\",\"updateTime\":\"2023-01-06 22:14:48\",\"usableColumn\":true},{\"capJavaField\":\"HotelNumber\",\"columnComment\":\"酒店编号\",\"columnId\":107,\"columnName\":\"hotel_number\",\"columnType\":\"varchar(10)\",\"createBy\":\"王一\",\"createTime\":\"2023-01-06 22:13:59\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\"', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-06 22:30:31');
+INSERT INTO `sys_oper_log` VALUES (476, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, '王一', NULL, '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{}', NULL, 0, NULL, '2023-01-06 22:30:33');
+INSERT INTO `sys_oper_log` VALUES (477, '酒店列表', 1, 'com.ruoyi.business.controller.BaseHotelController.add()', 'POST', 1, '王一', NULL, '/business/hotel', '127.0.0.1', '内网IP', '{\"hotelName\":\"清历酒店\",\"params\":{}}', NULL, 1, '\r\n### Error updating database.  Cause: java.sql.SQLException: Field \'hotel_number\' doesn\'t have a default value\r\n### The error may exist in file [D:\\ruoyi\\Hotel-Staff-Module\\staff-business\\target\\classes\\mapper\\business\\BaseHotelMapper.xml]\r\n### The error may involve com.ruoyi.business.mapper.BaseHotelMapper.insertBaseHotel-Inline\r\n### The error occurred while setting parameters\r\n### SQL: insert into base_hotel          ( hotel_name )           values ( ? )\r\n### Cause: java.sql.SQLException: Field \'hotel_number\' doesn\'t have a default value\n; Field \'hotel_number\' doesn\'t have a default value; nested exception is java.sql.SQLException: Field \'hotel_number\' doesn\'t have a default value', '2023-01-07 12:28:27');
+INSERT INTO `sys_oper_log` VALUES (478, '代码生成', 6, 'com.ruoyi.generator.controller.GenController.importTableSave()', 'POST', 1, '王一', NULL, '/tool/gen/importTable', '127.0.0.1', '内网IP', '\"sys_region\"', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 13:23:54');
+INSERT INTO `sys_oper_log` VALUES (479, '代码生成', 2, 'com.ruoyi.generator.controller.GenController.editSave()', 'PUT', 1, '王一', NULL, '/tool/gen', '127.0.0.1', '内网IP', '{\"businessName\":\"region\",\"className\":\"SysRegion\",\"columns\":[{\"capJavaField\":\"Id\",\"columnComment\":\"区域ID\",\"columnId\":108,\"columnName\":\"id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 13:23:54\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isPk\":\"1\",\"javaField\":\"id\",\"javaType\":\"Long\",\"list\":false,\"params\":{},\"pk\":true,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":1,\"superColumn\":false,\"tableId\":17,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"Name\",\"columnComment\":\"区域名\",\"columnId\":109,\"columnName\":\"name\",\"columnType\":\"varchar(50)\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 13:23:54\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"name\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"LIKE\",\"required\":true,\"sort\":2,\"superColumn\":false,\"tableId\":17,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"ParentId\",\"columnComment\":\"上级ID\",\"columnId\":110,\"columnName\":\"parent_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 13:23:54\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"parentId\",\"javaType\":\"Long\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"EQ\",\"required\":true,\"sort\":3,\"superColumn\":true,\"tableId\":17,\"updateBy\":\"\",\"usableColumn\":true}],\"crud\":true,\"functionAuthor\":\"ruoyi\",\"functionName\":\"区域列表\",\"genPath\":\"/\",\"genType\":\"0\",\"moduleName\":\"business\",\"options\":\"{}\",\"packageName\":\"com.ruoyi.business\",\"params\":{},\"sub\":false,\"tableComment\":\"区域表\",\"tableId\":17,\"tableName\":\"sys_region\",\"tplCategory\":\"crud\",\"tree\":false}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 13:24:38');
+INSERT INTO `sys_oper_log` VALUES (480, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, '王一', NULL, '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{}', NULL, 0, NULL, '2023-01-07 13:25:10');
+INSERT INTO `sys_oper_log` VALUES (481, '酒店列表', 2, 'com.ruoyi.business.controller.BaseHotelController.edit()', 'PUT', 1, '王一', NULL, '/business/hotel', '127.0.0.1', '内网IP', '{\"area\":\"滕州市\",\"city\":\"枣庄市\",\"hotelId\":1,\"hotelName\":\"德优酒店\",\"hotelNumber\":\"3704810001\",\"params\":{},\"province\":\"山东省\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 14:07:03');
+INSERT INTO `sys_oper_log` VALUES (482, '酒店列表', 2, 'com.ruoyi.business.controller.BaseHotelController.edit()', 'PUT', 1, '王一', NULL, '/business/hotel', '127.0.0.1', '内网IP', '{\"area\":\"滕州市\",\"city\":\"枣庄市\",\"hotelId\":1,\"hotelName\":\"德优酒店\",\"hotelNumber\":\"3706130001\",\"params\":{},\"province\":\"山东省\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 14:14:12');
+INSERT INTO `sys_oper_log` VALUES (483, '酒店列表', 1, 'com.ruoyi.business.controller.BaseHotelController.add()', 'POST', 1, '王一', NULL, '/business/hotel', '127.0.0.1', '内网IP', '{\"hotelId\":2,\"hotelName\":\"万达酒店\",\"hotelNumber\":\"3704810002\",\"params\":{}}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 14:23:42');
+INSERT INTO `sys_oper_log` VALUES (484, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"测试\",\"params\":{},\"positionId\":7,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":1,\"departmentName\":\"1酒店1部门\",\"hotelId\":1,\"params\":{}}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 14:35:37');
+INSERT INTO `sys_oper_log` VALUES (485, '员工信息', 1, 'com.ruoyi.business.controller.BaseStaffController.add()', 'POST', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"\",\"params\":{},\"positionId\":7,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":1,\"hotelId\":1,\"params\":{},\"staffId\":15,\"staffName\":\"王雨\",\"staffPassword\":\"aaaaaa\",\"staffPhone\":\"13153328989\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 14:36:10');
+INSERT INTO `sys_oper_log` VALUES (486, '职位信息', 2, 'com.ruoyi.business.controller.BasePositionController.edit()', 'PUT', 1, '刘七', NULL, '/business/position', '127.0.0.1', '内网IP', '{\"hotelId\":2,\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 14:51:45');
+INSERT INTO `sys_oper_log` VALUES (487, '职位信息', 2, 'com.ruoyi.business.controller.BasePositionController.edit()', 'PUT', 1, '刘七', NULL, '/business/position', '127.0.0.1', '内网IP', '{\"hotelId\":2,\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 14:51:49');
+INSERT INTO `sys_oper_log` VALUES (488, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"12345\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 14:52:04');
+INSERT INTO `sys_oper_log` VALUES (489, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"会议销售专员\",\"params\":{},\"positionId\":6,\"positionName\":\"商务销售专员\",\"remark\":\"测试\"}],\"departmentId\":5,\"hotelId\":2,\"params\":{},\"remark\":\"测试\",\"staffId\":14,\"staffName\":\"陈六\",\"staffPassword\":\"123\",\"staffPhone\":\"13678783636\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 14:52:18');
+INSERT INTO `sys_oper_log` VALUES (490, '代码生成', 6, 'com.ruoyi.generator.controller.GenController.importTableSave()', 'POST', 1, '王一', NULL, '/tool/gen/importTable', '127.0.0.1', '内网IP', '\"base_role,base_auth\"', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 15:19:50');
+INSERT INTO `sys_oper_log` VALUES (491, '代码生成', 2, 'com.ruoyi.generator.controller.GenController.editSave()', 'PUT', 1, '王一', NULL, '/tool/gen', '127.0.0.1', '内网IP', '{\"businessName\":\"auth\",\"className\":\"BaseAuth\",\"columns\":[{\"capJavaField\":\"AuthId\",\"columnComment\":\"权限ID\",\"columnId\":111,\"columnName\":\"auth_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 15:19:50\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":true,\"insert\":true,\"isIncrement\":\"1\",\"isInsert\":\"1\",\"isPk\":\"1\",\"javaField\":\"authId\",\"javaType\":\"Long\",\"list\":false,\"params\":{},\"pk\":true,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":1,\"superColumn\":false,\"tableId\":18,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"Url\",\"columnComment\":\"URL\",\"columnId\":112,\"columnName\":\"url\",\"columnType\":\"varchar(255)\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 15:19:50\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"url\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"EQ\",\"required\":true,\"sort\":2,\"superColumn\":false,\"tableId\":18,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"AuthName\",\"columnComment\":\"权限名\",\"columnId\":113,\"columnName\":\"auth_name\",\"columnType\":\"varchar(50)\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 15:19:50\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"authName\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"LIKE\",\"required\":true,\"sort\":3,\"superColumn\":false,\"tableId\":18,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"HotelId\",\"columnComment\":\"酒店ID\",\"columnId\":114,\"columnName\":\"hotel_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 15:19:50\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"hotelId\",\"javaType\":\"Long\",\"list\":tr', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 15:21:26');
+INSERT INTO `sys_oper_log` VALUES (492, '代码生成', 2, 'com.ruoyi.generator.controller.GenController.editSave()', 'PUT', 1, '王一', NULL, '/tool/gen', '127.0.0.1', '内网IP', '{\"businessName\":\"role\",\"className\":\"BaseRole\",\"columns\":[{\"capJavaField\":\"RoleId\",\"columnComment\":\"角色ID\",\"columnId\":115,\"columnName\":\"role_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 15:19:50\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":true,\"insert\":true,\"isIncrement\":\"1\",\"isInsert\":\"1\",\"isPk\":\"1\",\"javaField\":\"roleId\",\"javaType\":\"Long\",\"list\":false,\"params\":{},\"pk\":true,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":1,\"superColumn\":false,\"tableId\":19,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"RoleName\",\"columnComment\":\"角色名\",\"columnId\":116,\"columnName\":\"role_name\",\"columnType\":\"varchar(50)\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 15:19:50\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"roleName\",\"javaType\":\"String\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"LIKE\",\"required\":true,\"sort\":2,\"superColumn\":false,\"tableId\":19,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"HotelId\",\"columnComment\":\"酒店ID\",\"columnId\":117,\"columnName\":\"hotel_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 15:19:50\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"hotelId\",\"javaType\":\"Long\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"EQ\",\"required\":true,\"sort\":3,\"superColumn\":false,\"tableId\":19,\"updateBy\":\"\",\"usableColumn\":false}],\"crud\":true,\"functionAuthor\":\"ruoyi\",\"functionName\":\"角色信息\",\"genPath\":\"/\",\"genType\":\"0\",\"moduleName\":\"business\",\"options\":\"{}\",\"packageName\":\"com.ruoyi.business\",\"params\":{},\"sub\":false,\"subTableFkName\":\"\",\"subTableName\":\"\",\"tableComment\":\"角色表\",\"tableId\":19,\"tableName\":\"base_role\",\"tplCategory\":\"crud\",\"tree\":false}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 15:22:46');
+INSERT INTO `sys_oper_log` VALUES (493, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, '王一', NULL, '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{}', NULL, 0, NULL, '2023-01-07 15:22:49');
+INSERT INTO `sys_oper_log` VALUES (494, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, '王一', NULL, '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{}', NULL, 0, NULL, '2023-01-07 15:25:51');
+INSERT INTO `sys_oper_log` VALUES (495, '权限信息', 1, 'com.ruoyi.business.controller.BaseAuthController.add()', 'POST', 1, '刘七', NULL, '/business/auth', '127.0.0.1', '内网IP', '{\"authName\":\"百度\",\"params\":{},\"url\":\"www.baidu.com\"}', NULL, 1, '\r\n### Error updating database.  Cause: java.sql.SQLException: Field \'hotel_id\' doesn\'t have a default value\r\n### The error may exist in file [D:\\ruoyi\\Hotel-Staff-Module\\staff-business\\target\\classes\\mapper\\business\\BaseAuthMapper.xml]\r\n### The error may involve com.ruoyi.business.mapper.BaseAuthMapper.insertBaseAuth-Inline\r\n### The error occurred while setting parameters\r\n### SQL: insert into base_auth          ( url,             auth_name )           values ( ?,             ? )\r\n### Cause: java.sql.SQLException: Field \'hotel_id\' doesn\'t have a default value\n; Field \'hotel_id\' doesn\'t have a default value; nested exception is java.sql.SQLException: Field \'hotel_id\' doesn\'t have a default value', '2023-01-07 15:41:59');
+INSERT INTO `sys_oper_log` VALUES (496, '权限信息', 1, 'com.ruoyi.business.controller.BaseAuthController.add()', 'POST', 1, '刘七', NULL, '/business/auth', '127.0.0.1', '内网IP', '{\"authId\":1,\"authName\":\"百度\",\"hotelId\":2,\"params\":{},\"url\":\"www.baidu.com\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 15:43:34');
+INSERT INTO `sys_oper_log` VALUES (497, '权限信息', 2, 'com.ruoyi.business.controller.BaseAuthController.edit()', 'PUT', 1, '刘七', NULL, '/business/auth', '127.0.0.1', '内网IP', '{\"authId\":1,\"authName\":\"百度2\",\"hotelId\":2,\"params\":{},\"url\":\"www.baidu.com\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 15:43:55');
+INSERT INTO `sys_oper_log` VALUES (498, '权限信息', 2, 'com.ruoyi.business.controller.BaseAuthController.edit()', 'PUT', 1, '刘七', NULL, '/business/auth', '127.0.0.1', '内网IP', '{\"authId\":1,\"authName\":\"百度\",\"hotelId\":2,\"params\":{},\"url\":\"www.baidu.com\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 15:44:00');
+INSERT INTO `sys_oper_log` VALUES (499, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"hotelId\":2,\"params\":{},\"roleId\":1,\"roleName\":\"普通员工2\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 15:44:25');
+INSERT INTO `sys_oper_log` VALUES (500, '角色信息', 1, 'com.ruoyi.business.controller.BaseRoleController.add()', 'POST', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"hotelId\":2,\"params\":{},\"roleId\":2,\"roleName\":\"特殊员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 15:44:34');
+INSERT INTO `sys_oper_log` VALUES (501, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"hotelId\":2,\"params\":{},\"roleId\":1,\"roleName\":\"普通员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 15:44:38');
+INSERT INTO `sys_oper_log` VALUES (502, '权限信息', 1, 'com.ruoyi.business.controller.BaseAuthController.add()', 'POST', 1, '刘七', NULL, '/business/auth', '127.0.0.1', '内网IP', '{\"authId\":2,\"authName\":\"CSDN\",\"hotelId\":2,\"params\":{},\"url\":\"www.csdn.com\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 18:49:39');
+INSERT INTO `sys_oper_log` VALUES (503, '角色信息', 1, 'com.ruoyi.business.controller.BaseRoleController.add()', 'POST', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"hotelId\":2,\"params\":{},\"roleId\":3,\"roleName\":\"d\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 18:50:14');
+INSERT INTO `sys_oper_log` VALUES (504, '角色信息', 3, 'com.ruoyi.business.controller.BaseRoleController.remove()', 'DELETE', 1, '刘七', NULL, '/business/role/3', '127.0.0.1', '内网IP', '{roleIds=3}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 18:50:20');
+INSERT INTO `sys_oper_log` VALUES (505, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"hotelId\":2,\"params\":{},\"roleId\":1,\"roleName\":\"普通员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 19:05:47');
+INSERT INTO `sys_oper_log` VALUES (506, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"hotelId\":2,\"params\":{},\"roleId\":1,\"roleName\":\"普通员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 19:22:39');
+INSERT INTO `sys_oper_log` VALUES (507, '代码生成', 6, 'com.ruoyi.generator.controller.GenController.importTableSave()', 'POST', 1, '王一', NULL, '/tool/gen/importTable', '127.0.0.1', '内网IP', '\"staff_role_relationships,role_auth_relationships\"', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:31:49');
+INSERT INTO `sys_oper_log` VALUES (508, '代码生成', 2, 'com.ruoyi.generator.controller.GenController.editSave()', 'PUT', 1, '王一', NULL, '/tool/gen', '127.0.0.1', '内网IP', '{\"businessName\":\"relationships\",\"className\":\"RoleAuthRelationships\",\"columns\":[{\"capJavaField\":\"Id\",\"columnComment\":\"ID\",\"columnId\":118,\"columnName\":\"id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 20:31:49\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":true,\"insert\":true,\"isIncrement\":\"1\",\"isInsert\":\"1\",\"isPk\":\"1\",\"javaField\":\"id\",\"javaType\":\"Long\",\"list\":false,\"params\":{},\"pk\":true,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":1,\"superColumn\":false,\"tableId\":20,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"RoleId\",\"columnComment\":\"角色ID\",\"columnId\":119,\"columnName\":\"role_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 20:31:49\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"roleId\",\"javaType\":\"Long\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"EQ\",\"required\":true,\"sort\":2,\"superColumn\":false,\"tableId\":20,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"AuthId\",\"columnComment\":\"权限ID\",\"columnId\":120,\"columnName\":\"auth_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 20:31:49\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"authId\",\"javaType\":\"Long\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"EQ\",\"required\":true,\"sort\":3,\"superColumn\":false,\"tableId\":20,\"updateBy\":\"\",\"usableColumn\":false}],\"crud\":true,\"functionAuthor\":\"ruoyi\",\"functionName\":\"角色权限关联信息\",\"genPath\":\"/\",\"genType\":\"0\",\"moduleName\":\"business\",\"options\":\"{}\",\"packageName\":\"com.ruoyi.business\",\"params\":{},\"sub\":false,\"tableComment\":\"角色权限关联表\",\"tableId\":20,\"tableName\":\"role_auth_relationships\",\"tplCategory\":\"crud\",\"tree\":false}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:32:33');
+INSERT INTO `sys_oper_log` VALUES (509, '代码生成', 2, 'com.ruoyi.generator.controller.GenController.editSave()', 'PUT', 1, '王一', NULL, '/tool/gen', '127.0.0.1', '内网IP', '{\"businessName\":\"relationships\",\"className\":\"StaffRoleRelationships\",\"columns\":[{\"capJavaField\":\"Id\",\"columnComment\":\"ID\",\"columnId\":121,\"columnName\":\"ID\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 20:31:49\",\"dictType\":\"\",\"edit\":false,\"htmlType\":\"input\",\"increment\":true,\"insert\":true,\"isIncrement\":\"1\",\"isInsert\":\"1\",\"isPk\":\"1\",\"javaField\":\"id\",\"javaType\":\"Long\",\"list\":false,\"params\":{},\"pk\":true,\"query\":false,\"queryType\":\"EQ\",\"required\":false,\"sort\":1,\"superColumn\":false,\"tableId\":21,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"StaffId\",\"columnComment\":\"员工ID\",\"columnId\":122,\"columnName\":\"staff_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 20:31:49\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"staffId\",\"javaType\":\"Long\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"EQ\",\"required\":true,\"sort\":2,\"superColumn\":false,\"tableId\":21,\"updateBy\":\"\",\"usableColumn\":false},{\"capJavaField\":\"RoleId\",\"columnComment\":\"角色ID\",\"columnId\":123,\"columnName\":\"role_id\",\"columnType\":\"int\",\"createBy\":\"王一\",\"createTime\":\"2023-01-07 20:31:49\",\"dictType\":\"\",\"edit\":true,\"htmlType\":\"input\",\"increment\":false,\"insert\":true,\"isEdit\":\"1\",\"isIncrement\":\"0\",\"isInsert\":\"1\",\"isList\":\"1\",\"isPk\":\"0\",\"isQuery\":\"1\",\"isRequired\":\"1\",\"javaField\":\"roleId\",\"javaType\":\"Long\",\"list\":true,\"params\":{},\"pk\":false,\"query\":true,\"queryType\":\"EQ\",\"required\":true,\"sort\":3,\"superColumn\":false,\"tableId\":21,\"updateBy\":\"\",\"usableColumn\":false}],\"crud\":true,\"functionAuthor\":\"ruoyi\",\"functionName\":\"员工角色关联信息\",\"genPath\":\"/\",\"genType\":\"0\",\"moduleName\":\"business\",\"options\":\"{}\",\"packageName\":\"com.ruoyi.business\",\"params\":{},\"sub\":false,\"tableComment\":\"员工角色关联表\",\"tableId\":21,\"tableName\":\"staff_role_relationships\",\"tplCategory\":\"crud\",\"tree\":false}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:33:16');
+INSERT INTO `sys_oper_log` VALUES (510, '代码生成', 8, 'com.ruoyi.generator.controller.GenController.batchGenCode()', 'GET', 1, '王一', NULL, '/tool/gen/batchGenCode', '127.0.0.1', '内网IP', '{}', NULL, 0, NULL, '2023-01-07 20:33:21');
+INSERT INTO `sys_oper_log` VALUES (511, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1,2],\"hotelId\":2,\"params\":{},\"roleId\":1,\"roleName\":\"普通员工\"}', NULL, 1, 'Invalid bound statement (not found): com.ruoyi.business.mapper.BaseRoleMapper.batchRoleAuth', '2023-01-07 20:39:54');
+INSERT INTO `sys_oper_log` VALUES (512, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1,2],\"hotelId\":2,\"params\":{},\"roleId\":2,\"roleName\":\"特殊员工\"}', NULL, 1, 'nested exception is org.apache.ibatis.reflection.ReflectionException: There is no getter for property named \'role_id\' in \'class com.ruoyi.business.domain.RoleAuthRelationships\'', '2023-01-07 20:41:03');
+INSERT INTO `sys_oper_log` VALUES (513, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1,2],\"hotelId\":2,\"params\":{},\"roleId\":1,\"roleName\":\"普通员工\"}', NULL, 1, 'nested exception is org.apache.ibatis.reflection.ReflectionException: There is no getter for property named \'role_id\' in \'class com.ruoyi.business.domain.RoleAuthRelationships\'', '2023-01-07 20:44:59');
+INSERT INTO `sys_oper_log` VALUES (514, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1,2],\"hotelId\":2,\"params\":{},\"roleId\":1,\"roleName\":\"普通员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:47:34');
+INSERT INTO `sys_oper_log` VALUES (515, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1],\"hotelId\":2,\"params\":{},\"roleId\":2,\"roleName\":\"特殊员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:47:39');
+INSERT INTO `sys_oper_log` VALUES (516, '角色信息', 1, 'com.ruoyi.business.controller.BaseRoleController.add()', 'POST', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1,2],\"hotelId\":2,\"params\":{},\"roleId\":4,\"roleName\":\"其他员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:50:42');
+INSERT INTO `sys_oper_log` VALUES (517, '权限信息', 1, 'com.ruoyi.business.controller.BaseAuthController.add()', 'POST', 1, '刘七', NULL, '/business/auth', '127.0.0.1', '内网IP', '{\"authId\":3,\"authName\":\"菜鸟教程\",\"hotelId\":2,\"params\":{},\"url\":\"https://www.runoob.com/\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:51:25');
+INSERT INTO `sys_oper_log` VALUES (518, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1,2,3],\"hotelId\":2,\"params\":{},\"roleId\":4,\"roleName\":\"其他员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:51:47');
+INSERT INTO `sys_oper_log` VALUES (519, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1,2,3],\"hotelId\":2,\"params\":{},\"roleId\":2,\"roleName\":\"特殊员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:51:52');
+INSERT INTO `sys_oper_log` VALUES (520, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1],\"hotelId\":2,\"params\":{},\"roleId\":1,\"roleName\":\"普通员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:51:56');
+INSERT INTO `sys_oper_log` VALUES (521, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1,2],\"hotelId\":2,\"params\":{},\"roleId\":2,\"roleName\":\"特殊员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:52:00');
+INSERT INTO `sys_oper_log` VALUES (522, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1,2],\"hotelId\":2,\"params\":{},\"roleId\":4,\"roleName\":\"其他员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:52:04');
+INSERT INTO `sys_oper_log` VALUES (523, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1,2,3],\"hotelId\":2,\"params\":{},\"roleId\":4,\"roleName\":\"其他员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 20:52:07');
+INSERT INTO `sys_oper_log` VALUES (524, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1,2],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"12345\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 21:43:28');
+INSERT INTO `sys_oper_log` VALUES (525, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"公关部经理\",\"params\":{},\"positionId\":2,\"positionName\":\"公关部经理\",\"remark\":\"测试\"},{\"functionValue\":\"宣传专员\",\"params\":{},\"positionId\":4,\"positionName\":\"宣传专员\",\"remark\":\"测试\"},{\"functionValue\":\"设计美工\",\"params\":{},\"positionId\":5,\"positionName\":\"设计美工\",\"remark\":\"测试\"}],\"departmentId\":4,\"hotelId\":2,\"params\":{},\"remark\":\"测试-公安部-公安部经理\",\"roles\":[4],\"staffId\":12,\"staffName\":\"李四\",\"staffPassword\":\"123477\",\"staffPhone\":\"13590907872\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 21:43:38');
+INSERT INTO `sys_oper_log` VALUES (526, '员工信息', 1, 'com.ruoyi.business.controller.BaseStaffController.add()', 'POST', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"roles\":[1,2],\"staffId\":16,\"staffName\":\"权限测试\",\"staffPassword\":\"qqqqq\",\"staffPhone\":\"13221212323\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 21:44:03');
+INSERT INTO `sys_oper_log` VALUES (527, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"会议销售专员\",\"params\":{},\"positionId\":6,\"positionName\":\"商务销售专员\",\"remark\":\"测试\"}],\"departmentId\":5,\"hotelId\":2,\"params\":{},\"remark\":\"测试\",\"roles\":[2,4],\"staffId\":14,\"staffName\":\"陈六\",\"staffPassword\":\"123\",\"staffPhone\":\"13678783636\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 21:45:18');
+INSERT INTO `sys_oper_log` VALUES (528, '用户管理', 1, 'com.ruoyi.web.controller.system.SysUserController.add()', 'POST', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"params\":{},\"phonenumber\":\"13123231234\",\"postIds\":[],\"roleIds\":[],\"status\":\"0\",\"superAdministrator\":1,\"userName\":\"王一\"}', '{\"msg\":\"新增用户\'王一\'失败，登录账号已存在\",\"code\":500}', 0, NULL, '2023-01-07 21:55:54');
+INSERT INTO `sys_oper_log` VALUES (529, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"children\":[],\"deptId\":2,\"params\":{}},\"deptId\":2,\"email\":\"ry@163.com\",\"loginDate\":\"2023-01-07 22:27:19\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"测试-超级管理员\\n\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 22:58:16');
+INSERT INTO `sys_oper_log` VALUES (530, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"children\":[],\"deptId\":2,\"params\":{}},\"deptId\":2,\"email\":\"ry@163.com\",\"loginDate\":\"2023-01-07 22:27:19\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"测试-超级管理员\\n\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":1,\"updateBy\":\"王一\",\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 22:58:21');
+INSERT INTO `sys_oper_log` VALUES (531, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"1酒店管理员\",\"createTime\":\"2022-11-17 16:25:51\",\"delFlag\":\"0\",\"dept\":{\"children\":[],\"deptId\":2,\"params\":{}},\"deptId\":2,\"email\":\"\",\"hotelId\":1,\"loginDate\":\"2023-01-07 20:39:44\",\"loginIp\":\"127.0.0.1\",\"params\":{},\"phonenumber\":\"13578782422\",\"postIds\":[],\"remark\":\"测试-2酒店管理员\",\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"万达酒店\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":106,\"userName\":\"刘七\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 23:06:14');
+INSERT INTO `sys_oper_log` VALUES (532, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"1酒店管理员\",\"createTime\":\"2022-11-17 16:25:51\",\"delFlag\":\"0\",\"dept\":{\"children\":[],\"deptId\":2,\"params\":{}},\"deptId\":2,\"email\":\"\",\"hotelId\":2,\"loginDate\":\"2023-01-07 20:39:44\",\"loginIp\":\"127.0.0.1\",\"params\":{},\"phonenumber\":\"13578782422\",\"postIds\":[],\"remark\":\"测试-2酒店管理员\",\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"德优酒店\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":106,\"userName\":\"刘七\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 23:06:18');
+INSERT INTO `sys_oper_log` VALUES (533, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"children\":[],\"deptId\":2,\"params\":{}},\"deptId\":2,\"email\":\"ry@163.com\",\"loginDate\":\"2023-01-07 22:27:19\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":1,\"updateBy\":\"王一\",\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 23:06:38');
+INSERT INTO `sys_oper_log` VALUES (534, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"avatar\":\"\",\"createBy\":\"1酒店管理员\",\"createTime\":\"2022-11-17 16:25:51\",\"delFlag\":\"0\",\"dept\":{\"children\":[],\"deptId\":2,\"params\":{}},\"deptId\":2,\"email\":\"\",\"hotelId\":2,\"loginDate\":\"2023-01-07 20:39:44\",\"loginIp\":\"127.0.0.1\",\"params\":{},\"phonenumber\":\"13578782422\",\"postIds\":[],\"remark\":\"\",\"roleIds\":[2],\"roles\":[{\"admin\":false,\"dataScope\":\"2\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":2,\"roleKey\":\"common\",\"roleName\":\"普通角色\",\"roleSort\":\"2\",\"status\":\"万达酒店\"}],\"sex\":\"0\",\"status\":\"0\",\"superAdministrator\":0,\"updateBy\":\"王一\",\"userId\":106,\"userName\":\"刘七\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 23:06:42');
+INSERT INTO `sys_oper_log` VALUES (535, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"children\":[],\"deptId\":2,\"params\":{}},\"deptId\":2,\"email\":\"ry@163.com\",\"loginDate\":\"2023-01-07 22:27:19\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":0,\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"新增用户\'王一\'失败，未选择酒店\",\"code\":500}', 0, NULL, '2023-01-07 23:09:54');
+INSERT INTO `sys_oper_log` VALUES (536, '用户管理', 1, 'com.ruoyi.web.controller.system.SysUserController.add()', 'POST', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"params\":{},\"phonenumber\":\"13212323232\",\"postIds\":[],\"remark\":\"SADASD\",\"roleIds\":[],\"status\":\"0\",\"superAdministrator\":0,\"userName\":\"sd\"}', '{\"msg\":\"新增用户\'sd\'失败，未选择酒店\",\"code\":500}', 0, NULL, '2023-01-07 23:10:15');
+INSERT INTO `sys_oper_log` VALUES (537, '用户管理', 1, 'com.ruoyi.web.controller.system.SysUserController.add()', 'POST', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"params\":{},\"phonenumber\":\"13578782422\",\"postIds\":[],\"roleIds\":[],\"status\":\"0\",\"superAdministrator\":1,\"userName\":\"ssss\"}', '{\"msg\":\"新增用户\'ssss\'失败，手机号码已存在\",\"code\":500}', 0, NULL, '2023-01-07 23:18:53');
+INSERT INTO `sys_oper_log` VALUES (538, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"children\":[],\"deptId\":2,\"params\":{}},\"deptId\":2,\"email\":\"ry@163.com\",\"loginDate\":\"2023-01-07 22:27:19\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":1,\"updateBy\":\"王一\",\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 23:19:26');
+INSERT INTO `sys_oper_log` VALUES (539, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"children\":[],\"deptId\":2,\"params\":{}},\"deptId\":2,\"email\":\"ry@163.com\",\"loginDate\":\"2023-01-07 22:27:19\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":1,\"updateBy\":\"王一\",\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-07 23:19:43');
+INSERT INTO `sys_oper_log` VALUES (540, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"children\":[],\"deptId\":2,\"params\":{}},\"deptId\":2,\"email\":\"ry@163.com\",\"loginDate\":\"2023-01-07 22:27:19\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"13578782422\",\"postIds\":[1],\"remark\":\"\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":1,\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"修改用户\'王一\'失败，手机号码已存在\",\"code\":500}', 0, NULL, '2023-01-07 23:20:37');
+INSERT INTO `sys_oper_log` VALUES (541, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"children\":[],\"deptId\":2,\"params\":{}},\"deptId\":2,\"email\":\"ry@163.com\",\"loginDate\":\"2023-01-07 22:27:19\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":0,\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"修改用户\'王一\'失败，未选择酒店\",\"code\":500}', 0, NULL, '2023-01-07 23:20:46');
+INSERT INTO `sys_oper_log` VALUES (542, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1,2],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"12345333\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"修改用户\'张三\'失败，手机号码已存在\",\"code\":500}', 0, NULL, '2023-01-08 12:59:37');
+INSERT INTO `sys_oper_log` VALUES (543, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1,2],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"12345333\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"修改用户\'张三\'失败，手机号码已存在\",\"code\":500}', 0, NULL, '2023-01-08 12:59:42');
+INSERT INTO `sys_oper_log` VALUES (544, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1,2],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"12345\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:05:29');
+INSERT INTO `sys_oper_log` VALUES (545, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1,2],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"12345333\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:05:40');
+INSERT INTO `sys_oper_log` VALUES (546, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"12345\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:06:06');
+INSERT INTO `sys_oper_log` VALUES (547, '员工信息', 1, 'com.ruoyi.business.controller.BaseStaffController.add()', 'POST', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"roles\":[1,2],\"staffName\":\"asad\",\"staffPhone\":\"13223232114\"}', NULL, 1, 'rawPassword cannot be null', '2023-01-08 13:06:40');
+INSERT INTO `sys_oper_log` VALUES (548, '员工信息', 1, 'com.ruoyi.business.controller.BaseStaffController.add()', 'POST', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"roles\":[1],\"staffId\":17,\"staffName\":\"sadasd\",\"staffPassword\":\"$2a$10$CgkWcxoZNkpkf3isUdybZuz20ePMDZnrPBa.CXBRdca8LdCVkgn9S\",\"staffPhone\":\"13543432132\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:09:16');
+INSERT INTO `sys_oper_log` VALUES (549, '员工信息', 3, 'com.ruoyi.business.controller.BaseStaffController.remove()', 'DELETE', 1, '刘七', NULL, '/business/staff/17', '127.0.0.1', '内网IP', '{staffIds=17}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:14:25');
+INSERT INTO `sys_oper_log` VALUES (550, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:21:57');
+INSERT INTO `sys_oper_log` VALUES (551, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:22:47');
+INSERT INTO `sys_oper_log` VALUES (552, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"公关部经理\",\"params\":{},\"positionId\":2,\"positionName\":\"公关部经理\",\"remark\":\"测试\"},{\"functionValue\":\"宣传专员\",\"params\":{},\"positionId\":4,\"positionName\":\"宣传专员\",\"remark\":\"测试\"},{\"functionValue\":\"设计美工\",\"params\":{},\"positionId\":5,\"positionName\":\"设计美工\",\"remark\":\"测试\"},{\"functionValue\":\"ss\",\"params\":{},\"positionId\":1,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":4,\"departmentName\":\"公关部\",\"hotelId\":2,\"params\":{},\"superiorId\":2}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:23:02');
+INSERT INTO `sys_oper_log` VALUES (553, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:29:29');
+INSERT INTO `sys_oper_log` VALUES (554, '员工信息', 1, 'com.ruoyi.business.controller.BaseStaffController.add()', 'POST', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"\",\"params\":{},\"positionId\":1,\"positionName\":\"\",\"remark\":\"\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":4,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":4,\"hotelId\":2,\"params\":{},\"roles\":[1,2],\"staffId\":18,\"staffName\":\"王海军\",\"staffPassword\":\"$2a$10$HL9WN9GESU9ep9Isap90murgQr6zHguXw84Yo2GGA/nc/nFqUprc2\",\"staffPhone\":\"13567677676\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:30:03');
+INSERT INTO `sys_oper_log` VALUES (555, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"ss\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"\"},{\"functionValue\":\"宣传专员\",\"params\":{},\"positionId\":4,\"positionName\":\"宣传专员\",\"remark\":\"测试\"}],\"departmentId\":4,\"hotelId\":2,\"params\":{},\"roles\":[1,2,4],\"staffId\":18,\"staffName\":\"王海军\",\"staffPassword\":\"$2a$10$HL9WN9GESU9ep9Isap90murgQr6zHguXw84Yo2GGA/nc/nFqUprc2\",\"staffPhone\":\"13567677676\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:30:11');
+INSERT INTO `sys_oper_log` VALUES (556, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"ss\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"\"},{\"functionValue\":\"宣传专员\",\"params\":{},\"positionId\":4,\"positionName\":\"宣传专员\",\"remark\":\"测试\"}],\"departmentId\":4,\"hotelId\":2,\"params\":{},\"roles\":[],\"staffId\":18,\"staffName\":\"王海军\",\"staffPassword\":\"$2a$10$HL9WN9GESU9ep9Isap90murgQr6zHguXw84Yo2GGA/nc/nFqUprc2\",\"staffPhone\":\"13567677676\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:31:20');
+INSERT INTO `sys_oper_log` VALUES (557, '员工信息', 3, 'com.ruoyi.business.controller.BaseStaffController.remove()', 'DELETE', 1, '刘七', NULL, '/business/staff/16', '127.0.0.1', '内网IP', '{staffIds=16}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 13:57:09');
+INSERT INTO `sys_oper_log` VALUES (558, '权限信息', 2, 'com.ruoyi.business.controller.BaseAuthController.edit()', 'PUT', 1, '刘七', NULL, '/business/auth', '127.0.0.1', '内网IP', '{\"authId\":1,\"authName\":\"订购产品\",\"hotelId\":2,\"params\":{},\"url\":\"www.baidu.com\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:21:07');
+INSERT INTO `sys_oper_log` VALUES (559, '权限信息', 2, 'com.ruoyi.business.controller.BaseAuthController.edit()', 'PUT', 1, '刘七', NULL, '/business/auth', '127.0.0.1', '内网IP', '{\"authId\":2,\"authName\":\"签订合同\",\"hotelId\":2,\"params\":{},\"url\":\"www.csdn.com\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:21:14');
+INSERT INTO `sys_oper_log` VALUES (560, '权限信息', 2, 'com.ruoyi.business.controller.BaseAuthController.edit()', 'PUT', 1, '刘七', NULL, '/business/auth', '127.0.0.1', '内网IP', '{\"authId\":3,\"authName\":\"订购信息\",\"hotelId\":2,\"params\":{},\"url\":\"https://www.runoob.com/\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:21:45');
+INSERT INTO `sys_oper_log` VALUES (561, '权限信息', 2, 'com.ruoyi.business.controller.BaseAuthController.edit()', 'PUT', 1, '刘七', NULL, '/business/auth', '127.0.0.1', '内网IP', '{\"authId\":3,\"authName\":\"订购信息\",\"hotelId\":2,\"params\":{},\"url\":\"www.runoob.com\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:22:02');
+INSERT INTO `sys_oper_log` VALUES (562, '角色信息', 3, 'com.ruoyi.business.controller.BaseRoleController.remove()', 'DELETE', 1, '刘七', NULL, '/business/role/4', '127.0.0.1', '内网IP', '{roleIds=4}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:22:11');
+INSERT INTO `sys_oper_log` VALUES (563, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[],\"hotelId\":2,\"params\":{},\"roleId\":1,\"roleName\":\"普通员工\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:22:22');
+INSERT INTO `sys_oper_log` VALUES (564, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[2],\"hotelId\":2,\"params\":{},\"roleId\":1,\"roleName\":\"合同专员\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:23:59');
+INSERT INTO `sys_oper_log` VALUES (565, '角色信息', 2, 'com.ruoyi.business.controller.BaseRoleController.edit()', 'PUT', 1, '刘七', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[1,3],\"hotelId\":2,\"params\":{},\"roleId\":2,\"roleName\":\"产品专员\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:24:26');
+INSERT INTO `sys_oper_log` VALUES (566, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":7,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":2,\"departmentName\":\"营销部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:26:31');
+INSERT INTO `sys_oper_log` VALUES (567, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":1,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:26:44');
+INSERT INTO `sys_oper_log` VALUES (568, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":7,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:26:51');
+INSERT INTO `sys_oper_log` VALUES (569, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"params\":{},\"positionId\":1,\"positionName\":\"会议销售专员\",\"remark\":\"\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:27:05');
+INSERT INTO `sys_oper_log` VALUES (570, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":1,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:28:27');
+INSERT INTO `sys_oper_log` VALUES (571, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":1,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:29:17');
+INSERT INTO `sys_oper_log` VALUES (572, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":7,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:29:23');
+INSERT INTO `sys_oper_log` VALUES (573, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:29:27');
+INSERT INTO `sys_oper_log` VALUES (574, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":1,\"positionName\":\"\",\"remark\":\"\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":7,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:32:04');
+INSERT INTO `sys_oper_log` VALUES (575, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"params\":{},\"positionId\":7,\"positionName\":\"会议销售专员\",\"remark\":\"\"}],\"departmentId\":2,\"departmentName\":\"营销部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:32:18');
+INSERT INTO `sys_oper_log` VALUES (576, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"departmentName\":\"营销部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:32:23');
+INSERT INTO `sys_oper_log` VALUES (577, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"ws\",\"params\":{},\"positionId\":7,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":2,\"departmentName\":\"营销部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:32:34');
+INSERT INTO `sys_oper_log` VALUES (578, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:32:43');
+INSERT INTO `sys_oper_log` VALUES (579, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":7,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:32:49');
+INSERT INTO `sys_oper_log` VALUES (580, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"departmentName\":\"营销部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:32:55');
+INSERT INTO `sys_oper_log` VALUES (581, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:33:01');
+INSERT INTO `sys_oper_log` VALUES (582, '员工信息', 3, 'com.ruoyi.business.controller.BaseStaffController.remove()', 'DELETE', 1, '刘七', NULL, '/business/staff/18', '127.0.0.1', '内网IP', '{staffIds=18}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:33:06');
+INSERT INTO `sys_oper_log` VALUES (583, '员工信息', 3, 'com.ruoyi.business.controller.BaseStaffController.remove()', 'DELETE', 1, '刘七', NULL, '/business/staff/14', '127.0.0.1', '内网IP', '{staffIds=14}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:33:11');
+INSERT INTO `sys_oper_log` VALUES (584, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"公关部经理\",\"params\":{},\"positionId\":2,\"positionName\":\"公关部经理\",\"remark\":\"测试\"},{\"functionValue\":\"宣传专员\",\"params\":{},\"positionId\":4,\"positionName\":\"宣传专员\",\"remark\":\"测试\"},{\"functionValue\":\"设计美工\",\"params\":{},\"positionId\":5,\"positionName\":\"设计美工\",\"remark\":\"测试\"},{\"functionValue\":\"ss\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"\"}],\"departmentId\":4,\"departmentName\":\"公关部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:34:05');
+INSERT INTO `sys_oper_log` VALUES (585, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"公关部经理\",\"params\":{},\"positionId\":2,\"positionName\":\"公关部经理\",\"remark\":\"测试\"}],\"departmentId\":4,\"departmentName\":\"公关部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:34:20');
+INSERT INTO `sys_oper_log` VALUES (586, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"商务销售专员\",\"params\":{},\"positionId\":3,\"positionName\":\"销售部经理\",\"remark\":\"测试\"},{\"functionValue\":\"会议销售专员\",\"params\":{},\"positionId\":6,\"positionName\":\"商务销售专员\",\"remark\":\"测试\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":7,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":5,\"departmentName\":\"销售部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:34:43');
+INSERT INTO `sys_oper_log` VALUES (587, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:36:53');
+INSERT INTO `sys_oper_log` VALUES (588, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"测试\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:37:02');
+INSERT INTO `sys_oper_log` VALUES (589, '员工信息', 1, 'com.ruoyi.business.controller.BaseStaffController.add()', 'POST', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"\",\"params\":{},\"positionId\":6,\"positionName\":\"\",\"remark\":\"\"},{\"functionValue\":\"\",\"params\":{},\"positionId\":7,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":5,\"hotelId\":2,\"params\":{},\"roles\":[2],\"staffId\":19,\"staffName\":\"赵六\",\"staffPassword\":\"$2a$10$5FtfzSN76cgCNw1OCOrusuiH7e.Z0uA4HN8XDIKPo.uSo/8B7/BQG\",\"staffPhone\":\"13590908987\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:37:49');
+INSERT INTO `sys_oper_log` VALUES (590, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"\",\"params\":{},\"positionId\":3,\"positionName\":\"销售部经理\",\"remark\":\"测试\"},{\"functionValue\":\"商务销售专员\",\"params\":{},\"positionId\":6,\"positionName\":\"商务销售专员\",\"remark\":\"测试\"},{\"functionValue\":\"会议销售专员\",\"params\":{},\"positionId\":7,\"positionName\":\"会议销售专员\",\"remark\":\"\"}],\"departmentId\":5,\"departmentName\":\"销售部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:39:01');
+INSERT INTO `sys_oper_log` VALUES (591, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":3,\"positionName\":\"销售部经理\",\"remark\":\"\"},{\"functionValue\":\"商务销售专员\",\"params\":{},\"positionId\":6,\"positionName\":\"商务销售专员\",\"remark\":\"\"},{\"functionValue\":\"会议销售专员\",\"params\":{},\"positionId\":7,\"positionName\":\"会议销售专员\",\"remark\":\"\"}],\"departmentId\":5,\"departmentName\":\"销售部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:39:14');
+INSERT INTO `sys_oper_log` VALUES (592, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"公关部经理\",\"params\":{},\"positionId\":2,\"positionName\":\"公关部经理\",\"remark\":\"\"}],\"departmentId\":4,\"departmentName\":\"公关部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:39:21');
+INSERT INTO `sys_oper_log` VALUES (593, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"\"}],\"departmentId\":2,\"departmentName\":\"营销部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:39:24');
+INSERT INTO `sys_oper_log` VALUES (594, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '刘七', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"销售部经理\",\"params\":{},\"positionId\":3,\"positionName\":\"销售部经理\",\"remark\":\"\"},{\"functionValue\":\"商务销售专员\",\"params\":{},\"positionId\":6,\"positionName\":\"商务销售专员\",\"remark\":\"\"},{\"functionValue\":\"会议销售专员\",\"params\":{},\"positionId\":7,\"positionName\":\"会议销售专员\",\"remark\":\"\"}],\"departmentId\":5,\"departmentName\":\"销售部\",\"hotelId\":2,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:39:27');
+INSERT INTO `sys_oper_log` VALUES (595, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"商务销售专员\",\"params\":{},\"positionId\":6,\"positionName\":\"商务销售专员\",\"remark\":\"\"},{\"functionValue\":\"会议销售专员\",\"params\":{},\"positionId\":7,\"positionName\":\"会议销售专员\",\"remark\":\"\"}],\"departmentId\":5,\"hotelId\":2,\"params\":{},\"remark\":\"测试-销售部-专员\",\"roles\":[2],\"staffId\":19,\"staffName\":\"赵六\",\"staffPassword\":\"$2a$10$5FtfzSN76cgCNw1OCOrusuiH7e.Z0uA4HN8XDIKPo.uSo/8B7/BQG\",\"staffPhone\":\"13590908987\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:39:47');
+INSERT INTO `sys_oper_log` VALUES (596, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '刘七', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"营销总监\",\"params\":{},\"positionId\":1,\"positionName\":\"营销总监\",\"remark\":\"\"}],\"departmentId\":2,\"hotelId\":2,\"params\":{},\"remark\":\"测试-营销部-营销总监\",\"roles\":[1,2],\"staffId\":10,\"staffName\":\"张三\",\"staffPassword\":\"$2a$10$Nx5jIlqnNTwfFlydd.a7Uux8P9NB6KZwFLVBSjbgxO0UD4ZuEdSfW\",\"staffPhone\":\"17322221111\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:40:05');
+INSERT INTO `sys_oper_log` VALUES (597, '权限信息', 5, 'com.ruoyi.business.controller.BaseAuthController.export()', 'POST', 1, '刘七', NULL, '/business/auth/export', '127.0.0.1', '内网IP', '{\"params\":{}}', NULL, 0, NULL, '2023-01-08 14:41:45');
+INSERT INTO `sys_oper_log` VALUES (598, '角色信息', 5, 'com.ruoyi.business.controller.BaseRoleController.export()', 'POST', 1, '刘七', NULL, '/business/role/export', '127.0.0.1', '内网IP', '{\"params\":{}}', NULL, 0, NULL, '2023-01-08 14:42:04');
+INSERT INTO `sys_oper_log` VALUES (599, '职位信息', 5, 'com.ruoyi.business.controller.BasePositionController.export()', 'POST', 1, '刘七', NULL, '/business/position/export', '127.0.0.1', '内网IP', '{\"params\":{}}', NULL, 0, NULL, '2023-01-08 14:42:27');
+INSERT INTO `sys_oper_log` VALUES (600, '员工信息', 5, 'com.ruoyi.business.controller.BaseStaffController.export()', 'POST', 1, '刘七', NULL, '/business/staff/export', '127.0.0.1', '内网IP', '{\"params\":{}}', NULL, 0, NULL, '2023-01-08 14:42:44');
+INSERT INTO `sys_oper_log` VALUES (601, '员工信息', 5, 'com.ruoyi.business.controller.BaseStaffController.export()', 'POST', 1, '刘七', NULL, '/business/staff/export', '127.0.0.1', '内网IP', '{\"params\":{}}', NULL, 0, NULL, '2023-01-08 14:44:58');
+INSERT INTO `sys_oper_log` VALUES (602, '员工信息', 5, 'com.ruoyi.business.controller.BaseStaffController.export()', 'POST', 1, '刘七', NULL, '/business/staff/export', '127.0.0.1', '内网IP', '{\"hotelId\":2,\"params\":{}}', NULL, 0, NULL, '2023-01-08 14:48:09');
+INSERT INTO `sys_oper_log` VALUES (603, '酒店列表', 5, 'com.ruoyi.business.controller.BaseHotelController.export()', 'POST', 1, '王一', NULL, '/business/hotel/export', '127.0.0.1', '内网IP', '{\"params\":{}}', NULL, 0, NULL, '2023-01-08 14:49:44');
+INSERT INTO `sys_oper_log` VALUES (604, '酒店列表', 1, 'com.ruoyi.business.controller.BaseHotelController.add()', 'POST', 1, '王一', NULL, '/business/hotel', '127.0.0.1', '内网IP', '{\"hotelId\":3,\"hotelName\":\"豪泰酒店\",\"hotelNumber\":\"3701020003\",\"params\":{}}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:52:36');
+INSERT INTO `sys_oper_log` VALUES (605, '酒店列表', 2, 'com.ruoyi.business.controller.BaseHotelController.edit()', 'PUT', 1, '王一', NULL, '/business/hotel', '127.0.0.1', '内网IP', '{\"area\":\"历下区\",\"city\":\"济南市\",\"hotelId\":3,\"hotelName\":\"豪泰酒店\",\"hotelNumber\":\"3701030003\",\"params\":{},\"province\":\"山东省\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:52:58');
+INSERT INTO `sys_oper_log` VALUES (606, '酒店列表', 2, 'com.ruoyi.business.controller.BaseHotelController.edit()', 'PUT', 1, '王一', NULL, '/business/hotel', '127.0.0.1', '内网IP', '{\"area\":\"市中区\",\"city\":\"济南市\",\"hotelId\":3,\"hotelName\":\"豪泰酒店\",\"hotelNumber\":\"3701020003\",\"params\":{},\"province\":\"山东省\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 14:53:03');
+INSERT INTO `sys_oper_log` VALUES (607, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.edit()', 'PUT', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":true,\"avatar\":\"\",\"createBy\":\"admin\",\"createTime\":\"2022-10-18 18:10:30\",\"delFlag\":\"0\",\"dept\":{\"children\":[],\"deptId\":2,\"params\":{}},\"deptId\":2,\"email\":\"ry@163.com\",\"loginDate\":\"2023-01-08 14:49:25\",\"loginIp\":\"127.0.0.1\",\"nickName\":\"若依\",\"params\":{},\"phonenumber\":\"15888888888\",\"postIds\":[1],\"remark\":\"\",\"roleIds\":[1],\"roles\":[{\"admin\":true,\"dataScope\":\"1\",\"deptCheckStrictly\":false,\"flag\":false,\"menuCheckStrictly\":false,\"params\":{},\"roleId\":1,\"roleKey\":\"admin\",\"roleName\":\"超级管理员\",\"roleSort\":\"1\"}],\"sex\":\"1\",\"status\":\"0\",\"superAdministrator\":0,\"userId\":1,\"userName\":\"王一\"}', '{\"msg\":\"修改用户\'王一\'失败，未选择酒店\",\"code\":500}', 0, NULL, '2023-01-08 14:57:21');
+INSERT INTO `sys_oper_log` VALUES (608, '用户管理', 1, 'com.ruoyi.web.controller.system.SysUserController.add()', 'POST', 1, '王一', NULL, '/system/user', '127.0.0.1', '内网IP', '{\"admin\":false,\"createBy\":\"王一\",\"hotelId\":1,\"params\":{},\"phonenumber\":\"13567890987\",\"postIds\":[],\"roleIds\":[2],\"status\":\"0\",\"superAdministrator\":0,\"userId\":110,\"userName\":\"赵文\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:00:45');
+INSERT INTO `sys_oper_log` VALUES (609, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '赵文', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"测试\",\"params\":{},\"positionId\":7,\"positionName\":\"会议销售专员\",\"remark\":\"\"}],\"departmentId\":1,\"departmentName\":\"营销部\",\"hotelId\":1,\"params\":{}}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:01:46');
+INSERT INTO `sys_oper_log` VALUES (610, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '赵文', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[],\"departmentId\":1,\"departmentName\":\"营销部\",\"hotelId\":1,\"params\":{}}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:01:55');
+INSERT INTO `sys_oper_log` VALUES (611, '职位信息', 1, 'com.ruoyi.business.controller.BasePositionController.add()', 'POST', 1, '赵文', NULL, '/business/position', '127.0.0.1', '内网IP', '{\"hotelId\":1,\"params\":{},\"positionId\":8,\"positionName\":\"营销部长\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:02:08');
+INSERT INTO `sys_oper_log` VALUES (612, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '赵文', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[],\"departmentId\":1,\"departmentName\":\"营销部\",\"hotelId\":1,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:02:38');
+INSERT INTO `sys_oper_log` VALUES (613, '部门信息', 2, 'com.ruoyi.business.controller.BaseDepartmentController.edit()', 'PUT', 1, '赵文', NULL, '/business/department', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"\",\"params\":{},\"positionId\":8,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":1,\"departmentName\":\"营销部\",\"hotelId\":1,\"params\":{},\"superiorId\":-1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:04:42');
+INSERT INTO `sys_oper_log` VALUES (614, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '赵文', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"functionValue\":\"\",\"params\":{},\"positionId\":8,\"positionName\":\"\",\"remark\":\"\"}],\"departmentId\":1,\"hotelId\":1,\"params\":{},\"roles\":[],\"staffId\":15,\"staffName\":\"王雨\",\"staffPassword\":\"aaaaaa\",\"staffPhone\":\"13153328989\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:04:58');
+INSERT INTO `sys_oper_log` VALUES (615, '权限信息', 1, 'com.ruoyi.business.controller.BaseAuthController.add()', 'POST', 1, '赵文', NULL, '/business/auth', '127.0.0.1', '内网IP', '{\"authId\":4,\"authName\":\"www.hetong.com\",\"hotelId\":1,\"params\":{},\"url\":\"签订合同\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:05:33');
+INSERT INTO `sys_oper_log` VALUES (616, '权限信息', 2, 'com.ruoyi.business.controller.BaseAuthController.edit()', 'PUT', 1, '赵文', NULL, '/business/auth', '127.0.0.1', '内网IP', '{\"authId\":4,\"authName\":\"签订合同\",\"hotelId\":1,\"params\":{},\"url\":\"www.hetong.com\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:06:01');
+INSERT INTO `sys_oper_log` VALUES (617, '角色信息', 1, 'com.ruoyi.business.controller.BaseRoleController.add()', 'POST', 1, '赵文', NULL, '/business/role', '127.0.0.1', '内网IP', '{\"auths\":[4],\"hotelId\":1,\"params\":{},\"roleId\":5,\"roleName\":\"合同专员\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:06:10');
+INSERT INTO `sys_oper_log` VALUES (618, '员工信息', 2, 'com.ruoyi.business.controller.BaseStaffController.edit()', 'PUT', 1, '赵文', NULL, '/business/staff', '127.0.0.1', '内网IP', '{\"basePositionList\":[{\"params\":{},\"positionId\":8,\"positionName\":\"营销部长\",\"remark\":\"\"}],\"departmentId\":1,\"hotelId\":1,\"params\":{},\"roles\":[5],\"staffId\":15,\"staffName\":\"王雨\",\"staffPassword\":\"aaaaaa\",\"staffPhone\":\"13153328989\"}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:06:17');
+INSERT INTO `sys_oper_log` VALUES (619, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.resetPwd()', 'PUT', 1, '王一', NULL, '/system/user/resetPwd', '127.0.0.1', '内网IP', '{\"admin\":true,\"params\":{},\"updateBy\":\"王一\",\"userId\":1}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:09:59');
+INSERT INTO `sys_oper_log` VALUES (620, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.resetPwd()', 'PUT', 1, '王一', NULL, '/system/user/resetPwd', '127.0.0.1', '内网IP', '{\"admin\":false,\"params\":{},\"updateBy\":\"王一\",\"userId\":106}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:10:05');
+INSERT INTO `sys_oper_log` VALUES (621, '用户管理', 2, 'com.ruoyi.web.controller.system.SysUserController.resetPwd()', 'PUT', 1, '王一', NULL, '/system/user/resetPwd', '127.0.0.1', '内网IP', '{\"admin\":false,\"params\":{},\"updateBy\":\"王一\",\"userId\":110}', '{\"msg\":\"操作成功\",\"code\":200}', 0, NULL, '2023-01-08 15:10:10');
 
 -- ----------------------------
 -- Table structure for sys_post
@@ -2032,8 +2442,8 @@ INSERT INTO `sys_role` VALUES (2, '普通角色', 'common', 2, '2', 1, 1, '0', '
 DROP TABLE IF EXISTS `sys_role_dept`;
 CREATE TABLE `sys_role_dept`  (
   `role_id` bigint(0) NOT NULL COMMENT '角色ID',
-  `dept_id` bigint(0) NOT NULL COMMENT '部门ID',
-  PRIMARY KEY (`role_id`, `dept_id`) USING BTREE
+  `department_id` bigint(0) NOT NULL COMMENT '部门ID',
+  PRIMARY KEY (`role_id`, `department_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '角色和部门关联表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -2058,6 +2468,7 @@ CREATE TABLE `sys_role_menu`  (
 -- ----------------------------
 INSERT INTO `sys_role_menu` VALUES (1, 1);
 INSERT INTO `sys_role_menu` VALUES (1, 100);
+INSERT INTO `sys_role_menu` VALUES (1, 116);
 INSERT INTO `sys_role_menu` VALUES (1, 1000);
 INSERT INTO `sys_role_menu` VALUES (1, 1001);
 INSERT INTO `sys_role_menu` VALUES (1, 1002);
@@ -2065,6 +2476,19 @@ INSERT INTO `sys_role_menu` VALUES (1, 1003);
 INSERT INTO `sys_role_menu` VALUES (1, 1004);
 INSERT INTO `sys_role_menu` VALUES (1, 1005);
 INSERT INTO `sys_role_menu` VALUES (1, 1006);
+INSERT INTO `sys_role_menu` VALUES (1, 1055);
+INSERT INTO `sys_role_menu` VALUES (1, 1056);
+INSERT INTO `sys_role_menu` VALUES (1, 1057);
+INSERT INTO `sys_role_menu` VALUES (1, 1058);
+INSERT INTO `sys_role_menu` VALUES (1, 1059);
+INSERT INTO `sys_role_menu` VALUES (1, 1060);
+INSERT INTO `sys_role_menu` VALUES (1, 2028);
+INSERT INTO `sys_role_menu` VALUES (1, 2029);
+INSERT INTO `sys_role_menu` VALUES (1, 2030);
+INSERT INTO `sys_role_menu` VALUES (1, 2031);
+INSERT INTO `sys_role_menu` VALUES (1, 2032);
+INSERT INTO `sys_role_menu` VALUES (1, 2033);
+INSERT INTO `sys_role_menu` VALUES (1, 2034);
 INSERT INTO `sys_role_menu` VALUES (2, 2000);
 INSERT INTO `sys_role_menu` VALUES (2, 2002);
 INSERT INTO `sys_role_menu` VALUES (2, 2003);
@@ -2084,6 +2508,20 @@ INSERT INTO `sys_role_menu` VALUES (2, 2022);
 INSERT INTO `sys_role_menu` VALUES (2, 2023);
 INSERT INTO `sys_role_menu` VALUES (2, 2024);
 INSERT INTO `sys_role_menu` VALUES (2, 2025);
+INSERT INTO `sys_role_menu` VALUES (2, 2026);
+INSERT INTO `sys_role_menu` VALUES (2, 2027);
+INSERT INTO `sys_role_menu` VALUES (2, 2035);
+INSERT INTO `sys_role_menu` VALUES (2, 2036);
+INSERT INTO `sys_role_menu` VALUES (2, 2037);
+INSERT INTO `sys_role_menu` VALUES (2, 2038);
+INSERT INTO `sys_role_menu` VALUES (2, 2039);
+INSERT INTO `sys_role_menu` VALUES (2, 2040);
+INSERT INTO `sys_role_menu` VALUES (2, 2041);
+INSERT INTO `sys_role_menu` VALUES (2, 2042);
+INSERT INTO `sys_role_menu` VALUES (2, 2043);
+INSERT INTO `sys_role_menu` VALUES (2, 2044);
+INSERT INTO `sys_role_menu` VALUES (2, 2045);
+INSERT INTO `sys_role_menu` VALUES (2, 2046);
 
 -- ----------------------------
 -- Table structure for sys_role_menu_hotel
@@ -2119,7 +2557,7 @@ CREATE TABLE `sys_user`  (
   `user_id` bigint(0) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
   `hotel_id` int(0) NULL DEFAULT NULL COMMENT '酒店ID',
   `super_administrator` int(0) NOT NULL COMMENT '是否为超级管理员',
-  `dept_id` bigint(0) NULL DEFAULT NULL COMMENT '部门ID',
+  `department_id` int(0) NULL DEFAULT NULL COMMENT '部门ID',
   `user_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户账号',
   `nick_name` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '用户昵称',
   `user_type` varchar(2) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '00' COMMENT '用户类型（00系统用户）',
@@ -2137,16 +2575,19 @@ CREATE TABLE `sys_user`  (
   `update_by` varchar(64) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT '' COMMENT '更新者',
   `update_time` datetime(0) NULL DEFAULT NULL COMMENT '更新时间',
   `remark` varchar(500) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 108 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`user_id`) USING BTREE,
+  INDEX `FK_User_Department`(`department_id`) USING BTREE,
+  CONSTRAINT `FK_User_Department` FOREIGN KEY (`department_id`) REFERENCES `base_department` (`department_id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE = InnoDB AUTO_INCREMENT = 110 CHARACTER SET = utf8 COLLATE = utf8_general_ci COMMENT = '用户信息表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO `sys_user` VALUES (1, NULL, 1, 103, '王一', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$DzfQV4zTPznMBm13lYkbcu/VNXhmacek2X6TDYotCWC1LfweUeQZK', '0', '0', '127.0.0.1', '2022-12-09 12:01:26', 'admin', '2022-10-18 18:10:30', '王一', '2022-12-09 12:01:26', '测试-超级管理员\n');
-INSERT INTO `sys_user` VALUES (106, 2, 0, NULL, '刘七', NULL, '00', '', '13578782422', '0', '', '$2a$10$E7H7rTbnx2vpVGIz/wsEqeTgOmplAjWgEPZIoifmjG24LXMmxHUk.', '0', '0', '127.0.0.1', '2022-12-09 12:01:02', '1酒店管理员', '2022-11-17 16:25:51', 'admin', '2022-12-09 12:01:02', '测试-2酒店管理员');
-INSERT INTO `sys_user` VALUES (108, 25, 0, NULL, '王一2', NULL, '00', '', '13222323121', '0', '', '$2a$10$MPrNl16STXsfrfKtjqCCYO4ELJkkfKAAB79u2wZWdNMA6jFIBT.pG', '0', '2', '', NULL, '王一', '2022-12-09 10:56:48', '王一', '2022-12-09 11:27:59', NULL);
-INSERT INTO `sys_user` VALUES (109, NULL, 1, NULL, '测试', NULL, '00', '', '13567673737', '0', '', '$2a$10$RElGEUtru9Pq3IuiKn7YteeYBy1jbokEDXVl.Zf4H8fdP.qdu4nLS', '0', '2', '', NULL, '王一', '2022-12-09 11:31:29', '王一', '2022-12-09 11:31:40', NULL);
+INSERT INTO `sys_user` VALUES (1, NULL, 1, 2, '王一', '若依', '00', 'ry@163.com', '15888888888', '1', '', '$2a$10$b4PRKBnqlhnTHH9F4GYOiuWLkF0L0jqKyd9cyIFmVtJUY8L8vPH6C', '0', '0', '127.0.0.1', '2023-01-08 15:10:23', 'admin', '2022-10-18 18:10:30', '王一', '2023-01-08 15:10:23', '');
+INSERT INTO `sys_user` VALUES (106, 2, 0, 2, '刘七', NULL, '00', '', '13578782422', '0', '', '$2a$10$X/ZZZWxGm8QmEirNxio98ur7FJYy.zNy1Yyw6ktnV9qBcAb4Apk5e', '0', '0', '127.0.0.1', '2023-01-08 15:10:39', '1酒店管理员', '2022-11-17 16:25:51', '王一', '2023-01-08 15:10:39', '');
+INSERT INTO `sys_user` VALUES (108, 25, 0, 2, '王一2', NULL, '00', '', '13222323121', '0', '', '$2a$10$MPrNl16STXsfrfKtjqCCYO4ELJkkfKAAB79u2wZWdNMA6jFIBT.pG', '0', '2', '', NULL, '王一', '2022-12-09 10:56:48', '王一', '2022-12-09 11:27:59', NULL);
+INSERT INTO `sys_user` VALUES (109, NULL, 1, 2, '测试', NULL, '00', '', '13567673737', '0', '', '$2a$10$RElGEUtru9Pq3IuiKn7YteeYBy1jbokEDXVl.Zf4H8fdP.qdu4nLS', '0', '2', '', NULL, '王一', '2022-12-09 11:31:29', '王一', '2022-12-09 11:31:40', NULL);
+INSERT INTO `sys_user` VALUES (110, 1, 0, NULL, '赵文', NULL, '00', '', '13567890987', '0', '', '$2a$10$USTPUKkhP13uhkVDjarF1OSi9/XuqFscib8d1KnWSxFTdhp4L9meq', '0', '0', '127.0.0.1', '2023-01-08 15:11:00', '王一', '2023-01-08 15:00:45', '王一', '2023-01-08 15:10:59', NULL);
 
 -- ----------------------------
 -- Table structure for sys_user_post
@@ -2178,6 +2619,7 @@ CREATE TABLE `sys_user_role`  (
 -- ----------------------------
 INSERT INTO `sys_user_role` VALUES (1, 1);
 INSERT INTO `sys_user_role` VALUES (106, 2);
+INSERT INTO `sys_user_role` VALUES (110, 2);
 
 -- ----------------------------
 -- Triggers structure for table base_department
