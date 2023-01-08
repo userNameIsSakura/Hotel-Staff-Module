@@ -79,6 +79,7 @@ public class BasePositionController extends BaseController
     /**
      * 导出职位信息列表
      */
+/*
     @PreAuthorize("@ss.hasPermi('business:position:export')")
     @Log(title = "职位信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
@@ -88,6 +89,7 @@ public class BasePositionController extends BaseController
         ExcelUtil<BasePosition> util = new ExcelUtil<BasePosition>(BasePosition.class);
         util.exportExcel(response, list, "职位信息数据");
     }
+*/
 
     /**
      * 获取职位信息详细信息

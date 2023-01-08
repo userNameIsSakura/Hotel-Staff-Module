@@ -46,7 +46,7 @@ public class BaseDepartmentController extends BaseController
     /**
      * 导出部门信息列表
      */
-    @PreAuthorize("@ss.hasPermi('business:department:export')")
+/*    @PreAuthorize("@ss.hasPermi('business:department:export')")
     @Log(title = "部门信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, BaseDepartment baseDepartment)
@@ -54,7 +54,7 @@ public class BaseDepartmentController extends BaseController
         List<BaseDepartment> list = baseDepartmentService.selectBaseDepartmentList(baseDepartment);
         ExcelUtil<BaseDepartment> util = new ExcelUtil<BaseDepartment>(BaseDepartment.class);
         util.exportExcel(response, list, "部门信息数据");
-    }
+    }*/
 
     /**
      * 获取部门信息详细信息

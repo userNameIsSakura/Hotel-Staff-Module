@@ -47,6 +47,16 @@ public interface BaseStaffMapper
     public int updateBaseStaff(BaseStaff baseStaff);
 
     /**
+     * 修改员工密码
+     *
+     * @param baseStaff 员工信息
+     * @return 结果
+     */
+    public int updateBaseStaffPassword(BaseStaff baseStaff);
+
+
+
+    /**
      * 删除员工信息
      *
      * @param staffId 员工信息主键
@@ -101,5 +111,5 @@ public interface BaseStaffMapper
      * @param phone 电话
      * @return {@link List}<{@link BaseStaff}>
      */
-    public int checkStaffPhone(String phone);
+    public List<BaseStaff> checkStaffPhone(String phone);
 }

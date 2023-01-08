@@ -29,15 +29,15 @@ public class BaseStaff extends BaseEntity
     private String staffPhone;
 
     /** 酒店ID */
-    @Excel(name = "酒店ID")
     private Long hotelId;
 
     /** 部门ID */
-    @Excel(name = "部门ID")
     private Long departmentId;
     /** 部门名 */
+    @Excel(name = "部门")
     private String departmentName;
     /** 酒店名 */
+    @Excel(name = "酒店")
     private String hotelName;
     /** 角色组 */
     private Long[] roles;
@@ -67,7 +67,6 @@ public class BaseStaff extends BaseEntity
     }
 
     /** 员工密码 */
-    @Excel(name = "员工密码")
     private String staffPassword;
 
     /** 员工职位列表*/

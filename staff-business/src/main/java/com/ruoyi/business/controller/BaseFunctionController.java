@@ -23,7 +23,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 职能信息Controller
- * 
+ *
  * @author ruoyi
  * @date 2022-11-18
  */
@@ -49,7 +49,7 @@ public class BaseFunctionController extends BaseController
     /**
      * 导出职能信息列表
      */
-    @PreAuthorize("@ss.hasPermi('business:function:export')")
+/*    @PreAuthorize("@ss.hasPermi('business:function:export')")
     @Log(title = "职能信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, BaseFunction baseFunction)
@@ -57,7 +57,7 @@ public class BaseFunctionController extends BaseController
         List<BaseFunction> list = baseFunctionService.selectBaseFunctionList(baseFunction);
         ExcelUtil<BaseFunction> util = new ExcelUtil<BaseFunction>(BaseFunction.class);
         util.exportExcel(response, list, "职能信息数据");
-    }
+    }*/
 
     /**
      * 获取职能信息详细信息

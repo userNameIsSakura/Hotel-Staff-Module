@@ -23,7 +23,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 员工职位关联信息Controller
- * 
+ *
  * @author ruoyi
  * @date 2022-11-19
  */
@@ -49,7 +49,7 @@ public class StaffPositionRelationshipsController extends BaseController
     /**
      * 导出员工职位关联信息列表
      */
-    @PreAuthorize("@ss.hasPermi('business:staffPositionRelationships:export')")
+/*    @PreAuthorize("@ss.hasPermi('business:staffPositionRelationships:export')")
     @Log(title = "员工职位关联信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, StaffPositionRelationships staffPositionRelationships)
@@ -57,7 +57,7 @@ public class StaffPositionRelationshipsController extends BaseController
         List<StaffPositionRelationships> list = staffPositionRelationshipsService.selectStaffPositionRelationshipsList(staffPositionRelationships);
         ExcelUtil<StaffPositionRelationships> util = new ExcelUtil<StaffPositionRelationships>(StaffPositionRelationships.class);
         util.exportExcel(response, list, "员工职位关联信息数据");
-    }
+    }*/
 
     /**
      * 获取员工职位关联信息详细信息

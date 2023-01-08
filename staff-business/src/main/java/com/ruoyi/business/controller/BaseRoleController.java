@@ -58,7 +58,7 @@ public class BaseRoleController extends BaseController
     /**
      * 导出角色信息列表
      */
-    @PreAuthorize("@ss.hasPermi('business:role:export')")
+/*    @PreAuthorize("@ss.hasPermi('business:role:export')")
     @Log(title = "角色信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, BaseRole baseRole)
@@ -66,7 +66,7 @@ public class BaseRoleController extends BaseController
         List<BaseRole> list = baseRoleService.selectBaseRoleList(baseRole);
         ExcelUtil<BaseRole> util = new ExcelUtil<BaseRole>(BaseRole.class);
         util.exportExcel(response, list, "角色信息数据");
-    }
+    }*/
 
     /**
      * 获取角色信息详细信息

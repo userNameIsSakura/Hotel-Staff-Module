@@ -164,12 +164,31 @@ public class TokenService
     }
 
     public void refreshStaffToken(StaffUser staffUser) {
+
+        staffUser.setExpireTime(System.currentTimeMillis() + expireTime * MILLIS_MINUTE);
         // 根据uuid将staffUser缓存
         String userKey = getStaffTokenKey(staffUser.getToken());
         redisCache.setCacheObject(userKey, staffUser, expireTime, TimeUnit.MINUTES);
+
     }
 
+    /**
+     * 验证员工令牌有效期，相差不足20分钟，自动刷新缓存
+     *
+     * @param staffUser
+     *
+     * @return 令牌
+     */
+    public void verifyStaffToken(StaffUser staffUser)
+    {
+        long expireTime = staffUser.getExpireTime();
+        long currentTime = System.currentTimeMillis();
 
+        if (expireTime - currentTime <= MILLIS_MINUTE_TEN)
+        {
+            refreshStaffToken(staffUser);
+        }
+    }
 
     /**
      * 验证令牌有效期，相差不足20分钟，自动刷新缓存

@@ -52,7 +52,7 @@ public class BaseAuthController extends BaseController
     /**
      * 导出权限信息列表
      */
-    @PreAuthorize("@ss.hasPermi('business:auth:export')")
+/*    @PreAuthorize("@ss.hasPermi('business:auth:export')")
     @Log(title = "权限信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, BaseAuth baseAuth)
@@ -60,7 +60,7 @@ public class BaseAuthController extends BaseController
         List<BaseAuth> list = baseAuthService.selectBaseAuthList(baseAuth);
         ExcelUtil<BaseAuth> util = new ExcelUtil<BaseAuth>(BaseAuth.class);
         util.exportExcel(response, list, "权限信息数据");
-    }
+    }*/
 
     /**
      * 获取权限信息详细信息

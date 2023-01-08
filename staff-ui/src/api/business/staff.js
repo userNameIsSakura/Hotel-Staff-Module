@@ -36,6 +36,15 @@ export function updateStaff(data) {
   })
 }
 
+// 修改员工密码
+export function updateStaffPassword(data) {
+  return request({
+    url: '/business/staff/reset',
+    method: 'put',
+    data: data
+  })
+}
+
 // 删除员工信息
 export function delStaff(staffId) {
   return request({

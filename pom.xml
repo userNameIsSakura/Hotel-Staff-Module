@@ -10,7 +10,7 @@
 
     <name>staff</name>
     <url>http://www.staff.vip</url>
-    <description>酒店-员工管理系统</description>
+    <description>酒店管理系统</description>
 
     <properties>
         <staff.version>3.8.3</staff.version>

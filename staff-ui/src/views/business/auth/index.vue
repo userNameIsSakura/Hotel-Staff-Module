@@ -56,7 +56,7 @@
           v-hasPermi="['business:auth:remove']"
         >删除</el-button>
       </el-col>
-      <el-col :span="1.5">
+<!--      <el-col :span="1.5">
         <el-button
           type="warning"
           plain
@@ -65,7 +65,7 @@
           @click="handleExport"
           v-hasPermi="['business:auth:export']"
         >导出</el-button>
-      </el-col>
+      </el-col>-->
       <right-toolbar :showSearch.sync="showSearch" @queryTable="getList"></right-toolbar>
     </el-row>
 
@@ -104,12 +104,14 @@
     <!-- 添加或修改权限信息对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item label="URL" prop="url">
-          <el-input v-model="form.url" placeholder="请输入URL" />
-        </el-form-item>
+
         <el-form-item label="权限名" prop="authName">
           <el-input v-model="form.authName" placeholder="请输入权限名" />
         </el-form-item>
+        <el-form-item label="URL" prop="url">
+          <el-input v-model="form.url" placeholder="请输入URL" />
+        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>

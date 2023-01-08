@@ -319,16 +319,17 @@ export default {
     submitForm() {
       var list = [];
       for(var i = 0;i < this.basePositionList.length; i++) {
-        if(this.basePositionList[i].functionValue === "" || this.basePositionList[i].positionId === undefined) {
-          this.$modal.msgError("职位/职能不能为空");
+
+        if(this.basePositionList[i].positionId === undefined) {
+          this.$modal.msgError("职位不能为空");
           return;
         }
         if(list.includes(this.basePositionList[i].positionId)) {
           this.$modal.msgError("职位不能重复");
           return;
         }
-
         list.push(this.basePositionList[i].positionId);
+
       }
 
       this.$refs["form"].validate(valid => {

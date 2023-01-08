@@ -23,7 +23,6 @@ public class BaseRole extends BaseEntity
     private String roleName;
 
     /** 酒店ID */
-    @Excel(name = "酒店ID")
     private Long hotelId;
 
     /** 权限组 */

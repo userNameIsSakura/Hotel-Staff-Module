@@ -10,6 +10,7 @@ import com.ruoyi.business.domain.BaseRole;
 import com.ruoyi.business.domain.StaffRoleRelationships;
 import com.ruoyi.business.mapper.BaseStaffMapper;
 import com.ruoyi.business.service.IBaseRoleService;
+import com.ruoyi.common.core.domain.model.StaffUser;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.framework.web.service.TokenService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -67,18 +68,28 @@ public class BaseStaffController extends BaseController
         /* 账号密码验证 */
         BaseStaff baseStaff = new BaseStaff();
         baseStaff.setStaffPhone(phone);
-        baseStaff.setStaffPassword(password);
         List<BaseStaff> baseStaffs = baseStaffService.selectBaseStaffList(baseStaff);
+
         if(baseStaffs.size() == 0)
             return null;
-        else
+
+        BaseStaff staff = baseStaffs.get(0);
+        if (SecurityUtils.matchesPassword(password,staff.getStaffPassword())) {
             return tokenService.createStaffToken(baseStaffs.get(0).getStaffId());
+        }
+        return null;
     }
 
 
     @PostMapping("/auth")
     public boolean auth(@RequestBody String url,HttpServletRequest request) {
-        Long staffId = tokenService.getStaffUser(request).getStaffId();
+
+        StaffUser staffUser = tokenService.getStaffUser(request);
+
+        /*有效期验证*/
+        tokenService.verifyStaffToken(staffUser);
+
+        Long staffId = staffUser.getStaffId();
         int i = baseStaffService.checkUrl(staffId, url);
         if(i > 0)
             return true;
@@ -93,6 +104,7 @@ public class BaseStaffController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, BaseStaff baseStaff)
     {
+        baseStaff.setHotelId(SecurityUtils.getHotelId());
         List<BaseStaff> list = baseStaffService.selectBaseStaffList(baseStaff);
         ExcelUtil<BaseStaff> util = new ExcelUtil<BaseStaff>(BaseStaff.class);
         util.exportExcel(response, list, "员工信息数据");
@@ -129,11 +141,12 @@ public class BaseStaffController extends BaseController
     public AjaxResult add(@RequestBody BaseStaff baseStaff)
     {
 
-        int i = baseStaffMapper.checkStaffPhone(baseStaff.getStaffPhone());
-        if(i != 0) {
+        List<BaseStaff> list = baseStaffMapper.checkStaffPhone(baseStaff.getStaffPhone());
+        if(list.size() != 0) {
             return AjaxResult.error("新增用户'" + baseStaff.getStaffName() + "'失败，手机号码已存在");
         }
         baseStaff.setHotelId(SecurityUtils.getHotelId());
+        baseStaff.setStaffPassword(SecurityUtils.encryptPassword(baseStaff.getStaffPassword()));
         return toAjax(baseStaffService.insertBaseStaff(baseStaff));
     }
 
@@ -145,12 +158,33 @@ public class BaseStaffController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody BaseStaff baseStaff)
     {
-        int i = baseStaffMapper.checkStaffPhone(baseStaff.getStaffPhone());
-        if(i != 0) {
-            return AjaxResult.error("修改用户'" + baseStaff.getStaffName() + "'失败，手机号码已存在");
+        List<BaseStaff> list = baseStaffMapper.checkStaffPhone(baseStaff.getStaffPhone());
+
+        if(list.size() != 0) {
+            for (int i = 0; i < list.size(); i++) {
+                if(!list.get(i).getStaffId().equals(baseStaff.getStaffId()))
+                {
+                    return AjaxResult.error("修改用户'" + baseStaff.getStaffName() + "'失败，手机号码已存在");
+                }
+            }
         }
+
         return toAjax(baseStaffService.updateBaseStaff(baseStaff));
     }
+
+    /**
+     * 重置员工密码
+     * */
+    @PreAuthorize("@ss.hasPermi('business:staff:edit')")
+    @PutMapping("/reset")
+    public AjaxResult reset(@RequestBody BaseStaff staff) {
+
+        staff.setStaffPassword(SecurityUtils.encryptPassword(staff.getStaffPassword()));
+        return toAjax(baseStaffMapper.updateBaseStaffPassword(staff));
+
+    }
+
+
 
     /**
      * 删除员工信息

@@ -54,14 +54,14 @@ public class BizContractController extends BaseController
     /**
      * 导出合同记录列表
      */
-    @Log(title = "合同记录", businessType = BusinessType.EXPORT)
+/*    @Log(title = "合同记录", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, BizContract bizContract)
     {
         List<BizContract> list = bizContractService.selectBizContractList(bizContract);
         ExcelUtil<BizContract> util = new ExcelUtil<BizContract>(BizContract.class);
         util.exportExcel(response, list, "合同记录数据");
-    }
+    }*/
 
     /**
      *

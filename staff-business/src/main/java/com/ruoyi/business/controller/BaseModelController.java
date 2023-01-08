@@ -41,14 +41,14 @@ public class BaseModelController extends BaseController
     /**
      * 导出范本列表列表
      */
-    @Log(title = "范本列表", businessType = BusinessType.EXPORT)
+/*    @Log(title = "范本列表", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, BaseModel baseModel)
     {
         List<BaseModel> list = baseModelService.selectBaseModelList(baseModel);
         ExcelUtil<BaseModel> util = new ExcelUtil<BaseModel>(BaseModel.class);
         util.exportExcel(response, list, "范本列表数据");
-    }
+    }*/
 
     /**
      * 获取范本列表详细信息

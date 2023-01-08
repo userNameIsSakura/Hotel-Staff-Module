@@ -25,6 +25,7 @@
              @page-loaded="currentPage=$event" @loaded="loadPdfHandler">
         </pdf>
       </div>
+
     </template>
 
 
@@ -158,15 +159,14 @@ export default {
 
 .pdf {
   width: 900px;
-  margin: 0 auto;
   position: relative;
-  right: 130px;
+  right: 200px;
 }
 
 .operation {
-  position: absolute;
+  position: fixed;
   right: 0;
-  top: 0;
+  bottom: 0;
   z-index: 999;
 }
 

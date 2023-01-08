@@ -110,6 +110,13 @@
             @click="handleDelete(scope.row)"
             v-hasPermi="['business:staff:remove']"
           >删除</el-button>
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-lock"
+            @click="resetPassword(scope.row)"
+            v-hasPermi="['business:staff:edit']"
+          >重置密码</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -131,10 +138,7 @@
         <el-form-item label="联系电话" prop="staffPhone">
           <el-input v-model="form.staffPhone" placeholder="请输入联系电话" />
         </el-form-item>
-        <el-form-item label="酒店ID" v-if="admin" prop="hotelId">
-          <el-input v-model="form.hotelId" placeholder="请输入酒店ID" />
-        </el-form-item>
-        <el-form-item label="部门ID" prop="departmentId">
+        <el-form-item label="部门" prop="departmentId">
           <el-select v-model="form.departmentId" filterable placeholder="请选择部门" @change="departmentChange">
             <el-option
               v-for="d in baseDepartmentList"
@@ -144,8 +148,8 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="员工密码" prop="staffPassword">
-          <el-input type="password" show-password v-model="form.staffPassword" placeholder="请输入员工密码" />
+        <el-form-item label="员工密码" v-if="this.form.staffId === null" prop="staffPassword">
+          <el-input type="password"  show-password v-model="form.staffPassword" placeholder="请输入员工密码" />
         </el-form-item>
 
         <el-form-item label="角色">
@@ -211,11 +215,33 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+
+
+
+    <!-- 重置密码对话框 -->
+    <el-dialog :title="title" :visible.sync="resetOpen" width="600px" append-to-body>
+      <el-form ref="form" :model="form" label-width="120px">
+
+        <el-form-item label="请输入新密码" prop="staffPassword">
+          <el-input type="password" show-password v-model="form.staffPassword" placeholder="请输入员工密码" />
+        </el-form-item>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="submitResetForm">确 定</el-button>
+        <el-button @click="cancelReset">取 消</el-button>
+      </div>
+    </el-dialog>
+
+
+
+
   </div>
 </template>
 
 <script>
-import { listStaff, getStaff, delStaff, addStaff, updateStaff } from "@/api/business/staff";
+import {listStaff, getStaff, delStaff, addStaff, updateStaff, updateStaffPassword} from "@/api/business/staff";
 import Cookies from "js-cookie";
 import {listAllPosition, listPositionByDepartmentId} from "@/api/business/position";
 import {listDepartment} from "@/api/business/department";
@@ -258,6 +284,8 @@ export default {
       title: "",
       // 是否显示弹出层
       open: false,
+      //重置密码弹出层
+      resetOpen: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -332,6 +360,11 @@ export default {
       this.open = false;
       this.reset();
     },
+    //重置取消
+    cancelReset() {
+      this.resetOpen = false;
+      this.reset();
+    },
     // 表单重置
     reset() {
       this.form = {
@@ -344,6 +377,8 @@ export default {
         remark: null
       };
       this.basePositionList = [];
+      this.originalMessage.departmentId = "";
+      this.originalMessage.list = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -399,6 +434,18 @@ export default {
         });
       }
     },
+    /** 重置密码 */
+    resetPassword(row) {
+      this.reset();
+      const staffId = row.staffId || this.ids
+
+      getStaff(staffId).then(response => {
+        this.form = response.data;
+        this.form.staffPassword = "";
+        this.resetOpen = true;
+        this.title = "重置密码";
+      });
+    },
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset();
@@ -449,6 +496,25 @@ export default {
           }
         }
       });
+    },
+    submitResetForm() {
+      if(this.form.staffPassword === null || this.form.staffPassword === "") {
+        this.$modal.msgError("密码不能为空");
+        return;
+      }
+
+      if(this.form.staffPassword.length < 5 || this.form.staffPassword.length > 20) {
+        this.$modal.msgError("密码长度必须介于 5 和 20 之间");
+        return;
+      }
+
+
+
+      updateStaffPassword(this.form).then(response => {
+        this.$modal.msgSuccess("重置成功");
+        this.resetOpen = false;
+        this.getList();
+      })
     },
     /** 删除按钮操作 */
     handleDelete(row) {

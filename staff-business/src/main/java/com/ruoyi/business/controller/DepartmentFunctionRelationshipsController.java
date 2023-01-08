@@ -23,7 +23,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 
 /**
  * 部门职能连接信息Controller
- * 
+ *
  * @author ruoyi
  * @date 2022-11-18
  */
@@ -49,7 +49,7 @@ public class DepartmentFunctionRelationshipsController extends BaseController
     /**
      * 导出部门职能连接信息列表
      */
-    @PreAuthorize("@ss.hasPermi('business:relationships:export')")
+/*    @PreAuthorize("@ss.hasPermi('business:relationships:export')")
     @Log(title = "部门职能连接信息", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, DepartmentFunctionRelationships departmentFunctionRelationships)
@@ -57,7 +57,7 @@ public class DepartmentFunctionRelationshipsController extends BaseController
         List<DepartmentFunctionRelationships> list = departmentFunctionRelationshipsService.selectDepartmentFunctionRelationshipsList(departmentFunctionRelationships);
         ExcelUtil<DepartmentFunctionRelationships> util = new ExcelUtil<DepartmentFunctionRelationships>(DepartmentFunctionRelationships.class);
         util.exportExcel(response, list, "部门职能连接信息数据");
-    }
+    }*/
 
     /**
      * 获取部门职能连接信息详细信息

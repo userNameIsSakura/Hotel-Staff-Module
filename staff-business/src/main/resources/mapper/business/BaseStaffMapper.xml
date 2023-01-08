@@ -51,10 +51,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT a.staff_id, a.staff_name, a.staff_phone, a.hotel_id, a.department_id, a.staff_password, a.remark,
                b.position_id as sub_position_id,b.position_name as sub_position_name,b.remark as sub_remark,
                b.function_value as sub_function_value
-        FROM base_staff a LEFT JOIN (SELECT r1.staff_id,p.position_id,p.position_name,f.remark,f.function_value
+        FROM base_staff a LEFT JOIN (SELECT r1.staff_id,p.position_id,p.position_name,f.remark,f.function_value,r2.department_id
             FROM staff_position_relationships r1,base_position p,department_function_relationships r2,base_function f
             where r1.position_id = p.position_id and r2.position_id = p.position_id and f.function_id = r2.function_id) b
-        on a.staff_id = b.staff_id
+        on a.staff_id = b.staff_id and a.department_id = b.department_id
         where a.staff_id = #{staffId}
     </select>
 
@@ -85,11 +85,20 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="staffPhone != null and staffPhone != ''">staff_phone = #{staffPhone},</if>
             <if test="hotelId != null">hotel_id = #{hotelId},</if>
             <if test="departmentId != null">department_id = #{departmentId},</if>
-            <if test="staffPassword != null and staffPassword != ''">staff_password = #{staffPassword},</if>
             <if test="remark != null">remark = #{remark},</if>
         </trim>
         where staff_id = #{staffId}
     </update>
+
+    <update id="updateBaseStaffPassword" parameterType="BaseStaff">
+        update base_staff
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="staffPassword != null and staffPassword != ''">staff_password = #{staffPassword},</if>
+        </trim>
+        where staff_id = #{staffId}
+    </update>
+
+
 
     <delete id="deleteBaseStaffByStaffId" parameterType="Long">
         delete from base_staff where staff_id = #{staffId}
@@ -127,8 +136,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             and sr.staff_id = #{staffId}
     </select>
 
-    <select id="checkStaffPhone"  parameterType="java.lang.String" resultType="java.lang.Integer">
-        select count(*) from base_staff s
+    <select id="checkStaffPhone"  parameterType="java.lang.String" resultMap="BaseStaffResult">
+        select s.* from base_staff s
         where s.staff_phone = #{phone};
     </select>
 
