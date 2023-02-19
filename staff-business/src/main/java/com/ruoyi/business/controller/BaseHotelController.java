@@ -46,12 +46,19 @@ public class BaseHotelController extends BaseController
         return getDataTable(list);
     }
 
-        /**
+    /**
      * 查询酒店列表列表
      */
     @PreAuthorize("@ss.hasPermi('business:hotel:list')")
     @GetMapping("/listAll")
     public List<BaseHotel> listAll()
+    {
+        BaseHotel baseHotel = new BaseHotel();
+        List<BaseHotel> list = baseHotelService.selectBaseHotelList(baseHotel);
+        return list;
+    }
+
+    public List<BaseHotel> listAllPrivate()
     {
         BaseHotel baseHotel = new BaseHotel();
         List<BaseHotel> list = baseHotelService.selectBaseHotelList(baseHotel);

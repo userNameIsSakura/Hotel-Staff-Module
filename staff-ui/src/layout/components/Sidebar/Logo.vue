@@ -36,7 +36,6 @@ export default {
   data() {
     return {
       title: '酒店管理系统',
-      logo: logoImg
     }
   }
 }

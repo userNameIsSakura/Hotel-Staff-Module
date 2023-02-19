@@ -2,10 +2,12 @@ package com.ruoyi.framework.web.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 
 import com.ruoyi.common.core.domain.model.StaffUser;
+import com.ruoyi.common.utils.uuid.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -161,6 +163,10 @@ public class TokenService
         Map<String, Object> claims = new HashMap<>();
         claims.put(Constants.STAFF_KEY, token);
         return createToken(claims);
+    }
+
+    public String creteClientToken() {
+        return UUID.randomUUID().toString().replaceAll("-","");
     }
 
     public void refreshStaffToken(StaffUser staffUser) {

@@ -197,7 +197,6 @@
         <module>staff-generator</module>
         <module>staff-common</module>
         <module>staff-business</module>
-        <module>hotel-business</module>
     </modules>
     <packaging>pom</packaging>
 

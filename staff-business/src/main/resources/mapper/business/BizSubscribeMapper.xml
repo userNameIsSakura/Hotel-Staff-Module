@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BizSubscribeMapper">
+
+    <resultMap type="BizSubscribe" id="BizSubscribeResult">
+        <result property="subscribeId"    column="subscribe_id"    />
+        <result property="subscribeContent"    column="subscribe_content"    />
+        <result property="parameter"    column="parameter"    />
+        <result property="available"    column="available"    />
+    </resultMap>
+
+    <sql id="selectBizSubscribeVo">
+        select subscribe_id, subscribe_content, parameter, available from biz_subscribe
+    </sql>
+
+    <select id="selectBizSubscribeList" parameterType="BizSubscribe" resultMap="BizSubscribeResult">
+        <include refid="selectBizSubscribeVo"/>
+        <where>
+            <if test="subscribeContent != null  and subscribeContent != ''"> and subscribe_content = ${subscribeContent}</if>
+            <if test="parameter != null  and parameter != ''"> and parameter = #{parameter}</if>
+            <if test="available != null "> and available = #{available}</if>
+        </where>
+    </select>
+
+    <select id="selectBizSubscribeBySubscribeId" parameterType="Long" resultMap="BizSubscribeResult">
+        <include refid="selectBizSubscribeVo"/>
+        where subscribe_id = #{subscribeId}
+    </select>
+
+    <insert id="insertBizSubscribe" parameterType="BizSubscribe" useGeneratedKeys="true" keyProperty="subscribeId">
+        insert into biz_subscribe
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="subscribeContent != null and subscribeContent != ''">subscribe_content,</if>
+            <if test="parameter != null">parameter,</if>
+            <if test="available != null">available,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="subscribeContent != null and subscribeContent != ''">#{subscribeContent},</if>
+            <if test="parameter != null">#{parameter},</if>
+            <if test="available != null">#{available},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizSubscribe" parameterType="BizSubscribe">
+        update biz_subscribe
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="subscribeContent != null and subscribeContent != ''">subscribe_content = #{subscribeContent},</if>
+            <if test="parameter != null">parameter = #{parameter},</if>
+            <if test="available != null">available = #{available},</if>
+        </trim>
+        where subscribe_id = #{subscribeId}
+    </update>
+
+    <delete id="deleteBizSubscribeBySubscribeId" parameterType="Long">
+        delete from biz_subscribe where subscribe_id = #{subscribeId}
+    </delete>
+
+    <delete id="deleteBizSubscribeBySubscribeIds" parameterType="String">
+        delete from biz_subscribe where subscribe_id in
+        <foreach item="subscribeId" collection="array" open="(" separator="," close=")">
+            #{subscribeId}
+        </foreach>
+    </delete>
+</mapper>

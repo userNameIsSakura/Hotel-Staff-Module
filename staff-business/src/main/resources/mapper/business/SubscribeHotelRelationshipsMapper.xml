@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.SubscribeHotelRelationshipsMapper">
+
+    <resultMap type="SubscribeHotelRelationships" id="SubscribeHotelRelationshipsResult">
+        <result property="id"    column="id"    />
+        <result property="hotelId"    column="hotel_id"    />
+        <result property="subscribeId"    column="subscribe_id"    />
+    </resultMap>
+
+    <resultMap type="SubscribeHotelRelationships" id="RelationshipAndHotel">
+        <result property="id"    column="id"    />
+        <result property="hotelId"    column="hotel_id"    />
+        <result property="subscribeId"    column="subscribe_id"    />
+        <result property="hotelNumber" column="hotel_number"/>
+    </resultMap>
+
+    <sql id="selectSubscribeHotelRelationshipsVo">
+        select id, hotel_id, subscribe_id from subscribe_hotel_relationships
+    </sql>
+
+    <select id="selectSubscribeHotelRelationshipsByContent" parameterType="java.lang.String" resultMap="RelationshipAndHotel">
+        select r.*,h.hotel_number from subscribe_hotel_relationships r, base_hotel h, biz_subscribe s
+        where  s.subscribe_content = #{content} and s.available = true and s.subscribe_id = r.subscribe_id and r.hotel_id = h.hotel_id
+    </select>
+
+    <select id="selectSubscribeHotelRelationshipsList" parameterType="SubscribeHotelRelationships" resultMap="SubscribeHotelRelationshipsResult">
+        <include refid="selectSubscribeHotelRelationshipsVo"/>
+        <where>
+            <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
+            <if test="subscribeId != null "> and subscribe_id = #{subscribeId}</if>
+        </where>
+    </select>
+
+    <select id="selectSubscribeHotelRelationshipsById" parameterType="Long" resultMap="SubscribeHotelRelationshipsResult">
+        <include refid="selectSubscribeHotelRelationshipsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSubscribeHotelRelationships" parameterType="SubscribeHotelRelationships" useGeneratedKeys="true" keyProperty="id">
+        insert into subscribe_hotel_relationships
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="hotelId != null">hotel_id,</if>
+            <if test="subscribeId != null">subscribe_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="hotelId != null">#{hotelId},</if>
+            <if test="subscribeId != null">#{subscribeId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSubscribeHotelRelationships" parameterType="SubscribeHotelRelationships">
+        update subscribe_hotel_relationships
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="hotelId != null">hotel_id = #{hotelId},</if>
+            <if test="subscribeId != null">subscribe_id = #{subscribeId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSubscribeHotelRelationshipsById" parameterType="Long">
+        delete from subscribe_hotel_relationships where id = #{id}
+    </delete>
+
+    <delete id="deleteSubscribeHotelRelationshipsByIds" parameterType="String">
+        delete from subscribe_hotel_relationships where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
