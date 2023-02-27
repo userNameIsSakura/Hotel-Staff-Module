@@ -5,15 +5,15 @@ import com.ruoyi.business.domain.BaseHotel;
 
 /**
  * 酒店列表Mapper接口
- * 
+ *
  * @author ruoyi
  * @date 2023-01-06
  */
-public interface BaseHotelMapper 
+public interface BaseHotelMapper
 {
     /**
      * 查询酒店列表
-     * 
+     *
      * @param hotelId 酒店列表主键
      * @return 酒店列表
      */
@@ -21,7 +21,7 @@ public interface BaseHotelMapper
 
     /**
      * 查询酒店列表列表
-     * 
+     *
      * @param baseHotel 酒店列表
      * @return 酒店列表集合
      */
@@ -29,15 +29,23 @@ public interface BaseHotelMapper
 
     /**
      * 新增酒店列表
-     * 
+     *
      * @param baseHotel 酒店列表
      * @return 结果
      */
     public int insertBaseHotel(BaseHotel baseHotel);
 
     /**
+     * 根据地址前缀查询酒店数量
+     *
+     * @param prefix 前缀
+     * @return int
+     */
+    public String selectNumByAddressPrefix(String prefix);
+
+    /**
      * 修改酒店列表
-     * 
+     *
      * @param baseHotel 酒店列表
      * @return 结果
      */
@@ -45,7 +53,7 @@ public interface BaseHotelMapper
 
     /**
      * 删除酒店列表
-     * 
+     *
      * @param hotelId 酒店列表主键
      * @return 结果
      */
@@ -53,7 +61,7 @@ public interface BaseHotelMapper
 
     /**
      * 批量删除酒店列表
-     * 
+     *
      * @param hotelIds 需要删除的数据主键集合
      * @return 结果
      */

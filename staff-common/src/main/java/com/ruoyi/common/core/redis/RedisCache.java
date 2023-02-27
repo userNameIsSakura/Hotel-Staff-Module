@@ -153,6 +153,18 @@ public class RedisCache
         return redisTemplate.opsForList().range(key, 0, -1);
     }
 
+
+    /**
+     * 删除缓存的list
+     *
+     * @param key 缓存的键值
+     * @return 缓存键值对应的数据
+     */
+    public long deleteFromList(final String key,final Object o)
+    {
+        return redisTemplate.opsForList().remove(key,1,o);
+    }
+
     /**
      * 缓存Set
      *

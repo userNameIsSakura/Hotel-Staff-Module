@@ -6,7 +6,7 @@ public class StaffUser {
     /**
      * 员工ID
      * */
-    private Long staffId;
+    private String phone;
 
     /**
     * 唯一标识
@@ -26,12 +26,12 @@ public class StaffUser {
         this.expireTime = expireTime;
     }
 
-    public Long getStaffId() {
-        return staffId;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setStaffId(Long staffId) {
-        this.staffId = staffId;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getToken() {

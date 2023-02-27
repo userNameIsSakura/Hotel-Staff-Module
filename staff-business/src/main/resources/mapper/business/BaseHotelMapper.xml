@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.business.mapper.BaseHotelMapper">
-    
+
     <resultMap type="BaseHotel" id="BaseHotelResult">
         <result property="hotelId"    column="hotel_id"    />
         <result property="hotelName"    column="hotel_name"    />
@@ -17,17 +17,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectBaseHotelList" parameterType="BaseHotel" resultMap="BaseHotelResult">
         <include refid="selectBaseHotelVo"/>
-        <where>  
+        <where>
             <if test="hotelName != null  and hotelName != ''"> and hotel_name like concat('%', #{hotelName}, '%')</if>
             <if test="hotelNumber != null  and hotelNumber != ''"> and hotel_number = #{hotelNumber}</if>
         </where>
     </select>
-    
+
     <select id="selectBaseHotelByHotelId" parameterType="Long" resultMap="BaseHotelResult">
         <include refid="selectBaseHotelVo"/>
         where hotel_id = #{hotelId}
     </select>
-        
+
     <insert id="insertBaseHotel" parameterType="BaseHotel" useGeneratedKeys="true" keyProperty="hotelId">
         insert into base_hotel
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -41,6 +41,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="hotelNumber != null and hotelNumber != ''">#{hotelNumber},</if>
          </trim>
     </insert>
+
+    <select id="selectNumByAddressPrefix" parameterType="java.lang.String" resultType="java.lang.String">
+        select hotel_number from base_hotel
+        where hotel_number like '${prefix}%'
+        order by hotel_number desc
+        limit 1
+    </select>
 
     <update id="updateBaseHotel" parameterType="BaseHotel">
         update base_hotel
@@ -57,7 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteBaseHotelByHotelIds" parameterType="String">
-        delete from base_hotel where hotel_id in 
+        delete from base_hotel where hotel_id in
         <foreach item="hotelId" collection="array" open="(" separator="," close=")">
             #{hotelId}
         </foreach>

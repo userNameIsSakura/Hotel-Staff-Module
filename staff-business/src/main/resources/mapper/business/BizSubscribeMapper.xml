@@ -18,7 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectBizSubscribeList" parameterType="BizSubscribe" resultMap="BizSubscribeResult">
         <include refid="selectBizSubscribeVo"/>
         <where>
-            <if test="subscribeContent != null  and subscribeContent != ''"> and subscribe_content = ${subscribeContent}</if>
+            <if test="subscribeContent != null  and subscribeContent != ''"> and subscribe_content = #{subscribeContent}</if>
             <if test="parameter != null  and parameter != ''"> and parameter = #{parameter}</if>
             <if test="available != null "> and available = #{available}</if>
         </where>

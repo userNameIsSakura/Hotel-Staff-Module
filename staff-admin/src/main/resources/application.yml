@@ -19,6 +19,7 @@ ruoyi:
 server:
   # 服务器的HTTP端口，默认为8080
   port: 8090
+#  port: 80
   servlet:
     # 应用的访问路径
     context-path: /
@@ -139,33 +140,44 @@ pdf:
   # 合同有效期一年
   periodOfValidity: 31536000000
 
-#mqtt:
-#  broker:
-#    host:
-##      - tcp://121.89.238.10:1883
-#      - tcp://127.0.0.1:1883
-#    username: admin
-#    password: "public"
-#    clientId: aosTest
-#    qos: 2
-#    serverTopic: "serverTopic"
-#    timeout: 30
-#    keepalive: 10
-#    completionTimeout: 30
-#
-
-
 mqtt:
   broker:
     host:
 #      - tcp://121.89.238.10:1883
-      - tcp://server4.dyky.top:1883
-    username: hotel-user
-    password: "mXshRj2pe4EegpYHtHpU8Yyu"
+      - tcp://127.0.0.1:1883
+    username: admin
+    password: "public"
     clientId: aosTest
     qos: 2
+    serverTopic: "serverTopic"
     timeout: 30
     keepalive: 10
     completionTimeout: 30
 
 
+
+#mqtt:
+#  broker:
+#    host:
+##      - tcp://121.89.238.10:1883
+#      - tcp://192.168.1.16:1883
+#    username: hotel-user
+#    password: "mXshRj2pe4EegpYHtHpU8Yyu"
+#    clientId: aosTest
+#    qos: 2
+#    timeout: 30
+#    keepalive: 10
+#    completionTimeout: 30
+
+
+#mqtt:
+#  broker:
+#    host:
+#      - tcp://eb6b1549b32a3c89.natapp.cc:6004
+#    username: hotel-user
+#    password: "mXshRj2pe4EegpYHtHpU8Yyu"
+#    clientId: aqwe
+#    qos: 2
+#    timeout: 30
+#    keepalive: 10
+#    completionTimeout: 30

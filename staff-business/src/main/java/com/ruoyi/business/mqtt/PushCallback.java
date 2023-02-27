@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class PushCallback implements MqttCallback {
     //根据cpu核心数创建线程池线程数
-    private ExecutorService cachedThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+    private static ExecutorService cachedThreadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2 - 1);
 
     public ExecutorService getCachedThreadPool() {
         return cachedThreadPool;

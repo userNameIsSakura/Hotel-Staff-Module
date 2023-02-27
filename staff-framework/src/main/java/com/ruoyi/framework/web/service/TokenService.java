@@ -2,7 +2,6 @@ package com.ruoyi.framework.web.service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 
@@ -105,6 +104,7 @@ public class TokenService
             }
             catch (Exception e)
             {
+                return null;
             }
         }
         return null;
@@ -152,10 +152,10 @@ public class TokenService
         return createToken(claims);
     }
 
-    public String createStaffToken(Long staffId) {
+    public String createStaffToken(String phone) {
         String token = IdUtils.fastUUID();
         StaffUser staffUser = new StaffUser();
-        staffUser.setStaffId(staffId);
+        staffUser.setPhone(phone);
         staffUser.setToken(token);
 
         refreshStaffToken(staffUser);

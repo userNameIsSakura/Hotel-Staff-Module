@@ -1,18 +1,21 @@
 package com.ruoyi.business.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.business.domain.BaseHotel;
 import com.ruoyi.business.domain.SubscribeHotelRelationships;
+import com.ruoyi.business.mqtt.MqttConfiguration;
 import com.ruoyi.business.mqtt.MqttPushClient;
 import com.ruoyi.business.service.ISubscribeHotelRelationshipsService;
 import com.ruoyi.business.utils.MqttConstantUtil;
+import com.ruoyi.common.core.domain.model.StaffUser;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.framework.web.service.TokenService;
 import io.jsonwebtoken.Jwts;
@@ -61,6 +64,8 @@ public class BizSubscribeController extends BaseController
     private TokenService tokenService;
     @Autowired
     private RedisCache redisCache;
+    @Autowired
+    private MqttConfiguration mqttConfiguration;
 
     private AtomicInteger topicId = new AtomicInteger(1);
 
@@ -75,7 +80,7 @@ public class BizSubscribeController extends BaseController
      *
      * */
     @PostMapping("/getDataList")
-    public List<Object> getDataList(@RequestBody HashMap<String,String> map) {
+    public HashMap getDataList(@RequestBody HashMap<String,String> map) {
 
         String token = map.get("token");
         int pageSize = Integer.parseInt(map.get("pageSize"));
@@ -88,10 +93,15 @@ public class BizSubscribeController extends BaseController
         if(pageNum > pageTotal)
             return null;
 
+        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("total",size);
+
         if(pageNum == pageTotal) {
-            return cacheList.subList((pageNum-1) * pageSize, size);
+           hashMap.put("list",cacheList.subList((pageNum-1) * pageSize, size));
+           return hashMap;
         }
-        return cacheList.subList((pageNum-1) * pageSize ,  (pageNum-1) * pageSize + pageSize);
+        hashMap.put("list",cacheList.subList((pageNum-1) * pageSize ,  (pageNum-1) * pageSize + pageSize));
+        return hashMap;
     }
 
     /**
@@ -102,19 +112,35 @@ public class BizSubscribeController extends BaseController
      *          denied  请求失败
      * */
     @PostMapping("/clientRequest")
-    public AjaxResult clientRequest(@RequestBody HashMap<String,Object> map) {
+    public AjaxResult clientRequest(@RequestBody HashMap<String,Object> map, HttpServletRequest request) {
+
+
+
+        /* 检查token */
+        StaffUser staffUser = tokenService.getStaffUser(request);
+
+        if(staffUser == null) {
+            return AjaxResult.error("权限验证失败");
+        }
+
+        /* 获得员工ID */
+        String phone = staffUser.getPhone();
+
+        /* token有效期验证 */
+        tokenService.verifyStaffToken(staffUser);
+
 
         /* 命令 */
         String command = (String) map.get("command");
         /* 参数 */
         HashMap parameter = (HashMap) map.get("parameter");
         /* userId */
-        String operationSystemUserId = (String) map.get("operationSystemUserId");
+        String operationSystemUserId = phone.toString();
         /* 客户端topic */
-        String topic = (String) map.get("topic");
+        String topic = BaseStaffController.getClientTopic(phone);
 
         if(command.equals("")) {
-            return AjaxResult.error("denied");
+            return AjaxResult.error("请求参数异常");
         }
 
         BizSubscribe bizSubscribe = new BizSubscribe();
@@ -123,14 +149,14 @@ public class BizSubscribeController extends BaseController
         /* 命令是否存在 */
         List<BizSubscribe> bizSubscribes = bizSubscribeService.selectBizSubscribeList(bizSubscribe);
         if(bizSubscribes.size() == 0) {
-            return AjaxResult.error("denied");
+            return AjaxResult.error("当前请求不存在");
         }
 
         BizSubscribe commandObject = bizSubscribes.get(0);
 
         /* 是否可用 */
         if(commandObject.getAvailable() == 0) {
-            return AjaxResult.error("denied");
+            return AjaxResult.error("当前请求不可用");
         }
 
         /* 全部酒店列表 */
@@ -159,29 +185,44 @@ public class BizSubscribeController extends BaseController
 
         /* 服务端数据 */
         map = new HashMap<>();
-        map.put("operation_system_user_id",operationSystemUserId);
-        map.put("callback_topic",callbackTopic);
-        map.put("callback_topic_qos",1);
-        map.put("operation_cmd",command);
+        map.put("operationSystemUserId",operationSystemUserId);
+        map.put("callbackTopic",callbackTopic);
+        map.put("callbackTopicQos",1);
+        map.put("operationCmd",command);
         /* 此处直接将map对象传入，不转换成JSON，否则会出现反斜杠 */
         map.put("data",parameter);
 
-        HashMap<String, String> redisCache = new HashMap<>();
-        redisCache.put("size", String.valueOf(hotels.size()));
+        HashMap<String, Object> redisCache = new HashMap<>();
+        redisCache.put("responseNum", 0);
+        redisCache.put("ifReturn", false);
         redisCache.put("clientTopic",topic);
+        String token = Jwts.builder().setClaims(redisCache).signWith(SignatureAlgorithm.HS512,secret).compact();
+        redisCache.put("token",token);
+        redisCache.put("timestamp",System.currentTimeMillis());
         this.redisCache.setCacheMap(callbackTopic,redisCache);
         this.redisCache.expire(callbackTopic,MqttConstantUtil.DEFAULT_SURPLUS_EXPIRE);
 
+        /* 更新缓存 */
+        ArrayList<String> list = new ArrayList<>();
+        list.add(callbackTopic);
+        this.redisCache.setCacheList("clientTopics",list);
+        this.redisCache.expire("clientTopics",MqttConstantUtil.DEFAULT_TOPICS_LIST_EXPIRE);
+
+        mqttConfiguration.thread.interrupt();
+
         /* 发布消息 */
         for (String h : hotels) {
-            map.put("operation_hotel_id",h);
-            String serverTopic = "/area/" + h.substring(0,2) +"/" + h.substring(2,4) + "/" + h.substring(4,6) + "/" + h.substring(6,10);
+            map.put("operationHotelId",h);
+            String serverTopic = "area/" + h.substring(0,2) +"/" + h.substring(2,4) + "/" + h.substring(4,6) + "/" + h.substring(6,10);
+            System.out.println(serverTopic);
             /* 订阅 */
             client.subscribe(callbackTopic);
+            System.out.println("订阅成功:"+callbackTopic);
             /* 发布 */
+            System.out.println(map);
             client.publish(serverTopic,JSONObject.toJSONString(map).getBytes());
         }
-        return AjaxResult.success("success");
+        return AjaxResult.success("success").put("token",token);
     }
 
     private String getCallbackTopic() {

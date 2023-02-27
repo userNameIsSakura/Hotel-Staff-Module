@@ -206,7 +206,10 @@ export default {
         hotelId: null,
         hotelName: null,
         remark: null,
-        hotelNumber: null
+        hotelNumber: null,
+        province: null,
+        city: null,
+        area: null
       };
       this.resetForm("form");
     },
@@ -257,12 +260,14 @@ export default {
           if (this.form.hotelId != null) {
             updateHotel(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
+              this.form = {};
               this.open = false;
               this.getList();
             });
           } else {
             addHotel(this.form).then(response => {
               this.$modal.msgSuccess("新增成功");
+              this.form = {};
               this.open = false;
               this.getList();
             });

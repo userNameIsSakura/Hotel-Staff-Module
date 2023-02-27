@@ -2,6 +2,7 @@ package com.ruoyi.business.controller;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.ruoyi.business.domain.BaseRole;
 import com.ruoyi.business.domain.StaffRoleRelationships;
 import com.ruoyi.business.mapper.BaseStaffMapper;
+import com.ruoyi.business.service.IBaseHotelService;
 import com.ruoyi.business.service.IBaseRoleService;
 import com.ruoyi.common.core.domain.model.StaffUser;
 import com.ruoyi.common.utils.SecurityUtils;
@@ -43,9 +45,16 @@ public class BaseStaffController extends BaseController
     private IBaseRoleService baseRoleService;
     @Autowired
     private BaseStaffMapper baseStaffMapper;
+    @Autowired
+    private IBaseHotelService hotelService;
+
+    private static AtomicInteger clientId = new AtomicInteger(0);
 
     /**
      * 查询员工信息列表
+     *
+     * @param baseStaff 员工
+     * @return {@link TableDataInfo}
      */
     @PreAuthorize("@ss.hasPermi('business:staff:list')")
     @GetMapping("/list")
@@ -59,9 +68,17 @@ public class BaseStaffController extends BaseController
         return getDataTable(list);
     }
 
+    /**
+     * 登录
+     *
+     * @param map 地图
+     * @return {@link HashMap}
+     */
     @PostMapping("/login")
-    public String login(@RequestBody HashMap map)
+    public HashMap login(@RequestBody HashMap map)
     {
+
+
         String phone = (String) map.get("phone");
         String password = (String) map.get("password");
 
@@ -70,23 +87,56 @@ public class BaseStaffController extends BaseController
         baseStaff.setStaffPhone(phone);
         List<BaseStaff> baseStaffs = baseStaffService.selectBaseStaffList(baseStaff);
 
-        if(baseStaffs.size() == 0)
-            return null;
+        if(baseStaffs.size() == 0) {
+            HashMap<String, String> hashMap = new HashMap<>();
+            hashMap.put("msg","账号不存在");
+            return hashMap;
+        }
 
         BaseStaff staff = baseStaffs.get(0);
         if (SecurityUtils.matchesPassword(password,staff.getStaffPassword())) {
-            return tokenService.createStaffToken(baseStaffs.get(0).getStaffId());
+            HashMap<String, String> hashMap = new HashMap<>();
+            String token = tokenService.createStaffToken(staff.getStaffPhone());
+            hashMap.put("msg","登录成功");
+            hashMap.put("token",token);
+            hashMap.put("hotelId",hotelService.selectBaseHotelByHotelId(staff.getHotelId()).getHotelNumber());
+            hashMap.put("topic",getClientTopic(staff.getStaffPhone()));
+            return hashMap;
         }
-        return null;
+        HashMap<String, String> hashMap = new HashMap<>();
+        hashMap.put("msg","密码错误");
+        return hashMap;
     }
 
+    public static String getClientTopic(String phone) {
+        int andIncrement = clientId.getAndIncrement();
+        String format = String.format("%03d", andIncrement);
+        return "topic_zzj_" + phone + format;
+    }
 
-    @PostMapping("/auth")
+    /**
+     * 心跳
+     *
+     * @param request 请求
+     * @return boolean
+     */
+    @GetMapping("/heart")
+    public boolean heart(HttpServletRequest request) {
+
+        StaffUser staffUser = tokenService.getStaffUser(request);
+        if(staffUser == null) {
+            return false;
+        }
+        tokenService.verifyStaffToken(staffUser);
+        return true;
+    }
+
+/*    @PostMapping("/auth")
     public boolean auth(@RequestBody String url,HttpServletRequest request) {
 
         StaffUser staffUser = tokenService.getStaffUser(request);
 
-        /*有效期验证*/
+        *//*有效期验证*//*
         tokenService.verifyStaffToken(staffUser);
 
         Long staffId = staffUser.getStaffId();
@@ -94,7 +144,7 @@ public class BaseStaffController extends BaseController
         if(i > 0)
             return true;
         return false;
-    }
+    }*/
 
     /**
      * 导出员工信息列表

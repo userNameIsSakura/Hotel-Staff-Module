@@ -56,9 +56,29 @@ public class BaseHotelServiceImpl implements IBaseHotelService
     @Override
     public int insertBaseHotel(BaseHotel baseHotel)
     {
+        String prefix = baseHotel.getHotelNumber().substring(0, 6);
+        String groupId = baseHotel.getHotelNumber().substring(6, 8);
+
+        String num = baseHotelMapper.selectNumByAddressPrefix(prefix);
+
+        if( num == null ) {
+            num = "00";
+        }else {
+            num = num.substring(8,10);
+        }
+
+        int newId = Integer.parseInt(num) + 1;
+
+        String id;
+        if(newId < 10) {
+            id = "0" + newId;
+        }else {
+            id = String.valueOf(newId);
+        }
+
+        baseHotel.setHotelNumber(prefix + groupId + id);
         int i = baseHotelMapper.insertBaseHotel(baseHotel);
-        baseHotel.setHotelNumber(baseHotel.getHotelNumber().substring(0,6) + String.format("%04d",baseHotel.getHotelId()));
-        baseHotelMapper.updateBaseHotel(baseHotel);
+
         return i;
     }
 
@@ -71,6 +91,29 @@ public class BaseHotelServiceImpl implements IBaseHotelService
     @Override
     public int updateBaseHotel(BaseHotel baseHotel)
     {
+
+        String prefix = baseHotel.getHotelNumber().substring(0, 6);
+        String groupId = baseHotel.getHotelNumber().substring(6, 8);
+
+        String num = baseHotelMapper.selectNumByAddressPrefix(prefix);
+
+        if( num == null ) {
+            num = "00";
+        }else {
+            num = num.substring(8,10);
+        }
+
+        int newId = Integer.parseInt(num) + 1;
+
+        String id;
+        if(newId < 10) {
+            id = "0" + newId;
+        }else {
+            id = String.valueOf(newId);
+        }
+
+        baseHotel.setHotelNumber(prefix + groupId + id);
+
         return baseHotelMapper.updateBaseHotel(baseHotel);
     }
 
