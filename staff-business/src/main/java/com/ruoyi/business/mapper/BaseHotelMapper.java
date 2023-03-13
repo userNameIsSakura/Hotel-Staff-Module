@@ -19,6 +19,15 @@ public interface BaseHotelMapper
      */
     public BaseHotel selectBaseHotelByHotelId(Long hotelId);
 
+
+    /**
+     * 查询酒店列表
+     *
+     * @param chotelId 酒店列表主键
+     * @return 酒店列表
+     */
+    public BaseHotel selectBaseHotelByChotelId(Long chotelId);
+
     /**
      * 查询酒店列表列表
      *

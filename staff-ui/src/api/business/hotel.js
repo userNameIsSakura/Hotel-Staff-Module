@@ -24,6 +24,14 @@ export function getHotel(hotelId) {
   })
 }
 
+// 查询酒店列表详细
+export function getHotelByCHotelId(chotelId) {
+  return request({
+    url: '/business/hotel/chotelId/' + chotelId,
+    method: 'get',
+  })
+}
+
 // 新增酒店列表
 export function addHotel(data) {
   return request({

@@ -124,9 +124,7 @@ public class HotelController {
         }
 
         //设置中文
-        BaseFont bfChinese = BaseFont.createFont("C:/WINDOWS/Fonts/simsun.ttc,0", BaseFont.IDENTITY_H,BaseFont.NOT_EMBEDDED);
-        Font FontChinese = new Font(bfChinese, 12, Font.NORMAL);
-
+        BaseFont bfChinese = BaseFont.createFont("STSong-Light", "UniGB-UCS2-H",BaseFont.NOT_EMBEDDED);
 
         Document document = new Document();
         PdfCopy copy = null;

@@ -8,18 +8,33 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="hotelId"    column="hotel_id"    />
         <result property="hotelName"    column="hotel_name"    />
         <result property="remark"    column="remark"    />
+
+        <result property="hotelRoomCards"    column="hotel_room_cards"    />
         <result property="hotelNumber"    column="hotel_number"    />
+        <result property="hotelSettlement"    column="hotel_settlement"    />
+        <result property="hotelFreeBreakfast"    column="hotel_free_breakfast"    />
+        <result property="hotelDeposit"    column="hotel_deposit"    />
+        <result property="hotelPoster"    column="hotel_poster"    />
+        <result property="hotelIntroduct"    column="hotel_introduct"    />
+        <result property="chotelId"    column="chotel_id"    />
     </resultMap>
 
     <sql id="selectBaseHotelVo">
-        select hotel_id, hotel_name, remark, hotel_number from base_hotel
+        select hotel_id, hotel_name, remark, hotel_room_cards, hotel_number, hotel_settlement, hotel_free_breakfast, hotel_deposit, hotel_poster, hotel_introduct, chotel_id from base_hotel
     </sql>
 
     <select id="selectBaseHotelList" parameterType="BaseHotel" resultMap="BaseHotelResult">
         <include refid="selectBaseHotelVo"/>
         <where>
             <if test="hotelName != null  and hotelName != ''"> and hotel_name like concat('%', #{hotelName}, '%')</if>
+            <if test="hotelRoomCards != null "> and hotel_room_cards = #{hotelRoomCards}</if>
             <if test="hotelNumber != null  and hotelNumber != ''"> and hotel_number = #{hotelNumber}</if>
+            <if test="hotelSettlement != null  and hotelSettlement != ''"> and hotel_settlement = #{hotelSettlement}</if>
+            <if test="hotelFreeBreakfast != null "> and hotel_free_breakfast = #{hotelFreeBreakfast}</if>
+            <if test="hotelDeposit != null "> and hotel_deposit = #{hotelDeposit}</if>
+            <if test="hotelPoster != null  and hotelPoster != ''"> and hotel_poster = #{hotelPoster}</if>
+            <if test="hotelIntroduct != null  and hotelIntroduct != ''"> and hotel_introduct = #{hotelIntroduct}</if>
+            <if test="chotelId != null "> and chotel_id = #{chotelId}</if>
         </where>
     </select>
 
@@ -28,18 +43,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where hotel_id = #{hotelId}
     </select>
 
+    <select id="selectBaseHotelByChotelId" parameterType="Long" resultMap="BaseHotelResult">
+        <include refid="selectBaseHotelVo"/>
+        where chotel_id = #{chotelId}
+    </select>
+
     <insert id="insertBaseHotel" parameterType="BaseHotel" useGeneratedKeys="true" keyProperty="hotelId">
         insert into base_hotel
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="hotelName != null and hotelName != ''">hotel_name,</if>
             <if test="remark != null">remark,</if>
+            <if test="hotelRoomCards != null">hotel_room_cards,</if>
             <if test="hotelNumber != null and hotelNumber != ''">hotel_number,</if>
-         </trim>
+            <if test="hotelSettlement != null and hotelSettlement != ''">hotel_settlement,</if>
+            <if test="hotelFreeBreakfast != null">hotel_free_breakfast,</if>
+            <if test="hotelDeposit != null">hotel_deposit,</if>
+            <if test="hotelPoster != null and hotelPoster != ''">hotel_poster,</if>
+            <if test="hotelIntroduct != null and hotelIntroduct != ''">hotel_introduct,</if>
+            <if test="chotelId != null">chotel_id,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="hotelName != null and hotelName != ''">#{hotelName},</if>
             <if test="remark != null">#{remark},</if>
+            <if test="hotelRoomCards != null">#{hotelRoomCards},</if>
             <if test="hotelNumber != null and hotelNumber != ''">#{hotelNumber},</if>
-         </trim>
+            <if test="hotelSettlement != null and hotelSettlement != ''">#{hotelSettlement},</if>
+            <if test="hotelFreeBreakfast != null">#{hotelFreeBreakfast},</if>
+            <if test="hotelDeposit != null">#{hotelDeposit},</if>
+            <if test="hotelPoster != null and hotelPoster != ''">#{hotelPoster},</if>
+            <if test="hotelIntroduct != null and hotelIntroduct != ''">#{hotelIntroduct},</if>
+            <if test="chotelId != null">#{chotelId},</if>
+        </trim>
     </insert>
 
     <select id="selectNumByAddressPrefix" parameterType="java.lang.String" resultType="java.lang.String">
@@ -54,7 +88,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="hotelName != null and hotelName != ''">hotel_name = #{hotelName},</if>
             <if test="remark != null">remark = #{remark},</if>
+            <if test="hotelRoomCards != null">hotel_room_cards = #{hotelRoomCards},</if>
             <if test="hotelNumber != null and hotelNumber != ''">hotel_number = #{hotelNumber},</if>
+            <if test="hotelSettlement != null and hotelSettlement != ''">hotel_settlement = #{hotelSettlement},</if>
+            <if test="hotelFreeBreakfast != null">hotel_free_breakfast = #{hotelFreeBreakfast},</if>
+            <if test="hotelDeposit != null">hotel_deposit = #{hotelDeposit},</if>
+            <if test="hotelPoster != null and hotelPoster != ''">hotel_poster = #{hotelPoster},</if>
+            <if test="hotelIntroduct != null and hotelIntroduct != ''">hotel_introduct = #{hotelIntroduct},</if>
+            <if test="chotelId != null">chotel_id = #{chotelId},</if>
         </trim>
         where hotel_id = #{hotelId}
     </update>

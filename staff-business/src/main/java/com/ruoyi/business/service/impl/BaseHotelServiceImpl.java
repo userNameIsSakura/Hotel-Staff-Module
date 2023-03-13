@@ -2,11 +2,14 @@ package com.ruoyi.business.service.impl;
 
 import java.util.List;
 
+import com.ruoyi.business.domain.BaseChainHotel;
+import com.ruoyi.business.mapper.BaseChainHotelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.business.mapper.BaseHotelMapper;
 import com.ruoyi.business.domain.BaseHotel;
 import com.ruoyi.business.service.IBaseHotelService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 酒店列表Service业务层处理
@@ -19,6 +22,8 @@ public class BaseHotelServiceImpl implements IBaseHotelService
 {
     @Autowired
     private BaseHotelMapper baseHotelMapper;
+    @Autowired
+    private BaseChainHotelMapper baseChainHotelMapper;
 
 
     /**
@@ -47,6 +52,11 @@ public class BaseHotelServiceImpl implements IBaseHotelService
         return baseHotels;
     }
 
+    @Override
+    public BaseHotel selectBaseHotelByChotelId(Long chotelId) {
+        return baseHotelMapper.selectBaseHotelByChotelId(chotelId);
+    }
+
     /**
      * 新增酒店列表
      *
@@ -54,8 +64,18 @@ public class BaseHotelServiceImpl implements IBaseHotelService
      * @return 结果
      */
     @Override
+    @Transactional
     public int insertBaseHotel(BaseHotel baseHotel)
     {
+
+        /* 插入连锁酒店表 */
+        final BaseChainHotel baseChainHotel = new BaseChainHotel();
+        baseChainHotel.setChotelName(baseHotel.getHotelName());
+        baseChainHotel.setChotelParent(baseHotel.getChotelParent());
+        baseChainHotelMapper.insertBaseChainHotel(baseChainHotel);
+        /* 插入 */
+        baseHotel.setChotelId(baseChainHotel.getChotelId());
+
         String prefix = baseHotel.getHotelNumber().substring(0, 6);
         String groupId = baseHotel.getHotelNumber().substring(6, 8);
 
