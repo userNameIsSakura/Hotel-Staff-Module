@@ -155,6 +155,7 @@ import { listChainHotel, getChainHotel, delChainHotel, addChainHotel, updateChai
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {addHotel, getHotel, getHotelByCHotelId} from "@/api/business/hotel";
+import region from "@/api/business/region";
 
 export default {
   name: "ChainHotel",
@@ -349,6 +350,13 @@ export default {
       this.resetHotelForm();
       getHotelByCHotelId(row.chotelId).then(response => {
         this.hotelForm = response.data;
+        var hotelNumber = this.hotelForm.hotelNumber;
+        var provinceId = hotelNumber.slice(0,2)+"0000";
+        var cityId = hotelNumber.slice(0,4)+"00";
+        var areaId = hotelNumber.slice(0,6);
+        this.hotelForm.province = region["100000"][provinceId];
+        this.hotelForm.city = region[provinceId][cityId];
+        this.hotelForm.area = region[cityId][areaId];
         this.formOpen = true;
         this.title = "修改实体酒店";
       });
