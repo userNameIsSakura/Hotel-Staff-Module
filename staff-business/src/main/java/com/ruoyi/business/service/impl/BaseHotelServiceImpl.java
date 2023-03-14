@@ -109,8 +109,15 @@ public class BaseHotelServiceImpl implements IBaseHotelService
      * @return 结果
      */
     @Override
+    @Transactional
     public int updateBaseHotel(BaseHotel baseHotel)
     {
+
+        final BaseChainHotel baseChainHotel = new BaseChainHotel();
+        baseChainHotel.setChotelId(baseHotel.getChotelId());
+        baseChainHotel.setChotelName(baseHotel.getHotelName());
+        baseChainHotel.setRemark(baseHotel.getRemark());
+        baseChainHotelMapper.updateBaseChainHotel(baseChainHotel);
 
         String prefix = baseHotel.getHotelNumber().substring(0, 6);
         String groupId = baseHotel.getHotelNumber().substring(6, 8);

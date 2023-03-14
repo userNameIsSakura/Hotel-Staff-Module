@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.HotelDisgramRelationshipsMapper">
+    
+    <resultMap type="HotelDisgramRelationships" id="HotelDisgramRelationshipsResult">
+        <result property="id"    column="id"    />
+        <result property="hotelId"    column="hotel_id"    />
+        <result property="diagramType"    column="diagram_type"    />
+        <result property="diagramPath"    column="diagram_path"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectHotelDisgramRelationshipsVo">
+        select id, hotel_id, diagram_type, diagram_path, remark from hotel_disgram_relationships
+    </sql>
+
+    <select id="selectHotelDisgramRelationshipsList" parameterType="HotelDisgramRelationships" resultMap="HotelDisgramRelationshipsResult">
+        <include refid="selectHotelDisgramRelationshipsVo"/>
+        <where>  
+            <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
+            <if test="diagramType != null  and diagramType != ''"> and diagram_type = #{diagramType}</if>
+            <if test="diagramPath != null  and diagramPath != ''"> and diagram_path = #{diagramPath}</if>
+        </where>
+    </select>
+    
+    <select id="selectHotelDisgramRelationshipsById" parameterType="Long" resultMap="HotelDisgramRelationshipsResult">
+        <include refid="selectHotelDisgramRelationshipsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertHotelDisgramRelationships" parameterType="HotelDisgramRelationships" useGeneratedKeys="true" keyProperty="id">
+        insert into hotel_disgram_relationships
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="hotelId != null">hotel_id,</if>
+            <if test="diagramType != null and diagramType != ''">diagram_type,</if>
+            <if test="diagramPath != null and diagramPath != ''">diagram_path,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="hotelId != null">#{hotelId},</if>
+            <if test="diagramType != null and diagramType != ''">#{diagramType},</if>
+            <if test="diagramPath != null and diagramPath != ''">#{diagramPath},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHotelDisgramRelationships" parameterType="HotelDisgramRelationships">
+        update hotel_disgram_relationships
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="hotelId != null">hotel_id = #{hotelId},</if>
+            <if test="diagramType != null and diagramType != ''">diagram_type = #{diagramType},</if>
+            <if test="diagramPath != null and diagramPath != ''">diagram_path = #{diagramPath},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHotelDisgramRelationshipsById" parameterType="Long">
+        delete from hotel_disgram_relationships where id = #{id}
+    </delete>
+
+    <delete id="deleteHotelDisgramRelationshipsByIds" parameterType="String">
+        delete from hotel_disgram_relationships where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.BaseDiagramMapper">
+    
+    <resultMap type="BaseDiagram" id="BaseDiagramResult">
+        <result property="diagramType"    column="diagram_type"    />
+    </resultMap>
+
+    <sql id="selectBaseDiagramVo">
+        select diagram_type from base_diagram
+    </sql>
+
+    <select id="selectBaseDiagramList" parameterType="BaseDiagram" resultMap="BaseDiagramResult">
+        <include refid="selectBaseDiagramVo"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectBaseDiagramByDiagramType" parameterType="String" resultMap="BaseDiagramResult">
+        <include refid="selectBaseDiagramVo"/>
+        where diagram_type = #{diagramType}
+    </select>
+        
+    <insert id="insertBaseDiagram" parameterType="BaseDiagram">
+        insert into base_diagram
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="diagramType != null">diagram_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="diagramType != null">#{diagramType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBaseDiagram" parameterType="BaseDiagram">
+        update base_diagram
+        <trim prefix="SET" suffixOverrides=",">
+        </trim>
+        where diagram_type = #{diagramType}
+    </update>
+
+    <delete id="deleteBaseDiagramByDiagramType" parameterType="String">
+        delete from base_diagram where diagram_type = #{diagramType}
+    </delete>
+
+    <delete id="deleteBaseDiagramByDiagramTypes" parameterType="String">
+        delete from base_diagram where diagram_type in 
+        <foreach item="diagramType" collection="array" open="(" separator="," close=")">
+            #{diagramType}
+        </foreach>
+    </delete>
+</mapper>

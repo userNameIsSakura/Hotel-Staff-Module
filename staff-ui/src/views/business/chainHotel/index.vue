@@ -1,14 +1,6 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
-      <el-form-item label="上级ID" prop="chotelParent">
-        <el-input
-          v-model="queryParams.chotelParent"
-          placeholder="请输入上级ID"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="酒店名" prop="chotelName">
         <el-input
           v-model="queryParams.chotelName"
@@ -102,7 +94,7 @@
 
 
     <!-- 添加或修改实体酒店对话框 -->
-    <el-dialog :title="title" :visible.sync="formOpen" width="600px" append-to-body>
+    <el-dialog :title="title" :visible.sync="formOpen" width="800px" append-to-body>
       <el-form ref="hotelForm" :model="hotelForm" :rules="rulesForm" label-width="120px">
         <el-form-item label="酒店名" prop="hotelName">
           <el-input v-model="hotelForm.hotelName" placeholder="请输入酒店名" />
@@ -145,6 +137,24 @@
     </el-dialog>
 
 
+<!--
+    &lt;!&ndash; 添加或修改介绍图对话框 &ndash;&gt;
+    <el-dialog :title="title" :visible.sync="diagramOpen" width="600px" append-to-body>
+      <el-form ref="diagramForm" :model="diagramForm" :rules="diagramRules" label-width="80px">
+
+        <el-form-item label="介绍图类别" prop="diagramType">
+          <el-select v-model="diagramForm.diagramType" placeholder="请选择介绍图类别">
+            <el-option
+              v-for="d in allDiagramType"
+              :key="d.diagramType"
+              :label="d.diagramType"
+              :value="d.diagramType"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+-->
 
 
   </div>
@@ -154,7 +164,7 @@
 import { listChainHotel, getChainHotel, delChainHotel, addChainHotel, updateChainHotel } from "@/api/business/chainHotel";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import {addHotel, getHotel, getHotelByCHotelId} from "@/api/business/hotel";
+import {addHotel, getHotel, getHotelByCHotelId, updateHotel} from "@/api/business/hotel";
 import region from "@/api/business/region";
 
 export default {
@@ -173,11 +183,14 @@ export default {
       chainHotelList: [],
       // 连锁酒店树选项
       chainHotelOptions: [],
+      // 全部介绍图类别
+
       // 弹出层标题
       title: "",
       // 是否显示弹出层
       open: false,
       formOpen: false,
+      diagramOpen: false,
       // 是否展开，默认全部展开
       isExpandAll: true,
       // 重新渲染表格状态
@@ -191,10 +204,17 @@ export default {
       form: {},
       // 酒店表单参数
       hotelForm: {},
+      // 介绍图表单参数
+      diagramForm: {},
       // 表单校验
       rules: {
         chotelName: [
           { required: true, message: "酒店名不能为空", trigger: "blur" }
+        ],
+      },
+      diagramRules: {
+        diagramType: [
+          { required: true, message: "介绍图类型不能为空", trigger: "blur" }
         ],
       },
       rulesForm: {
@@ -386,7 +406,13 @@ export default {
       this.$refs["hotelForm"].validate(valid => {
         if (valid) {
           if (this.hotelForm.hotelId != null) {
-
+            // 修改酒店
+            updateHotel(this.hotelForm).then(response => {
+              this.$modal.msgSuccess("修改成功");
+              this.hotelForm = {};
+              this.formOpen = false;
+              this.getList();
+            });
           } else {
             // 新增酒店
             addHotel(this.hotelForm).then(response => {
