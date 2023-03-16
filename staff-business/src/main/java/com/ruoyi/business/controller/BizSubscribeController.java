@@ -11,12 +11,17 @@ import javax.servlet.http.HttpServletResponse;
 import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.business.domain.BaseHotel;
 import com.ruoyi.business.domain.SubscribeHotelRelationships;
+import com.ruoyi.business.mapper.BaseHotelMapper;
 import com.ruoyi.business.mqtt.MqttConfiguration;
 import com.ruoyi.business.mqtt.MqttPushClient;
 import com.ruoyi.business.service.ISubscribeHotelRelationshipsService;
+import com.ruoyi.business.service.impl.BaseFunctionServiceImpl;
+import com.ruoyi.business.service.impl.BaseHotelServiceImpl;
 import com.ruoyi.business.utils.MqttConstantUtil;
+import com.ruoyi.business.utils.SpringContextUtils;
 import com.ruoyi.common.core.domain.model.StaffUser;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.framework.web.service.TokenService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -73,7 +78,6 @@ public class BizSubscribeController extends BaseController
     @Value("${token.secret}")
     private String secret;
 
-
     /**
      *
      * 客户端获取数据接口
@@ -114,7 +118,7 @@ public class BizSubscribeController extends BaseController
     @PostMapping("/clientRequest")
     public AjaxResult clientRequest(@RequestBody HashMap<String,Object> map, HttpServletRequest request) {
 
-
+        BaseHotel hotel = SpringContextUtils.getBean(BaseHotelServiceImpl.class).selectBaseHotelByHotelId(tokenService.getStaffUser(request).getHotelId());
 
         /* 检查token */
         StaffUser staffUser = tokenService.getStaffUser(request);
@@ -175,10 +179,23 @@ public class BizSubscribeController extends BaseController
         if(parameter == null) {
             parameter = new HashMap();
         }
+        /* 参数覆盖 */
+        /* 酒店级限制参数 */
+        /* 1.酒店押金 */
+        parameter.put("hotelDeposit",hotel.getHotelDeposit());
+        /* 2.免费早餐 */
+        parameter.put("freeBreakfast",hotel.getHotelFreeBreakfast());
+        /* 3.酒店结算时间 */
+        parameter.put("clearingTime",hotel.getHotelSettlement());
+        /* 4.房卡数量 */
+        parameter.put("roomCardNumber",hotel.getHotelRoomCards());
+        /* 权限级限制参数 */
         if(commandObject.getParameter() != null && !commandObject.getParameter().equals("")) {
             HashMap jsonObject = JSONObject.parseObject(commandObject.getParameter());
             parameter.putAll(jsonObject);
         }
+
+
 
         /* 获取返回Topic */
         String callbackTopic = getCallbackTopic();
@@ -221,6 +238,7 @@ public class BizSubscribeController extends BaseController
             /* 发布 */
             System.out.println(map);
             client.publish(serverTopic,JSONObject.toJSONString(map).getBytes());
+            System.out.println("发送数据：" + JSONObject.toJSONString(map));
         }
         return AjaxResult.success("success").put("token",token);
     }

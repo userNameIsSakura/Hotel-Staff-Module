@@ -19,7 +19,7 @@
     >
       <i class="el-icon-plus"></i>
     </el-upload>
-    
+
     <!-- 上传提示 -->
     <div class="el-upload__tip" slot="tip" v-if="showTip">
       请上传
@@ -145,6 +145,12 @@ export default {
           return false;
         }
       }
+      /* 检查逗号 */
+      if (file.name.toString().includes(",")) {
+        this.$modal.msgError(`文件名中不得含有逗号（,）`);
+        return false;
+      }
+      file.name.replaceAll(",",".");
       this.$modal.loading("正在上传图片，请稍候...");
       this.number++;
     },

@@ -18,6 +18,19 @@ public class StaffUser {
      * */
     private Long expireTime;
 
+    /**
+    * 酒店ID
+    * */
+    private Long hotelId;
+
+    public Long getHotelId() {
+        return hotelId;
+    }
+
+    public void setHotelId(Long hotelId) {
+        this.hotelId = hotelId;
+    }
+
     public Long getExpireTime() {
         return expireTime;
     }

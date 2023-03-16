@@ -310,7 +310,7 @@ export default {
           { required: true, message: "酒店ID不能为空", trigger: "blur" }
         ],
         departmentId: [
-          { required: true, message: "部门ID不能为空", trigger: "blur" }
+          { required: true, message: "部门不能为空", trigger: "blur" }
         ],
         staffPassword: [
           { required: true, message: "员工密码不能为空", trigger: "blur" }

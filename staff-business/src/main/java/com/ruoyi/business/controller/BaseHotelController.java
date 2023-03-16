@@ -34,7 +34,7 @@ public class BaseHotelController extends BaseController
     /**
      * 查询酒店列表列表
      */
-    @PreAuthorize("@ss.hasPermi('business:hotel:list')")
+    @PreAuthorize("@ss.hasPermi('business:chainHotel:list')")
     @GetMapping("/list")
     public TableDataInfo list(BaseHotel baseHotel)
     {
@@ -47,7 +47,7 @@ public class BaseHotelController extends BaseController
     /**
      * 查询酒店列表列表
      */
-    @PreAuthorize("@ss.hasPermi('business:hotel:list')")
+    @PreAuthorize("@ss.hasPermi('business:chainHotel:list')")
     @GetMapping("/listAll")
     public List<BaseHotel> listAll()
     {
@@ -68,7 +68,7 @@ public class BaseHotelController extends BaseController
     /**
      * 导出酒店列表列表
      */
-    @PreAuthorize("@ss.hasPermi('business:hotel:export')")
+    @PreAuthorize("@ss.hasPermi('business:chainHotel:export')")
     @Log(title = "酒店列表", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, BaseHotel baseHotel)
@@ -81,7 +81,7 @@ public class BaseHotelController extends BaseController
     /**
      * 获取酒店列表详细信息
      */
-    @PreAuthorize("@ss.hasPermi('business:hotel:query')")
+    @PreAuthorize("@ss.hasPermi('business:chainHotel:query')")
     @GetMapping(value = "/{hotelId}")
     public AjaxResult getInfo(@PathVariable("hotelId") Long hotelId)
     {
@@ -92,7 +92,7 @@ public class BaseHotelController extends BaseController
     /**
      * 获取酒店列表详细信息
      */
-    @PreAuthorize("@ss.hasPermi('business:hotel:query')")
+    @PreAuthorize("@ss.hasPermi('business:chainHotel:query')")
     @GetMapping(value = "/chotelId/{chotelId}")
     public AjaxResult getInfoByChotelId(@PathVariable("chotelId") Long chotelId)
     {
@@ -102,7 +102,7 @@ public class BaseHotelController extends BaseController
     /**
      * 新增酒店列表
      */
-    @PreAuthorize("@ss.hasPermi('business:hotel:add')")
+    @PreAuthorize("@ss.hasPermi('business:chainHotel:add')")
     @Log(title = "酒店列表", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody BaseHotel baseHotel)
@@ -114,7 +114,7 @@ public class BaseHotelController extends BaseController
     /**
      * 修改酒店列表
      */
-    @PreAuthorize("@ss.hasPermi('business:hotel:edit')")
+    @PreAuthorize("@ss.hasPermi('business:chainHotel:edit')")
     @Log(title = "酒店列表", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody BaseHotel baseHotel)
@@ -125,7 +125,7 @@ public class BaseHotelController extends BaseController
     /**
      * 删除酒店列表
      */
-    @PreAuthorize("@ss.hasPermi('business:hotel:remove')")
+    @PreAuthorize("@ss.hasPermi('business:chainHotel:remove')")
     @Log(title = "酒店列表", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{hotelIds}")
     public AjaxResult remove(@PathVariable Long[] hotelIds)

@@ -96,7 +96,7 @@ public class BaseStaffController extends BaseController
         BaseStaff staff = baseStaffs.get(0);
         if (SecurityUtils.matchesPassword(password,staff.getStaffPassword())) {
             HashMap<String, String> hashMap = new HashMap<>();
-            String token = tokenService.createStaffToken(staff.getStaffPhone());
+            String token = tokenService.createStaffToken(staff.getStaffPhone(),staff.getHotelId());
             hashMap.put("msg","登录成功");
             hashMap.put("token",token);
             hashMap.put("hotelId",hotelService.selectBaseHotelByHotelId(staff.getHotelId()).getHotelNumber());

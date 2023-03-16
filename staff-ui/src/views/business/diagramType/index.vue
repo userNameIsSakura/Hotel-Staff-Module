@@ -20,17 +20,6 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="success"
-          plain
-          icon="el-icon-edit"
-          size="mini"
-          :disabled="single"
-          @click="handleUpdate"
-          v-hasPermi="['business:diagramType:edit']"
-        >修改</el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
           type="danger"
           plain
           icon="el-icon-delete"
@@ -61,13 +50,6 @@
           <el-button
             size="mini"
             type="text"
-            icon="el-icon-edit"
-            @click="handleUpdate(scope.row)"
-            v-hasPermi="['business:diagramType:edit']"
-          >修改</el-button>
-          <el-button
-            size="mini"
-            type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['business:diagramType:remove']"
@@ -75,7 +57,7 @@
         </template>
       </el-table-column>
     </el-table>
-    
+
     <pagination
       v-show="total>0"
       :total="total"
@@ -86,7 +68,10 @@
 
     <!-- 添加或修改介绍图类别对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
+        <el-form-item label="介绍图类型" prop="hotelDeposit">
+          <el-input v-model="form.diagramType" placeholder="请输入新的介绍图类型" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -180,33 +165,28 @@ export default {
       this.open = true;
       this.title = "添加介绍图类别";
     },
-    /** 修改按钮操作 */
-    handleUpdate(row) {
-      this.reset();
-      const diagramType = row.diagramType || this.ids
-      getDiagramType(diagramType).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改介绍图类别";
-      });
-    },
     /** 提交按钮 */
     submitForm() {
       this.$refs["form"].validate(valid => {
-        if (valid) {
-          if (this.form.diagramType != null) {
-            updateDiagramType(this.form).then(response => {
-              this.$modal.msgSuccess("修改成功");
-              this.open = false;
-              this.getList();
-            });
-          } else {
-            addDiagramType(this.form).then(response => {
-              this.$modal.msgSuccess("新增成功");
-              this.open = false;
-              this.getList();
-            });
+
+        if(this.form.diagramType === null) {
+          this.$modal.msgError("介绍图类型不得为空");
+          return;
+        }
+
+        for (let i = 0; i < this.diagramTypeList.length; i++) {
+          if(this.diagramTypeList[i].diagramType === this.form.diagramType) {
+            this.$modal.msgError("介绍图类型已存在");
+            return;
           }
+        }
+
+        if (valid) {
+          addDiagramType(this.form).then(response => {
+            this.$modal.msgSuccess("新增成功");
+            this.open = false;
+            this.getList();
+          });
         }
       });
     },

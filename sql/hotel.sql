@@ -1788,13 +1788,13 @@ INSERT INTO `sys_menu` VALUES (2024, '职位信息删除', 2020, 4, '#', '', NUL
 INSERT INTO `sys_menu` VALUES (2025, '职位信息导出', 2020, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:position:export', '#', 'admin', '2022-11-18 17:32:55', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2026, '合同列表', 0, 1, 'model', 'business/model/index', NULL, 1, 0, 'C', '0', '0', 'business:model', 'cascader', 'admin', '2022-12-08 00:00:00', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2027, '历史合同', 0, 2, 'contract', 'business/contract/index', NULL, 1, 0, 'C', '0', '0', 'business:contract', 'table', 'admin', '2022-12-08 00:00:00', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2028, '酒店信息', 0, 3, 'hotel', 'business/hotel/index', NULL, 1, 0, 'C', '0', '0', 'business:hotel', 'user', 'admin', '2022-12-09 00:00:00', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2029, '酒店列表', 3, 1, 'hotel', 'business/hotel/index', NULL, 1, 0, 'C', '0', '0', 'business:hotel:list', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '酒店列表菜单');
-INSERT INTO `sys_menu` VALUES (2030, '酒店列表查询', 2029, 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:hotel:query', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2031, '酒店列表新增', 2029, 2, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:hotel:add', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2032, '酒店列表修改', 2029, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:hotel:edit', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2033, '酒店列表删除', 2029, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:hotel:remove', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
-INSERT INTO `sys_menu` VALUES (2034, '酒店列表导出', 2029, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:hotel:export', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2028, '酒店信息', 0, 3, 'hotel', 'business/hotel/index', NULL, 1, 0, 'C', '0', '0', 'business:chainHotel', 'user', 'admin', '2022-12-09 00:00:00', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2029, '酒店列表', 3, 1, 'hotel', 'business/hotel/index', NULL, 1, 0, 'C', '0', '0', 'business:chainHotel:list', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '酒店列表菜单');
+INSERT INTO `sys_menu` VALUES (2030, '酒店列表查询', 2029, 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:chainHotel:query', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2031, '酒店列表新增', 2029, 2, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:chainHotel:add', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2032, '酒店列表修改', 2029, 3, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:chainHotel:edit', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2033, '酒店列表删除', 2029, 4, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:chainHotel:remove', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
+INSERT INTO `sys_menu` VALUES (2034, '酒店列表导出', 2029, 5, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:chainHotel:export', '#', 'admin', '2023-01-06 22:21:21', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2035, '角色信息', 2000, 1, 'role', 'business/role/index', NULL, 1, 0, 'C', '0', '0', 'business:role:list', 'build', 'admin', '2023-01-07 15:24:04', '', NULL, '角色信息菜单');
 INSERT INTO `sys_menu` VALUES (2036, '角色信息查询', 2035, 1, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:role:query', '#', 'admin', '2023-01-07 15:24:04', '', NULL, '');
 INSERT INTO `sys_menu` VALUES (2037, '角色信息新增', 2035, 2, '#', '', NULL, 1, 0, 'F', '0', '0', 'business:role:add', '#', 'admin', '2023-01-07 15:24:04', '', NULL, '');
@@ -2629,7 +2629,7 @@ delimiter ;;
 CREATE TRIGGER `department_function` BEFORE DELETE ON `base_department` FOR EACH ROW BEGIN
 
 DELETE FROM base_function
-WHERE function_id in (SELECT r.function_id FROM department_function_relationships r 
+WHERE function_id in (SELECT r.function_id FROM department_function_relationships r
 											where r.department_id = OLD.department_id);
 
 END
@@ -2644,7 +2644,7 @@ delimiter ;;
 CREATE TRIGGER `position_function` BEFORE DELETE ON `base_position` FOR EACH ROW BEGIN
 
 DELETE FROM base_function
-WHERE function_id in (SELECT r.function_id FROM department_function_relationships r 
+WHERE function_id in (SELECT r.function_id FROM department_function_relationships r
 											where r.position_id = OLD.position_id);
 
 END

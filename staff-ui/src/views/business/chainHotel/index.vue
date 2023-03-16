@@ -96,23 +96,26 @@
     <!-- 添加或修改实体酒店对话框 -->
     <el-dialog :title="title" :visible.sync="formOpen" width="800px" append-to-body>
       <el-form ref="hotelForm" :model="hotelForm" :rules="rulesForm" label-width="120px">
+        <el-form-item label="省/市/区" label-width="80px" prop="account">
+          <v-distpicker @selected="select" :province="hotelForm.province" :city="hotelForm.city" :area="hotelForm.area"></v-distpicker>
+        </el-form-item>
         <el-form-item label="酒店名" prop="hotelName">
           <el-input v-model="hotelForm.hotelName" placeholder="请输入酒店名" />
         </el-form-item>
         <el-form-item label="房卡数量" prop="hotelRoomCards">
           <el-input v-model="hotelForm.hotelRoomCards" placeholder="请输入房卡数量" />
         </el-form-item>
-        <el-form-item label="省/市/区" label-width="80px" prop="account">
-          <v-distpicker @selected="select" :province="hotelForm.province" :city="hotelForm.city" :area="hotelForm.area"></v-distpicker>
-        </el-form-item>
+
         <el-form-item label="结算时间">
-          <el-radio-group v-model="hotelForm.hotelSettlement">
-            <el-radio
-              v-for="dict in dict.type.hotel_settlement"
-              :key="dict.value"
-              :label="dict.value"
-            >{{dict.label}}</el-radio>
-          </el-radio-group>
+          <el-time-select
+            v-model="hotelForm.hotelSettlement"
+            :picker-options="{
+            start: '00:00',
+            step: '00:30',
+            end: '23:45'
+          }"
+            placeholder="选择时间">
+          </el-time-select>
         </el-form-item>
         <el-form-item label="免费早餐数量" prop="hotelFreeBreakfast">
           <el-input v-model="hotelForm.hotelFreeBreakfast" placeholder="请输入免费早餐数量" />
@@ -135,27 +138,6 @@
         <el-button @click="cancelForm">取 消</el-button>
       </div>
     </el-dialog>
-
-
-<!--
-    &lt;!&ndash; 添加或修改介绍图对话框 &ndash;&gt;
-    <el-dialog :title="title" :visible.sync="diagramOpen" width="600px" append-to-body>
-      <el-form ref="diagramForm" :model="diagramForm" :rules="diagramRules" label-width="80px">
-
-        <el-form-item label="介绍图类别" prop="diagramType">
-          <el-select v-model="diagramForm.diagramType" placeholder="请选择介绍图类别">
-            <el-option
-              v-for="d in allDiagramType"
-              :key="d.diagramType"
-              :label="d.diagramType"
-              :value="d.diagramType"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
--->
-
 
   </div>
 </template>

@@ -83,7 +83,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="介绍图" prop="diagramPath">
-          <image-upload v-model="form.diagramPath" limit="20" file-size="300">
+          <image-upload v-model="form.diagramPath" limit="20" file-size="100" >
           </image-upload>
         </el-form-item>
 
@@ -152,6 +152,10 @@ export default {
     this.getList();
   },
   methods: {
+    beforeUpload(file) {
+      alert("ddd")
+      return false;
+    },
     /** 查询酒店介绍图列表 */
     getList() {
       this.loading = true;
