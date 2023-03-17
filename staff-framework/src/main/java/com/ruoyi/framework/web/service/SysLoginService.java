@@ -132,10 +132,10 @@ public class SysLoginService
 
         recordLoginInfo(loginUser.getUserId());
 
-        if(!captchaEnabled) {
+/*        if(!captchaEnabled) {
             tokenService.createToken(loginUser);
             return JSONObject.toJSONString(loginUser);
-        }
+        }*/
 
         // 生成token
         return tokenService.createToken(loginUser);

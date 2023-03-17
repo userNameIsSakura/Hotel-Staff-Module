@@ -77,8 +77,6 @@ public class BaseStaffController extends BaseController
     @PostMapping("/login")
     public HashMap login(@RequestBody HashMap map)
     {
-
-
         String phone = (String) map.get("phone");
         String password = (String) map.get("password");
 
@@ -228,7 +226,6 @@ public class BaseStaffController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:staff:edit')")
     @PutMapping("/reset")
     public AjaxResult reset(@RequestBody BaseStaff staff) {
-
         staff.setStaffPassword(SecurityUtils.encryptPassword(staff.getStaffPassword()));
         return toAjax(baseStaffMapper.updateBaseStaffPassword(staff));
 

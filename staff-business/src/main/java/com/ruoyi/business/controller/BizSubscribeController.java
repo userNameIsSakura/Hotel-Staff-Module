@@ -133,7 +133,6 @@ public class BizSubscribeController extends BaseController
         /* token有效期验证 */
         tokenService.verifyStaffToken(staffUser);
 
-
         /* 命令 */
         String command = (String) map.get("command");
         /* 参数 */
@@ -195,8 +194,6 @@ public class BizSubscribeController extends BaseController
             parameter.putAll(jsonObject);
         }
 
-
-
         /* 获取返回Topic */
         String callbackTopic = getCallbackTopic();
 
@@ -247,7 +244,6 @@ public class BizSubscribeController extends BaseController
         return "callback/"+ topicId.getAndIncrement();
     }
 
-
     /**
      * 查询订阅信息列表
      */
@@ -270,7 +266,6 @@ public class BizSubscribeController extends BaseController
         List<BizSubscribe> list = bizSubscribeService.selectBizSubscribeList(new BizSubscribe());
         return list;
     }
-
 
     /**
      * 导出订阅信息列表

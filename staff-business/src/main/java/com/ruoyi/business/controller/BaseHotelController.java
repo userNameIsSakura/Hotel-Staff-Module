@@ -63,8 +63,6 @@ public class BaseHotelController extends BaseController
         return list;
     }
 
-
-
     /**
      * 导出酒店列表列表
      */
@@ -87,7 +85,6 @@ public class BaseHotelController extends BaseController
     {
         return AjaxResult.success(baseHotelService.selectBaseHotelByHotelId(hotelId));
     }
-
 
     /**
      * 获取酒店列表详细信息

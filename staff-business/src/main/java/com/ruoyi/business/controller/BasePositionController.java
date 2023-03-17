@@ -73,9 +73,6 @@ public class BasePositionController extends BaseController
         return basePositionMapper.selectBasePositionByDepartmentId(departmentId);
     }
 
-
-
-
     /**
      * 导出职位信息列表
      */

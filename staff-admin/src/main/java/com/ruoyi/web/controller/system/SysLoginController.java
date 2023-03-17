@@ -41,31 +41,6 @@ public class SysLoginController
     @Autowired
     private SysPermissionService permissionService;
 
-/*
-
-    public AjaxResult login(@RequestBody LoginBody loginBody, HttpServletResponse response,HttpServletRequest request)
-    {
-        System.out.println();
-        SysAdministrator login = loginService.login(loginBody.getUsername(), loginBody.getPassword());
-        if(login == null)
-        {
-            loginBody.setUsername("admin");
-            loginBody.setPassword("aaa");
-        }
-        else
-        {
-            loginBody.setUsername("admin");
-            loginBody.setPassword("admin123");
-            HttpSession session = request.getSession();
-            session.setAttribute("hotel",login.getHotelId());
-            Cookie admin = new Cookie("admin", login.getSuperAdministrator().toString());
-            admin.setPath("/");
-            response.addCookie(admin);
-        }
-        return login2(loginBody,login);
-    }
-*/
-
     /**
      * 登录方法
      *
@@ -73,7 +48,7 @@ public class SysLoginController
      * @return 结果
      */
     @PostMapping("/login")
-    public AjaxResult login(@RequestBody LoginBody loginBody,HttpServletResponse response) throws InterruptedException {
+    public AjaxResult login(@RequestBody LoginBody loginBody) {
 
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
@@ -86,16 +61,16 @@ public class SysLoginController
     }
 
     @PostMapping("/loginInterface")
-    public String loginInterface(@RequestBody LoginBody loginBody,HttpServletResponse response) throws InterruptedException {
+    public AjaxResult loginInterface(@RequestBody LoginBody loginBody) {
 
         AjaxResult ajax = AjaxResult.success();
         // 生成令牌
-        String loginUser = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
+        String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid(),false);
 
-        ajax.put(Constants.TOKEN, loginUser);
+        ajax.put(Constants.TOKEN, token);
 
-        return loginUser;
+        return ajax;
     }
 
 
