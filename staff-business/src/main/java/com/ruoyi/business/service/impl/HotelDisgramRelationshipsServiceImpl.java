@@ -1,6 +1,8 @@
 package com.ruoyi.business.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.business.mapper.HotelDisgramRelationshipsMapper;
@@ -56,6 +58,7 @@ public class HotelDisgramRelationshipsServiceImpl implements IHotelDisgramRelati
     {
         final HotelDisgramRelationships r = new HotelDisgramRelationships();
         r.setDiagramType(hotelDisgramRelationships.getDiagramType());
+        r.setHotelId(SecurityUtils.getHotelId());
         final List<HotelDisgramRelationships> list = selectHotelDisgramRelationshipsList(r);
         if(list.size() > 0) {
             final HotelDisgramRelationships newDiagram = list.get(0);
@@ -77,6 +80,7 @@ public class HotelDisgramRelationshipsServiceImpl implements IHotelDisgramRelati
     {
         final HotelDisgramRelationships r = new HotelDisgramRelationships();
         r.setDiagramType(hotelDisgramRelationships.getDiagramType());
+        r.setHotelId(SecurityUtils.getHotelId());
         final List<HotelDisgramRelationships> list = selectHotelDisgramRelationshipsList(r);
         if(list.size() > 0 && !list.get(0).getId().equals(hotelDisgramRelationships.getId())) {
             final HotelDisgramRelationships newDiagram = list.get(0);

@@ -50,6 +50,8 @@ public class HotelController {
     /*合同有效期*/
     @Value("${pdf.periodOfValidity}")
     private Long periodOfValidity;
+    @Value("${ruoyi.profile}")
+    private String pathPrefix;
 
     @PostMapping("/pdf")
     public void getPDF(@RequestBody int id, HttpServletResponse response) throws IOException {
@@ -61,7 +63,9 @@ public class HotelController {
             return;
         }
 
-        File file = new File(baseModel.getModelFile());
+        final String modelFile = baseModel.getModelFile();
+        final String fileName = modelFile.replaceFirst("/profile", "");
+        File file = new File(pathPrefix + fileName);
         InputStream in = new FileInputStream(file);
         ServletOutputStream outputStream = response.getOutputStream();
         //创建存放文件内容的数组
@@ -155,7 +159,11 @@ public class HotelController {
             PdfWriter writer = PdfWriter.getInstance(document, os);
             document.open();
             PdfContentByte cb = writer.getDirectContent();
-            File file = new File(baseModel.getModelFile());
+
+            final String modelFile = baseModel.getModelFile();
+            final String path = modelFile.replaceFirst("/profile", "");
+            File file = new File(pathPrefix + path);
+
             BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(file));
             PdfReader pdfReader = new PdfReader(bufferedInputStream);
             int sum = pdfReader.getNumberOfPages();

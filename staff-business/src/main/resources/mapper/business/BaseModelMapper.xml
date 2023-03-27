@@ -18,7 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectBaseModelList" parameterType="BaseModel" resultMap="BaseModelResult">
         <include refid="selectBaseModelVo"/>
         <where>
-            <if test="modelName != null  and modelName != ''"> and model_name like concat('%', #{modelName}, '%')</if>
+            <if test="modelName != null  and modelName != ''"> and model_name  #{modelName}</if>
             <if test="modelFile != null  and modelFile != ''"> and model_file = #{modelFile}</if>
         </where>
     </select>

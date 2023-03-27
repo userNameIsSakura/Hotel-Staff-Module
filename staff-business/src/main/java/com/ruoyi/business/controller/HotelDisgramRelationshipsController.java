@@ -44,6 +44,7 @@ public class HotelDisgramRelationshipsController extends BaseController
     public TableDataInfo list(HotelDisgramRelationships hotelDisgramRelationships)
     {
         startPage();
+        hotelDisgramRelationships.setHotelId(SecurityUtils.getHotelId());
         List<HotelDisgramRelationships> list = hotelDisgramRelationshipsService.selectHotelDisgramRelationshipsList(hotelDisgramRelationships);
         return getDataTable(list);
     }
@@ -91,6 +92,7 @@ public class HotelDisgramRelationshipsController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody HotelDisgramRelationships hotelDisgramRelationships)
     {
+        hotelDisgramRelationships.setHotelId(SecurityUtils.getHotelId());
         return toAjax(hotelDisgramRelationshipsService.updateHotelDisgramRelationships(hotelDisgramRelationships));
     }
 

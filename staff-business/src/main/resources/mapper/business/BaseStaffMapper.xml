@@ -37,7 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             s.department_id = d.department_id and s.hotel_id = h.hotel_id
             <if test="staffId != null  and staffId != ''"> and staff_id = #{staffId}</if>
-            <if test="staffName != null  and staffName != ''"> and staff_name like concat('%', #{staffName}, '%')</if>
+            <if test="staffName != null  and staffName != ''"> and staff_name= #{staffName}</if>
             <if test="staffPhone != null  and staffPhone != ''"> and staff_phone = #{staffPhone}</if>
             <if test="hotelId != null "> and s.hotel_id = #{hotelId}</if>
             <if test="departmentId != null "> and s.department_id = #{departmentId}</if>

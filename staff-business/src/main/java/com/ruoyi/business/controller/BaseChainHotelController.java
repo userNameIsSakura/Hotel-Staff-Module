@@ -1,7 +1,12 @@
 package com.ruoyi.business.controller;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.business.service.IBaseHotelService;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +27,7 @@ import com.ruoyi.common.utils.poi.ExcelUtil;
 
 /**
  * 连锁酒店Controller
- * 
+ *
  * @author ruoyi
  * @date 2023-03-13
  */
@@ -32,6 +37,10 @@ public class BaseChainHotelController extends BaseController
 {
     @Autowired
     private IBaseChainHotelService baseChainHotelService;
+    @Autowired
+    private IBaseHotelService baseHotelService;
+
+
 
     /**
      * 查询连锁酒店列表
@@ -43,6 +52,20 @@ public class BaseChainHotelController extends BaseController
         List<BaseChainHotel> list = baseChainHotelService.selectBaseChainHotelList(baseChainHotel);
         return AjaxResult.success(list);
     }
+
+    /**
+     * 获得集团ID
+     *
+     * @return int
+     */
+    @GetMapping
+    public Long getChotelId() {
+        if(SecurityUtils.getHotelId() != null)
+            return baseChainHotelService.selectBaseChainHotelByHotelId(SecurityUtils.getHotelId());
+        else
+            return 0L;
+    }
+
 
     /**
      * 导出连锁酒店列表

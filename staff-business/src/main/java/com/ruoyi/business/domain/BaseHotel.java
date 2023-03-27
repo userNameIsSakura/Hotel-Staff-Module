@@ -61,64 +61,15 @@ public class BaseHotel extends BaseEntity
     @Excel(name = "酒店简介")
     private String hotelIntroduct;
 
+    /** 发票二维码 */
+    @Excel(name = "发票二维码")
+    private String hotelBill;
+
     /** 关联ID */
     @Excel(name = "关联ID")
     private Long chotelId;
 
     /** 父级ID */
     private Long chotelParent;
-
-    public String getProvince() {
-        return province;
-    }
-
-    public void setProvince(String province) {
-        this.province = province;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getArea() {
-        return area;
-    }
-
-    public void setArea(String area) {
-        this.area = area;
-    }
-
-    public void setHotelId(Long hotelId)
-    {
-        this.hotelId = hotelId;
-    }
-
-    public Long getHotelId()
-    {
-        return hotelId;
-    }
-    public void setHotelName(String hotelName)
-    {
-        this.hotelName = hotelName;
-    }
-
-    public String getHotelName()
-    {
-        return hotelName;
-    }
-    public void setHotelNumber(String hotelNumber)
-    {
-        this.hotelNumber = hotelNumber;
-    }
-
-    public String getHotelNumber()
-    {
-        return hotelNumber;
-    }
-
 
 }

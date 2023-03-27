@@ -17,7 +17,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectBaseRoleList" parameterType="BaseRole" resultMap="BaseRoleResult">
         <include refid="selectBaseRoleVo"/>
         <where>
-            <if test="roleName != null  and roleName != ''"> and role_name like concat('%', #{roleName}, '%')</if>
+            <if test="roleName != null  and roleName != ''"> and role_name #{roleName}</if>
             <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
         </where>
     </select>

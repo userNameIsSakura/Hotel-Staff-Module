@@ -35,12 +35,21 @@ module.exports = {
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
-        target: `http://localhost:8090`,
+        target: `http://127.0.0.1:8090`,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
         }
-      }
+      },
+      [process.env.VUE_APP_MEMBER_API]: {
+        /* TODO:需要改成业务时会员系统的URL */
+        target: `http://127.0.0.1:8091`,
+        changeOrigin: true,
+        pathRewrite: {
+          ['^' + process.env.VUE_APP_MEMBER_API]: ''
+        }
+      },
+
     },
     disableHostCheck: true
   },
@@ -70,8 +79,8 @@ module.exports = {
     ],
   },
   chainWebpack(config) {
-    config.plugins.delete('preload') // TODO: need test
-    config.plugins.delete('prefetch') // TODO: need test
+    config.plugins.delete('preload')
+    config.plugins.delete('prefetch')
 
     // set svg-sprite-loader
     config.module

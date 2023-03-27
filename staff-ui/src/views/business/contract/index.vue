@@ -10,6 +10,8 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+
+
 <!--      <el-form-item label="合同状态" prop="contractState">
         <el-input
           v-model="queryParams.contractState"
@@ -24,7 +26,6 @@
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
-
     <el-table v-loading="loading" :data="contractList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="合同名" align="center" prop="contractName" />

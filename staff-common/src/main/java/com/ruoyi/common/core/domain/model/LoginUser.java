@@ -2,6 +2,8 @@ package com.ruoyi.common.core.domain.model;
 
 import java.util.Collection;
 import java.util.Set;
+
+import com.ruoyi.common.utils.spring.SpringUtils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.alibaba.fastjson2.annotation.JSONField;
@@ -90,6 +92,10 @@ public class LoginUser implements UserDetails
      */
     private SysUser user;
 
+    /**
+     * 集团ID
+     * */
+    private Long chotelId;
 
 
 

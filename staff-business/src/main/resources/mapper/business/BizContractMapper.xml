@@ -25,7 +25,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectBizContractVo"/>
         <where>
             <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
-            <if test="contractName != null  and contractName != ''"> and contract_name like concat('%', #{contractName}, '%')</if>
+            <if test="contractName != null  and contractName != ''"> and contract_name = #{contractName</if>
             <if test="contractFile != null  and contractFile != ''"> and contract_file = #{contractFile}</if>
             <if test="contractSign != null "> and contract_sign = #{contractSign}</if>
             <if test="contractEffect != null "> and contract_effect = #{contractEffect}</if>

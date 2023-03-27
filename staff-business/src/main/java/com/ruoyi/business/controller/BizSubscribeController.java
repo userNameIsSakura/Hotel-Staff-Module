@@ -19,9 +19,11 @@ import com.ruoyi.business.service.impl.BaseFunctionServiceImpl;
 import com.ruoyi.business.service.impl.BaseHotelServiceImpl;
 import com.ruoyi.business.utils.MqttConstantUtil;
 import com.ruoyi.business.utils.SpringContextUtils;
+import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.model.StaffUser;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.web.service.TokenService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -84,27 +86,29 @@ public class BizSubscribeController extends BaseController
      *
      * */
     @PostMapping("/getDataList")
-    public HashMap getDataList(@RequestBody HashMap<String,String> map) {
+    public HashMap getDataList(@RequestBody HashMap<String,String> map,HttpServletResponse response) {
 
         String token = map.get("token");
         int pageSize = Integer.parseInt(map.get("pageSize"));
         int pageNum =   Integer.parseInt(map.get("pageNum"))  ;
 
+        HashMap<String, Object> hashMap = new HashMap<>();
+
         List<Object> cacheList = redisCache.getCacheList(token);
+
         int size = cacheList.size();
         Integer pageTotal = (size % pageSize == 0) ? size / pageSize : (size / pageSize) + 1 ;
 
-        if(pageNum > pageTotal)
-            return null;
-
-        HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("code",HttpStatus.SUCCESS);
         hashMap.put("total",size);
 
-        if(pageNum == pageTotal) {
-           hashMap.put("list",cacheList.subList((pageNum-1) * pageSize, size));
-           return hashMap;
+        if(pageNum > pageTotal) {
+            hashMap.put("list",new ArrayList<>());
+        } else if(pageNum == pageTotal){
+            hashMap.put("list",cacheList.subList((pageNum-1) * pageSize, size));
+        }else {
+            hashMap.put("list",cacheList.subList((pageNum-1) * pageSize ,  (pageNum-1) * pageSize + pageSize));
         }
-        hashMap.put("list",cacheList.subList((pageNum-1) * pageSize ,  (pageNum-1) * pageSize + pageSize));
         return hashMap;
     }
 
@@ -118,8 +122,6 @@ public class BizSubscribeController extends BaseController
     @PostMapping("/clientRequest")
     public AjaxResult clientRequest(@RequestBody HashMap<String,Object> map, HttpServletRequest request) {
 
-        BaseHotel hotel = SpringContextUtils.getBean(BaseHotelServiceImpl.class).selectBaseHotelByHotelId(tokenService.getStaffUser(request).getHotelId());
-
         /* 检查token */
         StaffUser staffUser = tokenService.getStaffUser(request);
 
@@ -127,12 +129,17 @@ public class BizSubscribeController extends BaseController
             return AjaxResult.error("权限验证失败");
         }
 
+        BaseHotel hotel = SpringContextUtils.getBean(BaseHotelServiceImpl.class).selectBaseHotelByHotelId(tokenService.getStaffUser(request).getHotelId());
+
+        if (!mqttConfiguration.getMqttPushClient().isConnected()) {
+            return AjaxResult.error("MQTT未连接");
+        }
+
         /* 获得员工ID */
         String phone = staffUser.getPhone();
 
         /* token有效期验证 */
         tokenService.verifyStaffToken(staffUser);
-
 
         /* 命令 */
         String command = (String) map.get("command");
@@ -238,7 +245,7 @@ public class BizSubscribeController extends BaseController
             client.publish(serverTopic,JSONObject.toJSONString(map).getBytes());
             System.out.println("发送数据：" + JSONObject.toJSONString(map));
         }
-        return AjaxResult.success("success").put("token",token);
+        return AjaxResult.success().put("token",token);
     }
 
     private String getCallbackTopic() {

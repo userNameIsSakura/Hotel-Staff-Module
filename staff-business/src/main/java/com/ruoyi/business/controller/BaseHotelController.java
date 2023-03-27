@@ -104,7 +104,11 @@ public class BaseHotelController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody BaseHotel baseHotel)
     {
-        System.out.println(baseHotel);
+        final BaseHotel baseHotel1 = new BaseHotel();
+        baseHotel1.setHotelName(baseHotel.getHotelName());
+        if ((baseHotelService.selectBaseHotelList(baseHotel1).size() > 0)) {
+            return AjaxResult.error("酒店名已存在");
+        }
         return toAjax(baseHotelService.insertBaseHotel(baseHotel));
     }
 

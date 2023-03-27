@@ -126,6 +126,9 @@
         <el-form-item label="海报">
           <image-upload v-model="hotelForm.hotelPoster" limit="1"/>
         </el-form-item>
+        <el-form-item label="发票二维码">
+          <image-upload v-model="hotelForm.hotelBill" limit="1"/>
+        </el-form-item>
         <el-form-item label="酒店简介" prop="hotelIntroduct">
           <el-input v-model="hotelForm.hotelIntroduct" type="textarea" placeholder="请输入内容" />
         </el-form-item>
@@ -238,7 +241,11 @@ export default {
       if(this.hotelForm.hotelNumber === null) {
         this.hotelForm.hotelNumber = data.area.code + "0000";
       }else {
-        var id = this.hotelForm.hotelNumber.slice(6,10);
+        if(this.hotelForm.hotelNumber.length === 10)
+          var id = this.hotelForm.hotelNumber.slice(6,10);
+        else if (this.hotelForm.hotelNumber.length === 4)
+          var id = this.hotelForm.hotelNumber;
+
         this.hotelForm.hotelNumber = data.area.code + id;
       }
     },
@@ -301,6 +308,7 @@ export default {
         hotelFreeBreakfast: null,
         hotelDeposit: null,
         hotelPoster: null,
+        hotelBill: null,
         hotelIntroduct: null,
         chotelId: null,
 
@@ -386,6 +394,22 @@ export default {
     /** 提交实体酒店表单 */
     submitForm2() {
       this.$refs["hotelForm"].validate(valid => {
+
+        if(this.hotelForm.hotelNumber === null || this.hotelForm.hotelNumber.length !== 10) {
+          this.$message.error("酒店地址不得为空")
+          return;
+        }
+
+        if(this.hotelForm.hotelSettlement === null) {
+          this.$message.error("酒店结算时间不得为空")
+          return;
+        }
+
+        if(this.hotelForm.hotelPoster === null) {
+          this.$message.error("酒店海报不得为空")
+          return;
+        }
+
         if (valid) {
           if (this.hotelForm.hotelId != null) {
             // 修改酒店

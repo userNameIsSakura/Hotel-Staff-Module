@@ -19,7 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectBaseAuthVo"/>
         <where>
             <if test="url != null  and url != ''"> and url = #{url}</if>
-            <if test="authName != null  and authName != ''"> and auth_name like concat('%', #{authName}, '%')</if>
+            <if test="authName != null  and authName != ''"> and auth_name = #{authName}</if>
             <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
         </where>
     </select>

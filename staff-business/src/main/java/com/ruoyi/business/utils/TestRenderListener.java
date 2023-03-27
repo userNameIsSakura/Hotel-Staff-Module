@@ -29,7 +29,6 @@ public class TestRenderListener implements RenderListener {
     //step 2,遇到"BT"执行
     @Override
     public void beginTextBlock() {
-        // TODO Auto-generated method stub
     }
 
     //step 3
@@ -75,7 +74,6 @@ public class TestRenderListener implements RenderListener {
     //step 4(最后执行的，只执行一次)，遇到“ET”执行
     @Override
     public void endTextBlock() {
-        // TODO Auto-generated method stub
     }
 
     //step 1(图片处理方法)

@@ -43,7 +43,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <where>
             <if test="superiorId != null "> and superior_id = #{superiorId}</if>
             <if test="hotelId != null "> and hotel_id = #{hotelId}</if>
-            <if test="departmentName != null  and departmentName != ''"> and department_name like concat('%', #{departmentName}, '%')</if>
+            <if test="departmentName != null  and departmentName != ''"> and department_name = #{departmentName}</if>
         </where>
     </select>
 

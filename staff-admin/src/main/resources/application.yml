@@ -9,7 +9,7 @@ ruoyi:
   # 实例演示开关
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-#  TODU: 这里的路径需要改吧
+#  TODU: 这里的路径需要改成业务环境下的路径
   profile: D:/ruoyi/uploadPath # Windows
 #  profile:/home/ruoyi/uploadPath # Linux
   # 获取ip地址开关
@@ -142,34 +142,34 @@ pdf:
   # 合同有效期一年
   periodOfValidity: 31536000000
 
-mqtt:
-  broker:
-    host:
-#      - tcp://121.89.238.10:1883
-      - tcp://127.0.0.1:1883
-    username: admin
-    password: "public"
-    clientId: aosTest
-    qos: 2
-    serverTopic: "serverTopic"
-    timeout: 30
-    keepalive: 10
-    completionTimeout: 30
-
-
-
 #mqtt:
 #  broker:
 #    host:
 ##      - tcp://121.89.238.10:1883
-#      - tcp://192.168.1.16:1883
-#    username: hotel-user
-#    password: "mXshRj2pe4EegpYHtHpU8Yyu"
+#      - tcp://127.0.0.1:1883
+#    username: admin
+#    password: "public"
 #    clientId: aosTest
 #    qos: 2
+#    serverTopic: "serverTopic"
 #    timeout: 30
 #    keepalive: 10
 #    completionTimeout: 30
+
+
+
+mqtt:
+  broker:
+    host:
+#      - tcp://121.89.238.10:1883
+      - tcp://192.168.1.16:1883
+    username: hotel-user
+    password: "mXshRj2pe4EegpYHtHpU8Yyu"
+    clientId: aosTest
+    qos: 2
+    timeout: 30
+    keepalive: 10
+    completionTimeout: 30
 
 
 #mqtt:
@@ -178,7 +178,7 @@ mqtt:
 #      - tcp://eb6b1549b32a3c89.natapp.cc:6004
 #    username: hotel-user
 #    password: "mXshRj2pe4EegpYHtHpU8Yyu"
-#    clientId: aqwe
+#    clientId: aos
 #    qos: 2
 #    timeout: 30
 #    keepalive: 10

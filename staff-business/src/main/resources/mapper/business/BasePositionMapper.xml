@@ -18,7 +18,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectBasePositionList" parameterType="BasePosition" resultMap="BasePositionResult">
         <include refid="selectBasePositionVo"/>
         <where>
-            <if test="positionName != null  and positionName != ''"> and position_name like concat('%', #{positionName}, '%')</if>
+            <if test="positionName != null  and positionName != ''"> and position_name #{positionName}</if>
             <if test="hotelId != null  and hotelId != ''"> and hotel_id = #{hotelId}</if>
         </where>
     </select>
