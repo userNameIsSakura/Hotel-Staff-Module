@@ -137,6 +137,7 @@ xss:
 pdf:
 #  TODO Linux下要换成Linux路径
   path: D:\Hotel-System\pdf\
+#  path: /home/ruoyi/ruoyi
   # 甲方信息
   partyA:
     name: 测试用甲方公司名
@@ -146,6 +147,10 @@ pdf:
 tencent:
   api:
     key: HM4BZ-WBHRI-DOAGX-UJRVG-57WBS-CYBG5
+
+hotel:
+  member:
+    url: http://127.0.0.1:8091/
 
 #mqtt:
 #  broker:

@@ -22,6 +22,8 @@ public class InterfaceController {
     private BaseHotelServiceImpl baseHotelService;
     @Value("${tencent.api.key}")
     private String key;
+    @Value("${hotel.member.url}")
+    private String memberUrl;
 
     // TODO: 2023/4/1 此处接口只允许小程序端调用
 
@@ -43,7 +45,7 @@ public class InterfaceController {
         if(StringUtils.isEmpty(lat) || StringUtils.isEmpty(lng))
             return AjaxResult.error("经纬度不得为空");
 
-        /* 默认为级别1，该区下的 */
+        /* 默认为级别1，搜索该区下的酒店列表 */
         if(StringUtils.isEmpty(level))
             level = "1";
         if(!level.equals("1") && !level.equals("2") && !level.equals("3"))
@@ -97,26 +99,19 @@ public class InterfaceController {
     @PostMapping("/position")
     public AjaxResult getHotelsByPosition(@RequestBody HashMap<String,String> map) {
 
-        final Double lat;
-        final Double lng;
-        Double limit;
+        final double lat;
+        final double lng;
+        double limit;
         try {
-            lat = Double.valueOf(map.get("lat"));
-            lng = Double.valueOf(map.get("lng"));
-            limit = Double.valueOf(map.get("limit"));
+            lat = Double.parseDouble(map.get("lat"));
+            lng = Double.parseDouble(map.get("lng"));
+            limit = Double.parseDouble(map.get("limit"));
         }catch (Exception e) {
             return AjaxResult.error("格式转换出错，请检查参数格式");
         }
 
         /* 如果传来了酒店名称，则模糊查询酒店列表 */
         final String hotelName = map.get("hotelName");
-
-        if(StringUtils.isNull(lat) || StringUtils.isNull(lng))
-            return AjaxResult.error("经纬度不得为空");
-
-        /* 若未传limit，则表示不限制距离 */
-        if(StringUtils.isNull(limit))
-            limit = Double.MAX_VALUE;
 
         final BaseHotel hotel = new BaseHotel();
         final List<BaseHotel> baseHotels = baseHotelService.selectBaseHotelList(hotel);
@@ -139,6 +134,12 @@ public class InterfaceController {
         return AjaxResult.success().put("list",list).put("total",list.size());
     }
 
+    /* 根据身份证号码查询会员信息，返回会员ID，注册的子账号ID，子账号关联的酒店，手机号码 */
+    @GetMapping("/memberInfo")
+    public String memberList(@RequestParam(value = "memberIdnumber") String idNumber) {
+        // TODO: 2023/4/3 还要返回该会员常住的酒店
+        return HttpUtils.sendGet(memberUrl + "system/member/info?memberIdnumber=" + idNumber);
+    }
 
     /**
      * 解析位置获得经纬度
@@ -155,5 +156,4 @@ public class InterfaceController {
         doubles.add(aDouble1);
         return doubles;
     }
-
 }
