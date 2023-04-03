@@ -116,8 +116,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteStaffRoleByStaffId" parameterType="Long">
-        delete from staff_role_relationships r
-        where r.staff_id = #{id}
+        delete from staff_role_relationships
+        where staff_id = #{id}
     </delete>
 
     <insert id="batchStaffRole">

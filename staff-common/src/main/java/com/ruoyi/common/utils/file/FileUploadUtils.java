@@ -112,7 +112,9 @@ public class FileUploadUtils
 
         String fileName = extractFilename(file);
 
+        // TODO: 2023/3/27 Linux下显示不出图片
         String absPath = getAbsoluteFile(baseDir, fileName).getAbsolutePath();
+//        System.out.println("absPath:" + absPath);
         file.transferTo(Paths.get(absPath));
         return getPathFileName(baseDir, fileName);
     }

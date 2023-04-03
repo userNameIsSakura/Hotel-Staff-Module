@@ -57,6 +57,7 @@ public class BaseHotelServiceImpl implements IBaseHotelService
         return baseHotelMapper.selectBaseHotelByChotelId(chotelId);
     }
 
+
     /**
      * 新增酒店列表
      *
@@ -100,6 +101,11 @@ public class BaseHotelServiceImpl implements IBaseHotelService
         int i = baseHotelMapper.insertBaseHotel(baseHotel);
 
         return i;
+    }
+
+    @Override
+    public List<BaseHotel> selectBaseHotelByArea(String acode,String hotelName) {
+        return baseHotelMapper.selectBaseHotelByArea(acode,hotelName);
     }
 
     /**

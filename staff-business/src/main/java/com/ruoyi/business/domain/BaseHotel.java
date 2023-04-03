@@ -13,10 +13,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * @date 2023-01-06
  */
 @Data
-public class BaseHotel extends BaseEntity
+public class BaseHotel
 {
-    private static final long serialVersionUID = 1L;
-
     /** 酒店ID */
     private Long hotelId;
 
@@ -72,4 +70,12 @@ public class BaseHotel extends BaseEntity
     /** 父级ID */
     private Long chotelParent;
 
+    /** 坐标 */
+    private String latlng;
+
+    /** 距离 */
+    private Double distance;
+
+    /** 备注 */
+    private String remark;
 }

@@ -136,17 +136,29 @@
           <el-input v-model="hotelForm.remark" placeholder="请输入备注" />
         </el-form-item>
       </el-form>
+
+
+      <div id="container"></div>
+
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm2">确 定</el-button>
         <el-button @click="cancelForm">取 消</el-button>
       </div>
+
     </el-dialog>
+
 
   </div>
 </template>
 
 <script>
-import { listChainHotel, getChainHotel, delChainHotel, addChainHotel, updateChainHotel } from "@/api/business/chainHotel";
+import {
+  listChainHotel,
+  getChainHotel,
+  delChainHotel,
+  addChainHotel,
+  updateChainHotel,
+} from "@/api/business/chainHotel";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 import {addHotel, getHotel, getHotelByCHotelId, updateHotel} from "@/api/business/hotel";
@@ -191,6 +203,10 @@ export default {
       hotelForm: {},
       // 介绍图表单参数
       diagramForm: {},
+      // 地图
+      map: null,
+      local: null,
+      markerLayer: null,
       // 表单校验
       rules: {
         chotelName: [
@@ -230,7 +246,7 @@ export default {
         chotelId: [
           { required: true, message: "关联ID不能为空", trigger: "blur" }
         ]
-      }
+      },
     };
   },
   created() {
@@ -238,17 +254,30 @@ export default {
   },
   methods: {
     select(data) {
-      if(this.hotelForm.hotelNumber === null) {
+      if (this.hotelForm.hotelNumber === null) {
         this.hotelForm.hotelNumber = data.area.code + "0000";
-      }else {
-        if(this.hotelForm.hotelNumber.length === 10)
-          var id = this.hotelForm.hotelNumber.slice(6,10);
+      } else {
+        if (this.hotelForm.hotelNumber.length === 10)
+          var id = this.hotelForm.hotelNumber.slice(6, 10);
         else if (this.hotelForm.hotelNumber.length === 4)
           var id = this.hotelForm.hotelNumber;
 
         this.hotelForm.hotelNumber = data.area.code + id;
       }
+
+      var cityId = this.hotelForm.hotelNumber.slice(0, 4) + "00";
+      var areaId = this.hotelForm.hotelNumber.slice(0, 6);
+      var area = region[cityId][areaId];
+      if(area !== undefined) {
+
+        var geocoder = new TMap.service.Geocoder();
+        // 改变地图
+        geocoder.getLocation({ address: area }).then((result) => {
+          this.map.setCenter(result.result.location);
+          })
+      }
     },
+
     /** 查询连锁酒店列表 */
     getList() {
       this.loading = true;
@@ -268,11 +297,11 @@ export default {
         children: node.children
       };
     },
-	/** 查询连锁酒店下拉树结构 */
+    /** 查询连锁酒店下拉树结构 */
     getTreeselect() {
       listChainHotel().then(response => {
         this.chainHotelOptions = [];
-        const data = { chotelId: 0, chotelName: '顶级节点', children: [] };
+        const data = {chotelId: 0, chotelName: '顶级节点', children: []};
 
         data.children = this.handleTree(response.data, "chotelId", "chotelParent");
         this.chainHotelOptions.push(data);
@@ -312,8 +341,13 @@ export default {
         hotelIntroduct: null,
         chotelId: null,
 
-        chotelParent: null
+        chotelParent: null,
+        // 地图坐标
+        latlng: null
       };
+      // 清理地图标点
+      if(this.markerLayer !== null)
+        this.markerLayer.remove("1");
       this.resetForm("hotelForm");
     },
     /** 搜索按钮操作 */
@@ -335,9 +369,11 @@ export default {
     /** 新增实体酒店 */
     handleAddHotel(row) {
       this.resetHotelForm();
+
       this.hotelForm.chotelParent = row.chotelId;
       this.formOpen = true;
       this.title = "添加实体酒店";
+
     },
     /** 展开/折叠操作 */
     toggleExpandAll() {
@@ -361,12 +397,26 @@ export default {
       getHotelByCHotelId(row.chotelId).then(response => {
         this.hotelForm = response.data;
         var hotelNumber = this.hotelForm.hotelNumber;
-        var provinceId = hotelNumber.slice(0,2)+"0000";
-        var cityId = hotelNumber.slice(0,4)+"00";
-        var areaId = hotelNumber.slice(0,6);
+        var provinceId = hotelNumber.slice(0, 2) + "0000";
+        var cityId = hotelNumber.slice(0, 4) + "00";
+        var areaId = hotelNumber.slice(0, 6);
         this.hotelForm.province = region["100000"][provinceId];
         this.hotelForm.city = region[provinceId][cityId];
         this.hotelForm.area = region[cityId][areaId];
+
+        // 根据酒店位置调整地图
+        if(this.map !== null) {
+          var position = this.hotelForm.latlng;
+          var split = [];
+          split = position.split(",");
+          var center = new TMap.LatLng(parseFloat(split[0]),parseFloat(split[1]));
+          this.map.setCenter(center);
+          this.markerLayer.add({
+            id: "1",
+            position: center
+          });
+        }
+
         this.formOpen = true;
         this.title = "修改实体酒店";
       });
@@ -395,18 +445,23 @@ export default {
     submitForm2() {
       this.$refs["hotelForm"].validate(valid => {
 
-        if(this.hotelForm.hotelNumber === null || this.hotelForm.hotelNumber.length !== 10) {
+        if (this.hotelForm.hotelNumber === null || this.hotelForm.hotelNumber.length !== 10) {
           this.$message.error("酒店地址不得为空")
           return;
         }
 
-        if(this.hotelForm.hotelSettlement === null) {
+        if (this.hotelForm.hotelSettlement === null) {
           this.$message.error("酒店结算时间不得为空")
           return;
         }
 
-        if(this.hotelForm.hotelPoster === null) {
+        if (this.hotelForm.hotelPoster === null) {
           this.$message.error("酒店海报不得为空")
+          return;
+        }
+
+        if (this.hotelForm.latlng === null) {
+          this.$message.error("请在地图上标出酒店位置")
           return;
         }
 
@@ -433,13 +488,81 @@ export default {
     },
     /** 删除按钮操作 */
     handleDelete(row) {
-      this.$modal.confirm('是否确认删除连锁酒店编号为"' + row.chotelId + '"的数据项？').then(function() {
+      this.$modal.confirm('是否确认删除连锁酒店编号为"' + row.chotelId + '"的数据项？').then(function () {
         return delChainHotel(row.chotelId);
       }).then(() => {
         this.getList();
         this.$modal.msgSuccess("删除成功");
-      }).catch(() => {});
-    }
+      }).catch(() => {
+      });
+    },
+    initMap() {
+      //设置一个默认的中心点
+
+      // 根据酒店位置调整地图
+      if(this.hotelForm.latlng === null || this.hotelForm.latlng === undefined) {
+        var center = new TMap.LatLng(30.35269, 112.19016)
+      }else {
+        var position = this.hotelForm.latlng;
+        var split = [];
+        split = position.split(",");
+        var center = new TMap.LatLng(parseFloat(split[0]),parseFloat(split[1]));
+      }
+
+      //初始化地图
+      this.map = new TMap.Map(document.getElementById('container'), {
+        center: center,//设置地图中心点坐标
+        // zoom: 17.2,   //设置地图缩放级别
+        // pitch: 43.5,  //设置俯仰角
+        // rotation: 45    //设置地图旋转角度
+      });
+      //初始化marker图层
+      this.markerLayer = new TMap.MultiMarker({
+        id: 'marker-layer',
+        map: this.map
+      });
+
+      if(this.hotelForm.latlng !== null && this.hotelForm.latlng !== undefined) {
+        this.markerLayer.add({
+          id: "1",
+          position: new TMap.LatLng(parseFloat(split[0]),parseFloat(split[1]))
+        });
+      }
+
+
+      //监听点击事件添加marker
+      this.map.on("click", (evt) => {
+
+        // alert(this.markerLayer.getGeometryById("1").position)
+        this.markerLayer.remove("1");
+        var latlng = evt.latLng;
+        this.hotelForm.latlng = latlng.toString()
+
+        this.markerLayer.add({
+          id: "1",
+          position: latlng
+        });
+      });
+    },
+  },
+  mounted() {
+  },
+  updated() {
+    if(this.map == null)
+      this.initMap();
   }
 };
 </script>
+<style>
+#container {
+  margin: 0 auto;
+  width: 700px;
+  height: 350px;
+  border: 1px solid gray;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.img {
+  width: 150px;
+}
+</style>

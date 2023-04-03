@@ -2,6 +2,7 @@ package com.ruoyi.business.mapper;
 
 import java.util.List;
 import com.ruoyi.business.domain.BaseHotel;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 酒店列表Mapper接口
@@ -27,6 +28,8 @@ public interface BaseHotelMapper
      * @return 酒店列表
      */
     public BaseHotel selectBaseHotelByChotelId(Long chotelId);
+
+    public List<BaseHotel> selectBaseHotelByArea(@Param(value = "acode") String acode,@Param(value = "hotelName")String hotelName);
 
     /**
      * 查询酒店列表列表

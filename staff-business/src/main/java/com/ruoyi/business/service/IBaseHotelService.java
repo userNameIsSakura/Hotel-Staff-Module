@@ -19,6 +19,8 @@ public interface IBaseHotelService
      */
     public BaseHotel selectBaseHotelByHotelId(Long hotelId);
 
+    public List<BaseHotel> selectBaseHotelByArea(String acode,String hotelName);
+
     /**
      * 查询酒店列表
      *

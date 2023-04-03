@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.business.mapper.BaseStaffMapper;
 import com.ruoyi.business.service.IBaseStaffService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 员工信息Service业务层处理
@@ -78,14 +79,16 @@ public class BaseStaffServiceImpl implements IBaseStaffService
      * @return 结果
      */
     @Override
+    @Transactional
     public int updateBaseStaff(BaseStaff baseStaff)
     {
+        /*删除职位-员工关联信息*/
         baseStaffMapper.deleteSRPByStaffId(baseStaff.getStaffId());
         /*删除员工角色关联信息*/
         baseStaffMapper.deleteStaffRoleByStaffId(baseStaff.getStaffId());
         /*新增员工角色关联信息*/
         insertStaffRole(baseStaff);
-
+        /*新增职位-员工关联信息*/
         insertSRP(baseStaff);
         return baseStaffMapper.updateBaseStaff(baseStaff);
     }

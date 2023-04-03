@@ -42,3 +42,5 @@ export function delChainHotel(chotelId) {
     method: 'delete'
   })
 }
+
+

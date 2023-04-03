@@ -17,10 +17,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="hotelPoster"    column="hotel_poster"    />
         <result property="hotelIntroduct"    column="hotel_introduct"    />
         <result property="chotelId"    column="chotel_id"    />
+        <result property="latlng"    column="latlng"    />
     </resultMap>
 
     <sql id="selectBaseHotelVo">
-        select hotel_id, hotel_name, remark, hotel_bill, hotel_room_cards, hotel_number, hotel_settlement, hotel_free_breakfast, hotel_deposit, hotel_poster, hotel_introduct, chotel_id from base_hotel
+        select hotel_id, hotel_name, remark, hotel_bill, hotel_room_cards, hotel_number, hotel_settlement, hotel_free_breakfast, hotel_deposit, hotel_poster, hotel_introduct, chotel_id,latlng from base_hotel
     </sql>
 
     <select id="selectBaseHotelList" parameterType="BaseHotel" resultMap="BaseHotelResult">
@@ -36,6 +37,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="hotelBill != null  and hotelBill != ''"> and hotel_bill = #{hotelBill}</if>
             <if test="hotelIntroduct != null  and hotelIntroduct != ''"> and hotel_introduct = #{hotelIntroduct}</if>
             <if test="chotelId != null "> and chotel_id = #{chotelId}</if>
+            <if test="latlng != null and latlng != ''"> and latlng = #{latlng}</if>
         </where>
     </select>
 
@@ -47,6 +49,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectBaseHotelByChotelId" parameterType="Long" resultMap="BaseHotelResult">
         <include refid="selectBaseHotelVo"/>
         where chotel_id = #{chotelId}
+    </select>
+
+
+    <select id="selectBaseHotelByArea" resultMap="BaseHotelResult">
+        <include refid="selectBaseHotelVo"/>
+        <where>
+            hotel_number like concat(#{acode}, '%')
+            <if test="hotelName != null  and hotelName != ''">and hotel_name like concat('%',#{hotelName},'%')</if>
+        </where>
     </select>
 
     <insert id="insertBaseHotel" parameterType="BaseHotel" useGeneratedKeys="true" keyProperty="hotelId">
@@ -63,6 +74,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="hotelBill != null and hotelBill != ''">hotel_bill,</if>
             <if test="hotelIntroduct != null and hotelIntroduct != ''">hotel_introduct,</if>
             <if test="chotelId != null">chotel_id,</if>
+            <if test="latlng != null">latlng,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="hotelName != null and hotelName != ''">#{hotelName},</if>
@@ -76,6 +88,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="hotelBill != null and hotelBill != ''">#{hotelBill},</if>
             <if test="hotelIntroduct != null and hotelIntroduct != ''">#{hotelIntroduct},</if>
             <if test="chotelId != null">#{chotelId},</if>
+            <if test="latlng != null">#{latlng},</if>
         </trim>
     </insert>
 
@@ -100,6 +113,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="hotelBill != null and hotelBill != ''">hotel_bill = #{hotelBill},</if>
             <if test="hotelIntroduct != null and hotelIntroduct != ''">hotel_introduct = #{hotelIntroduct},</if>
             <if test="chotelId != null">chotel_id = #{chotelId},</if>
+            <if test="latlng != null">latlng = #{latlng},</if>
         </trim>
         where hotel_id = #{hotelId}
     </update>

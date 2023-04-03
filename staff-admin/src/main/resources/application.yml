@@ -9,9 +9,9 @@ ruoyi:
   # 实例演示开关
   demoEnabled: true
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
-#  TODU: 这里的路径需要改成业务环境下的路径
-  profile: D:/ruoyi/uploadPath # Windows
-#  profile:/home/ruoyi/uploadPath # Linux
+#  TODO: 这里的路径需要改成业务环境下的路径
+#  profile: D:/ruoyi/uploadPath # Windows
+  profile: /home/ruoyi/uploadPath # Linux
   # 获取ip地址开关
   addressEnabled: false
   # 验证码类型 math 数组计算 char 字符验证
@@ -135,12 +135,17 @@ xss:
 
 # PDF
 pdf:
+#  TODO Linux下要换成Linux路径
   path: D:\Hotel-System\pdf\
   # 甲方信息
   partyA:
     name: 测试用甲方公司名
   # 合同有效期一年
   periodOfValidity: 31536000000
+
+tencent:
+  api:
+    key: HM4BZ-WBHRI-DOAGX-UJRVG-57WBS-CYBG5
 
 #mqtt:
 #  broker:
