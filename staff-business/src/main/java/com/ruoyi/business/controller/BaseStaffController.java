@@ -93,12 +93,13 @@ public class BaseStaffController extends BaseController
 
         BaseStaff staff = baseStaffs.get(0);
         if (SecurityUtils.matchesPassword(password,staff.getStaffPassword())) {
+            final String clientTopic = getClientTopic(staff.getStaffPhone());
             HashMap<String, String> hashMap = new HashMap<>();
-            String token = tokenService.createStaffToken(staff.getStaffPhone(),staff.getHotelId());
+            String token = tokenService.createStaffToken(staff.getStaffPhone(),staff.getHotelId(),clientTopic);
             hashMap.put("msg","登录成功");
             hashMap.put("token",token);
             hashMap.put("hotelId",hotelService.selectBaseHotelByHotelId(staff.getHotelId()).getHotelNumber());
-            hashMap.put("topic",getClientTopic(staff.getStaffPhone()));
+            hashMap.put("topic",clientTopic);
             return hashMap;
         }
         HashMap<String, String> hashMap = new HashMap<>();
@@ -111,6 +112,8 @@ public class BaseStaffController extends BaseController
         String format = String.format("%03d", andIncrement);
         return "topic_zzj_" + phone + format;
     }
+
+
 
     /**
      * 心跳

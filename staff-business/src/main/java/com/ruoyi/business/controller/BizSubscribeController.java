@@ -148,7 +148,7 @@ public class BizSubscribeController extends BaseController
         /* userId */
         String operationSystemUserId = phone.toString();
         /* 客户端topic */
-        String topic = BaseStaffController.getClientTopic(phone);
+        String topic = staffUser.getTopic();
 
         if(command.equals("")) {
             return AjaxResult.error("请求参数异常");

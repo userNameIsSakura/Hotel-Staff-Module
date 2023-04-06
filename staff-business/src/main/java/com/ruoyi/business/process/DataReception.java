@@ -69,21 +69,11 @@ public class DataReception implements Runnable{
             List<Object> array = (List<Object>) ((HashMap)jsonObject.get("data")).get("records");
 
             String token = (String) cache.get("token");
-/*                if(token == null) {
-                    HashMap<String, Object> hashMap = new HashMap<>();
-                    hashMap.put("clientTopic",topic);
-                    hashMap.put("timeStamp",System.currentTimeMillis());
-                    token = Jwts.builder().setClaims(hashMap).signWith(SignatureAlgorithm.HS512,secret).compact();
-                    cache.put("token",token);
-                    redisCache.setCacheMap(topic,cache);
-                }else {
-                    token = token.toString();
-                }
-                */
+
             if(array != null && array.size() > 0) {
                 /* 这里set相当于在原有的list上add */
-                redisCache.setCacheList((String) token,array);
-                redisCache.expire((String) token, MqttConstantUtil.DEFAULT_TOKEN_EXPIRE);
+                redisCache.setCacheList(token,array);
+                redisCache.expire(token, MqttConstantUtil.DEFAULT_TOKEN_EXPIRE);
             }
 
             /* 同步 */
@@ -103,27 +93,12 @@ public class DataReception implements Runnable{
                 redisCache.setCacheMap(topic,hashMap);
             }
 
-            HashMap<String, String> map = new HashMap<>();
+/*            HashMap<String, String> map = new HashMap<>();
             map.put("status","success");
-            map.put("token", (String) token);
+            map.put("token", token);
             mqttPushClient.publish(clientTopic,JSONObject.toJSONString(map).getBytes());
-            System.out.println("交付客户端Topic：" + clientTopic);
+            System.out.println("交付客户端Topic：" + clientTopic);*/
 
-            /* 维护变量 */ /* 已弃用 */
-//            int num = Integer.parseInt((String) redisCache.getCacheMap(topic).get("size")) ;
-//            if(num == 1) {
-//                /* 已收齐,返回token和数据总数 */
-//                HashMap<String, String> map = new HashMap<>();
-//                map.put("status","success");
-//                map.put("token", (String) token);
-//                map.put("total", String.valueOf(redisCache.getCacheList((String) token).size()));
-//                mqttPushClient.publish(clientTopic,JSONObject.toJSONString(map).getBytes());
-//            }else {
-//                HashMap<String, String> map = new HashMap<>();
-//                map.put("size", String.valueOf(--num));
-//                redisCache.setCacheMap(topic,map);
-//                redisCache.expire(topic,MqttConstantUtil.DEFAULT_SURPLUS_EXPIRE);
-//            }
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -164,6 +139,7 @@ public class DataReception implements Runnable{
                         redisCache.deleteFromList("clientTopics",topic);
                     }
                     mqttPushClient.publish(clientTopic,JSONObject.toJSONString(returnMap).getBytes());
+                    System.out.println("交付客户端Topic：" + clientTopic);
                 }
 
                 long l = System.currentTimeMillis();

@@ -23,6 +23,19 @@ public class StaffUser {
     * */
     private Long hotelId;
 
+    /**
+     * topic
+     * */
+    private String topic;
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
+
     public Long getHotelId() {
         return hotelId;
     }

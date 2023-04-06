@@ -152,12 +152,13 @@ public class TokenService
         return createToken(claims);
     }
 
-    public String createStaffToken(String phone,Long hotelId) {
+    public String createStaffToken(String phone,Long hotelId,String topic) {
         String token = IdUtils.fastUUID();
         StaffUser staffUser = new StaffUser();
         staffUser.setPhone(phone);
         staffUser.setToken(token);
         staffUser.setHotelId(hotelId);
+        staffUser.setTopic(topic);
 
         refreshStaffToken(staffUser);
 
