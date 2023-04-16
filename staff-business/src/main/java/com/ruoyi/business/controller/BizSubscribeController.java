@@ -3,6 +3,7 @@ package com.ruoyi.business.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -102,6 +103,12 @@ public class BizSubscribeController extends BaseController
         hashMap.put("code",HttpStatus.SUCCESS);
         hashMap.put("total",size);
 
+        final Map<String, Object> cacheMap = redisCache.getCacheMap(token + "-param");
+        /* 返回除了list之外的数据 */
+        for (String s : cacheMap.keySet()) {
+            hashMap.put(s,hashMap.get(s));
+        }
+
         if(pageNum > pageTotal) {
             hashMap.put("list",new ArrayList<>());
         } else if(pageNum == pageTotal){
@@ -122,6 +129,7 @@ public class BizSubscribeController extends BaseController
     @PostMapping("/clientRequest")
     public AjaxResult clientRequest(@RequestBody HashMap<String,Object> map, HttpServletRequest request) {
 
+
         /* 检查token */
         StaffUser staffUser = tokenService.getStaffUser(request);
 
@@ -136,7 +144,7 @@ public class BizSubscribeController extends BaseController
         }
 
         /* 获得员工ID */
-        String phone = staffUser.getPhone();
+        Long userId = staffUser.getUserId();
 
         /* token有效期验证 */
         tokenService.verifyStaffToken(staffUser);
@@ -146,9 +154,11 @@ public class BizSubscribeController extends BaseController
         /* 参数 */
         HashMap parameter = (HashMap) map.get("parameter");
         /* userId */
-        String operationSystemUserId = phone.toString();
+        String operationSystemUserId = userId.toString();
         /* 客户端topic */
         String topic = staffUser.getTopic();
+        /* 酒店编号 */
+        final String operationHotelId = (String) map.get("operationHotelId");
 
         if(command.equals("")) {
             return AjaxResult.error("请求参数异常");
@@ -160,7 +170,7 @@ public class BizSubscribeController extends BaseController
         /* 命令是否存在 */
         List<BizSubscribe> bizSubscribes = bizSubscribeService.selectBizSubscribeList(bizSubscribe);
         if(bizSubscribes.size() == 0) {
-            return AjaxResult.error("当前请求不存在");
+                return AjaxResult.error("当前请求不存在");
         }
 
         BizSubscribe commandObject = bizSubscribes.get(0);
@@ -170,32 +180,12 @@ public class BizSubscribeController extends BaseController
             return AjaxResult.error("当前请求不可用");
         }
 
-        /* 全部酒店列表 */
-        List<String> hotels = baseHotelController.listAllPrivate().stream().map(BaseHotel:: getHotelNumber).collect(Collectors.toList());
-
-        /* 筛选黑名单 */
-        List<SubscribeHotelRelationships> subscribeHotelRelationships = subscribeHotelRelationshipsService.selectSubscribeHotelRelationshipsByContent(command);
-        List<String> blacklist = subscribeHotelRelationships.stream().map(SubscribeHotelRelationships::getHotelNumber).collect(Collectors.toList());
-
-        /* 获得酒店列表 */
-        if(blacklist.size() != 0 ) {
-            hotels = hotels.stream().filter( h -> !blacklist.contains(h)).collect(Collectors.toList());
-        }
-
         /* 限制参数 */
         if(parameter == null) {
             parameter = new HashMap();
         }
         /* 参数覆盖 */
-        /* 酒店级限制参数 */
-        /* 1.酒店押金 */
-        parameter.put("hotelDeposit",hotel.getHotelDeposit());
-        /* 2.免费早餐 */
-        parameter.put("freeBreakfast",hotel.getHotelFreeBreakfast());
-        /* 3.酒店结算时间 */
-        parameter.put("clearingTime",hotel.getHotelSettlement());
-        /* 4.房卡数量 */
-        parameter.put("roomCardNumber",hotel.getHotelRoomCards());
+
         /* 权限级限制参数 */
         if(commandObject.getParameter() != null && !commandObject.getParameter().equals("")) {
             HashMap jsonObject = JSONObject.parseObject(commandObject.getParameter());
@@ -213,14 +203,23 @@ public class BizSubscribeController extends BaseController
         map.put("operationCmd",command);
         /* 此处直接将map对象传入，不转换成JSON，否则会出现反斜杠 */
         map.put("data",parameter);
+        /* 酒店级限制参数 */
+        /* 1.酒店押金 */
+        map.put("hotelDeposit",hotel.getHotelDeposit());
+        /* 2.免费早餐 */
+        map.put("freeBreakfast",hotel.getHotelFreeBreakfast());
+        /* 3.酒店结算时间 */
+        map.put("clearingTime",hotel.getHotelSettlement());
+        /* 4.房卡数量 */
+        map.put("roomCardNumber",hotel.getHotelRoomCards());
 
         HashMap<String, Object> redisCache = new HashMap<>();
         redisCache.put("responseNum", 0);
         redisCache.put("ifReturn", false);
         redisCache.put("clientTopic",topic);
+        redisCache.put("timestamp",System.currentTimeMillis());
         String token = Jwts.builder().setClaims(redisCache).signWith(SignatureAlgorithm.HS512,secret).compact();
         redisCache.put("token",token);
-        redisCache.put("timestamp",System.currentTimeMillis());
         this.redisCache.setCacheMap(callbackTopic,redisCache);
         this.redisCache.expire(callbackTopic,MqttConstantUtil.DEFAULT_SURPLUS_EXPIRE);
 
@@ -230,12 +229,32 @@ public class BizSubscribeController extends BaseController
         this.redisCache.setCacheList("clientTopics",list);
         this.redisCache.expire("clientTopics",MqttConstantUtil.DEFAULT_TOPICS_LIST_EXPIRE);
 
+
+        /* 全部酒店列表 */
+        List<String> hotels = baseHotelController.listAllPrivate().stream().map(BaseHotel:: getHotelNumber).collect(Collectors.toList());
+
+        /* 筛选黑名单 */
+        List<SubscribeHotelRelationships> subscribeHotelRelationships = subscribeHotelRelationshipsService.selectSubscribeHotelRelationshipsByContent(command);
+        List<String> blacklist = subscribeHotelRelationships.stream().map(SubscribeHotelRelationships::getHotelNumber).collect(Collectors.toList());
+
+        /* 获得酒店列表 */
+        if(blacklist.size() != 0 ) {
+            hotels = hotels.stream().filter( h -> !blacklist.contains(h)).collect(Collectors.toList());
+        }
+
+        /* 打断，进入返回状态 */
         mqttConfiguration.thread.interrupt();
 
-        /* 发布消息 */
-        for (String h : hotels) {
-            map.put("operationHotelId",h);
-            String serverTopic = "area/" + h.substring(0,2) +"/" + h.substring(2,4) + "/" + h.substring(4,6) + "/" + h.substring(6,10);
+
+        /* 判断是否携带酒店编号 */
+        if(StringUtils.isNotNull(operationHotelId)) {
+
+            if(!hotels.contains(operationHotelId)) {
+                return AjaxResult.error("您无权使用该命令");
+            }
+
+            map.put("operationHotelId",operationHotelId);
+            String serverTopic = "area/" + operationHotelId.substring(0,2) +"/" + operationHotelId.substring(2,4) + "/" + operationHotelId.substring(4,6) + "/" + operationHotelId.substring(6,10);
             System.out.println(serverTopic);
             /* 订阅 */
             client.subscribe(callbackTopic);
@@ -244,7 +263,24 @@ public class BizSubscribeController extends BaseController
             System.out.println(map);
             client.publish(serverTopic,JSONObject.toJSONString(map).getBytes());
             System.out.println("发送数据：" + JSONObject.toJSONString(map));
+        }else {
+            /* 未携带：广播 */
+            /* 发布消息 */
+            for (String h : hotels) {
+                map.put("operationHotelId",h);
+                String serverTopic = "area/" + h.substring(0,2) +"/" + h.substring(2,4) + "/" + h.substring(4,6) + "/" + h.substring(6,10);
+                System.out.println(serverTopic);
+                /* 订阅 */
+                client.subscribe(callbackTopic);
+                System.out.println("订阅成功:"+callbackTopic);
+                /* 发布 */
+                System.out.println(map);
+                client.publish(serverTopic,JSONObject.toJSONString(map).getBytes());
+                System.out.println("发送数据：" + JSONObject.toJSONString(map));
+            }
         }
+
+
         return AjaxResult.success().put("token",token);
     }
 

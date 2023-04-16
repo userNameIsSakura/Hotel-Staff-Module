@@ -1,10 +1,13 @@
 package com.ruoyi.business.process;
 
+import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.business.mqtt.MqttPushClient;
 import com.ruoyi.business.utils.MqttConstantUtil;
 import com.ruoyi.common.core.redis.RedisCache;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.web.service.TokenService;
+import io.netty.util.internal.StringUtil;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +54,7 @@ public class DataReception implements Runnable{
             String json = new String(message, "UTF-8");
             JSONObject jsonObject = JSONObject.parseObject(json);
 
+
             System.out.println("-------------------信息--------------------");
             System.out.println(jsonObject);
             System.out.println("------------------------------------------");
@@ -65,17 +69,23 @@ public class DataReception implements Runnable{
                 log.debug("服务端(" + topic +")异常:" + mes);
                 return;
             }
-
-            List<Object> array = (List<Object>) ((HashMap)jsonObject.get("data")).get("records");
-
             String token = (String) cache.get("token");
 
-            if(array != null && array.size() > 0) {
-                /* 这里set相当于在原有的list上add */
-                redisCache.setCacheList(token,array);
-                redisCache.expire(token, MqttConstantUtil.DEFAULT_TOKEN_EXPIRE);
-            }
+            if(StringUtils.isNotNull(jsonObject.get("data"))) {
 
+                JSONArray array = new JSONArray();
+
+                final Object data = jsonObject.get("data");
+                if(data instanceof JSONArray) {
+                    array = (JSONArray) data;
+                }else if(data instanceof  JSONObject) {
+                    array = new JSONArray();
+                    array.add(data);
+                }
+
+                redisCache.setCacheList(token,array);
+
+            }
             /* 同步 */
             synchronized (DataReception.class) {
                 cache = (HashMap) redisCache.getCacheMap(topic);
@@ -155,7 +165,6 @@ public class DataReception implements Runnable{
                         continue;
                     break;
                 }
-
             }
         }
     }

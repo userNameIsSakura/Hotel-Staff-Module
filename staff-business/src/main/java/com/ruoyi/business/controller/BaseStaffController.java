@@ -48,7 +48,9 @@ public class BaseStaffController extends BaseController
     @Autowired
     private IBaseHotelService hotelService;
 
-    private static AtomicInteger clientId = new AtomicInteger(0);
+//    private static AtomicInteger clientId = new AtomicInteger(0);
+    private static HashMap<String,AtomicInteger> clientid = new HashMap<>();
+
 
     /**
      * 查询员工信息列表
@@ -95,7 +97,7 @@ public class BaseStaffController extends BaseController
         if (SecurityUtils.matchesPassword(password,staff.getStaffPassword())) {
             final String clientTopic = getClientTopic(staff.getStaffPhone());
             HashMap<String, String> hashMap = new HashMap<>();
-            String token = tokenService.createStaffToken(staff.getStaffPhone(),staff.getHotelId(),clientTopic);
+            String token = tokenService.createStaffToken(staff.getStaffId(),staff.getStaffPhone(),staff.getHotelId(),clientTopic);
             hashMap.put("msg","登录成功");
             hashMap.put("token",token);
             hashMap.put("hotelId",hotelService.selectBaseHotelByHotelId(staff.getHotelId()).getHotelNumber());
@@ -108,7 +110,9 @@ public class BaseStaffController extends BaseController
     }
 
     public static String getClientTopic(String phone) {
-        int andIncrement = clientId.getAndIncrement();
+        if(!clientid.containsKey(phone))
+            clientid.put(phone,new AtomicInteger(0));
+        int andIncrement = clientid.get(phone).getAndIncrement();
         String format = String.format("%03d", andIncrement);
         return "topic_zzj_" + phone + format;
     }

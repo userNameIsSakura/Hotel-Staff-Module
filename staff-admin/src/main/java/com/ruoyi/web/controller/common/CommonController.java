@@ -84,7 +84,6 @@ public class CommonController
             String url = serverConfig.getUrl() + fileName;
             AjaxResult ajax = AjaxResult.success();
             ajax.put("url", url);
-            // TODO: 2023/3/27 这里生成的URL的IP地址是Nginx的IP地址
  /*           System.out.println("------------url------------");
             System.out.println(url);*/
             ajax.put("fileName", fileName);

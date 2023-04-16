@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -134,12 +136,7 @@ public class InterfaceController {
         return AjaxResult.success().put("list",list).put("total",list.size());
     }
 
-    /* 根据身份证号码查询会员信息，返回会员ID，注册的子账号ID，子账号关联的酒店，手机号码 */
-    @GetMapping("/memberInfo")
-    public String memberList(@RequestParam(value = "memberIdnumber") String idNumber) {
-        // TODO: 2023/4/3 还要返回该会员常住的酒店
-        return HttpUtils.sendGet(memberUrl + "system/member/info?memberIdnumber=" + idNumber);
-    }
+
 
     /**
      * 解析位置获得经纬度
@@ -156,4 +153,5 @@ public class InterfaceController {
         doubles.add(aDouble1);
         return doubles;
     }
+
 }
