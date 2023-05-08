@@ -47,6 +47,8 @@ public class BaseStaffController extends BaseController
     private BaseStaffMapper baseStaffMapper;
     @Autowired
     private IBaseHotelService hotelService;
+    @Autowired
+    private IBaseHotelService baseHotelService;
 
 //    private static AtomicInteger clientId = new AtomicInteger(0);
     private static HashMap<String,AtomicInteger> clientid = new HashMap<>();
@@ -64,7 +66,7 @@ public class BaseStaffController extends BaseController
     {
         startPage();
 
-        baseStaff.setHotelId(SecurityUtils.getHotelId());
+        baseStaff.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseStaff.getHotelId()).getHotelId());
 
         List<BaseStaff> list = baseStaffService.selectBaseStaffList(baseStaff);
         return getDataTable(list);
@@ -159,7 +161,7 @@ public class BaseStaffController extends BaseController
     @PostMapping("/export")
     public void export(HttpServletResponse response, BaseStaff baseStaff)
     {
-        baseStaff.setHotelId(SecurityUtils.getHotelId());
+        baseStaff.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseStaff.getHotelId()).getHotelId());
         List<BaseStaff> list = baseStaffService.selectBaseStaffList(baseStaff);
         ExcelUtil<BaseStaff> util = new ExcelUtil<BaseStaff>(BaseStaff.class);
         util.exportExcel(response, list, "员工信息数据");
@@ -171,13 +173,13 @@ public class BaseStaffController extends BaseController
      * 获取员工信息详细信息
      */
     @PreAuthorize("@ss.hasPermi('business:staff:query')")
-    @GetMapping(value = {"/","/{staffId}"})
-    public AjaxResult getInfo(@PathVariable(value = "staffId",required = false) Long staffId)
+    @GetMapping(value = {"/{hotelId}/","/{hotelId}/{staffId}"})
+    public AjaxResult getInfo(@PathVariable(value = "hotelId",required = false) Long hotelId,@PathVariable(value = "staffId",required = false) Long staffId)
     {
         AjaxResult success = AjaxResult.success(baseStaffService.selectBaseStaffByStaffId(staffId));
 
         BaseRole baseRole = new BaseRole();
-        baseRole.setHotelId(SecurityUtils.getHotelId());
+        baseRole.setHotelId(baseHotelService.selectBaseHotelByChotelId(hotelId).getHotelId());
         List<BaseRole> baseRoles = baseRoleService.selectBaseRoleList(baseRole);
         success.put("roleList",baseRoles);
 
@@ -200,7 +202,7 @@ public class BaseStaffController extends BaseController
         if(list.size() != 0) {
             return AjaxResult.error("新增用户'" + baseStaff.getStaffName() + "'失败，手机号码已存在");
         }
-        baseStaff.setHotelId(SecurityUtils.getHotelId());
+        baseStaff.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseStaff.getHotelId()).getHotelId());
         baseStaff.setStaffPassword(SecurityUtils.encryptPassword(baseStaff.getStaffPassword()));
         return toAjax(baseStaffService.insertBaseStaff(baseStaff));
     }
@@ -213,6 +215,7 @@ public class BaseStaffController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody BaseStaff baseStaff)
     {
+        baseStaff.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseStaff.getHotelId()).getHotelId());
         List<BaseStaff> list = baseStaffMapper.checkStaffPhone(baseStaff.getStaffPhone());
 
         if(list.size() != 0) {

@@ -16,6 +16,14 @@ export function listHotelAll() {
   })
 }
 
+// 查询集团下全部酒店
+export function list() {
+  return request({
+    url: '/business/hotel/listHotels',
+    method: 'get',
+  })
+}
+
 // 查询酒店列表详细
 export function getHotel(hotelId) {
   return request({

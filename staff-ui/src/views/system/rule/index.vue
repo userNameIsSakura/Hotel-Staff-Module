@@ -339,7 +339,7 @@ export default {
       this.$modal.confirm('是否确定发布优惠券：' + row.ruleName + "?").then(function () {
         return issue(query);
       }).then(response => {
-        this.$message.success("发布成功,本次一共发布了" + response.num + "张优惠券");
+        this.$message.success("发布成功,本次一共发布了" + response.data.num + "张优惠券");
       })
     },
     /** 查询优惠规则列表 */

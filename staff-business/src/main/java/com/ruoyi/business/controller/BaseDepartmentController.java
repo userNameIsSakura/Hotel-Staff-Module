@@ -3,6 +3,7 @@ package com.ruoyi.business.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.business.service.IBaseHotelService;
 import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class BaseDepartmentController extends BaseController
     @Autowired
     private IBaseDepartmentService baseDepartmentService;
 
+    @Autowired
+    private IBaseHotelService baseHotelService;
+
     /**
      * 查询部门信息列表
      */
@@ -37,7 +41,7 @@ public class BaseDepartmentController extends BaseController
     public AjaxResult list(BaseDepartment baseDepartment)
     {
 
-        baseDepartment.setHotelId(SecurityUtils.getHotelId());
+        baseDepartment.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseDepartment.getHotelId()).getHotelId());
 
         List<BaseDepartment> list = baseDepartmentService.selectBaseDepartmentList(baseDepartment);
         return AjaxResult.success(list);
@@ -76,8 +80,8 @@ public class BaseDepartmentController extends BaseController
     {
         if(baseDepartment.getSuperiorId() == null)
             baseDepartment.setSuperiorId(-1l);
-        baseDepartment.setHotelId(SecurityUtils.getHotelId());
 
+        baseDepartment.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseDepartment.getHotelId()).getHotelId());
 
         return toAjax(baseDepartmentService.insertBaseDepartment(baseDepartment));
     }
@@ -90,6 +94,8 @@ public class BaseDepartmentController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody BaseDepartment baseDepartment)
     {
+        baseDepartment.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseDepartment.getHotelId()).getHotelId());
+
         return toAjax(baseDepartmentService.updateBaseDepartment(baseDepartment));
     }
 

@@ -39,7 +39,6 @@ public class BaseDepartmentServiceImpl implements IBaseDepartmentService
     @Override
     public BaseDepartment selectBaseDepartmentByDepartmentId(Long departmentId)
     {
-
         BaseDepartment baseDepartment = baseDepartmentMapper.selectBaseDepartmentByDepartmentId(departmentId);
         return baseDepartment;
     }

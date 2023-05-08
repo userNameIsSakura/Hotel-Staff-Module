@@ -3,6 +3,7 @@ package com.ruoyi.business.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.business.service.IBaseHotelService;
 import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,9 @@ public class HotelDisgramRelationshipsController extends BaseController
     @Autowired
     private IHotelDisgramRelationshipsService hotelDisgramRelationshipsService;
 
+    @Autowired
+    private IBaseHotelService baseHotelService;
+
     /**
      * 查询酒店介绍图列表
      */
@@ -44,7 +48,7 @@ public class HotelDisgramRelationshipsController extends BaseController
     public TableDataInfo list(HotelDisgramRelationships hotelDisgramRelationships)
     {
         startPage();
-        hotelDisgramRelationships.setHotelId(SecurityUtils.getHotelId());
+        hotelDisgramRelationships.setHotelId(baseHotelService.selectBaseHotelByChotelId(hotelDisgramRelationships.getHotelId()).getHotelId());
         List<HotelDisgramRelationships> list = hotelDisgramRelationshipsService.selectHotelDisgramRelationshipsList(hotelDisgramRelationships);
         return getDataTable(list);
     }
@@ -80,7 +84,8 @@ public class HotelDisgramRelationshipsController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody HotelDisgramRelationships hotelDisgramRelationships)
     {
-        hotelDisgramRelationships.setHotelId(SecurityUtils.getHotelId());
+        // TODO: 2023/5/5 检查携带过来的酒店ID是否是登陆账户的
+        hotelDisgramRelationships.setHotelId(baseHotelService.selectBaseHotelByChotelId(hotelDisgramRelationships.getHotelId()).getHotelId());
         return toAjax(hotelDisgramRelationshipsService.insertHotelDisgramRelationships(hotelDisgramRelationships));
     }
 
@@ -92,7 +97,7 @@ public class HotelDisgramRelationshipsController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody HotelDisgramRelationships hotelDisgramRelationships)
     {
-        hotelDisgramRelationships.setHotelId(SecurityUtils.getHotelId());
+        hotelDisgramRelationships.setHotelId(baseHotelService.selectBaseHotelByChotelId(hotelDisgramRelationships.getHotelId()).getHotelId());
         return toAjax(hotelDisgramRelationshipsService.updateHotelDisgramRelationships(hotelDisgramRelationships));
     }
 

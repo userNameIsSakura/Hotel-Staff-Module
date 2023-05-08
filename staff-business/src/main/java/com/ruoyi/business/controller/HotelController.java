@@ -4,8 +4,11 @@ import com.itextpdf.text.Document;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.PdfReaderContentParser;
+import com.ruoyi.business.domain.BaseChainHotel;
+import com.ruoyi.business.domain.BaseHotel;
 import com.ruoyi.business.domain.BaseModel;
 import com.ruoyi.business.domain.BizContract;
+import com.ruoyi.business.service.IBaseChainHotelService;
 import com.ruoyi.business.service.IBaseHotelService;
 import com.ruoyi.business.service.IBaseModelService;
 import com.ruoyi.business.service.IBizContractService;
@@ -39,7 +42,8 @@ public class HotelController {
     @Autowired
     private ISysUserService sysUserService;
     @Autowired
-    private IBaseHotelService hotelService;
+    private IBaseChainHotelService hotelService;
+
 
     /*默认保存位置*/
     @Value("${pdf.path}")
@@ -65,6 +69,7 @@ public class HotelController {
 
         final String modelFile = baseModel.getModelFile();
         final String fileName = modelFile.replaceFirst("/profile", "");
+
         File file = new File(pathPrefix + fileName);
         InputStream in = new FileInputStream(file);
         ServletOutputStream outputStream = response.getOutputStream();
@@ -99,6 +104,8 @@ public class HotelController {
         SysUser sysUser = sysUserService.selectUserById(SecurityUtils.getUserId());
         Long hotelId = sysUser.getHotelId();
 
+        final BaseChainHotel hotel = hotelService.selectBaseChainHotelByChotelId(hotelId);
+        final String hotelName = hotel.getChotelName();
 
         BizContract bizContract = new BizContract();
         bizContract.setHotelId(hotelId);
@@ -119,7 +126,6 @@ public class HotelController {
             }
         }
 
-        String hotelName = hotelService.selectBaseHotelByHotelId(hotelId).getHotelName();
 
         BaseModel baseModel = baseModelService.selectBaseModelByModelId((long) id);
         if(baseModel == null) {

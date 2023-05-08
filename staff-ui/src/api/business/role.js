@@ -11,9 +11,9 @@ export function listRole(query) {
 }
 
 // 查询角色信息详细
-export function getRole(roleId) {
+export function getRole(hotelId,roleId) {
   return request({
-    url: '/business/role/' + parseStrEmpty(roleId),
+    url: '/business/role/' + hotelId + "/" + parseStrEmpty(roleId),
     method: 'get'
   })
 }

@@ -7,7 +7,7 @@ import com.ruoyi.common.core.domain.TreeEntity;
 
 /**
  * 连锁酒店对象 base_chain_hotel
- * 
+ *
  * @author ruoyi
  * @date 2023-03-13
  */
@@ -26,41 +26,51 @@ public class BaseChainHotel extends TreeEntity
     @Excel(name = "酒店名")
     private String chotelName;
 
-    public void setChotelId(Long chotelId) 
+    private Long chotelType;
+
+    public Long getChotelType() {
+        return chotelType;
+    }
+
+    public void setChotelType(Long chotelType) {
+        this.chotelType = chotelType;
+    }
+
+    public void setChotelId(Long chotelId)
     {
         this.chotelId = chotelId;
     }
 
-    public Long getChotelId() 
+    public Long getChotelId()
     {
         return chotelId;
     }
-    public void setChotelParent(Long chotelParent) 
+    public void setChotelParent(Long chotelParent)
     {
         this.chotelParent = chotelParent;
     }
 
-    public Long getChotelParent() 
+    public Long getChotelParent()
     {
         return chotelParent;
     }
-    public void setChotelName(String chotelName) 
+    public void setChotelName(String chotelName)
     {
         this.chotelName = chotelName;
     }
 
-    public String getChotelName() 
+    public String getChotelName()
     {
         return chotelName;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("chotelId", getChotelId())
-            .append("chotelParent", getChotelParent())
-            .append("chotelName", getChotelName())
-            .append("remark", getRemark())
-            .toString();
+        return "BaseChainHotel{" +
+                "chotelId=" + chotelId +
+                ", chotelParent=" + chotelParent +
+                ", chotelName='" + chotelName + '\'' +
+                ", chotelType=" + chotelType +
+                '}';
     }
 }

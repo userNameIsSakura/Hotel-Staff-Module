@@ -1,8 +1,12 @@
 package com.ruoyi.business.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.business.domain.BaseChainHotel;
+import com.ruoyi.business.service.IBaseChainHotelService;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,8 @@ public class BaseHotelController extends BaseController
 {
     @Autowired
     private IBaseHotelService baseHotelService;
+    @Autowired
+    private IBaseChainHotelService baseChainHotelService;
     @Value("${ruoyi.profile}")
     private String uploadPathPrefix;
 
@@ -47,7 +53,7 @@ public class BaseHotelController extends BaseController
     /**
      * 查询酒店列表列表
      */
-    @PreAuthorize("@ss.hasPermi('business:chainHotel:list')")
+    @PreAuthorize("@ss.hasPermi('system:user:list')")
     @GetMapping("/listAll")
     public List<BaseHotel> listAll()
     {
@@ -55,6 +61,26 @@ public class BaseHotelController extends BaseController
         List<BaseHotel> list = baseHotelService.selectBaseHotelList(baseHotel);
         return list;
     }
+
+
+    /**
+     * 查询集团下酒店列表列表
+     */
+    @PreAuthorize("@ss.hasPermi('business:user:list')")
+    @GetMapping("/listHotels")
+    public List<BaseHotel> listHotelAll()
+    {
+        final BaseChainHotel baseChainHotel = new BaseChainHotel();
+        baseChainHotel.setChotelParent(SecurityUtils.getHotelId());
+        final List<BaseChainHotel> baseChainHotels = baseChainHotelService.selectBaseChainHotelList(baseChainHotel);
+        final ArrayList<BaseHotel> baseHotels = new ArrayList<>();
+        for (BaseChainHotel chainHotel : baseChainHotels) {
+            final BaseHotel hotel = baseHotelService.selectBaseHotelByChotelId(chainHotel.getChotelId());
+            baseHotels.add(hotel);
+        }
+        return baseHotels;
+    }
+
 
     public List<BaseHotel> listAllPrivate()
     {

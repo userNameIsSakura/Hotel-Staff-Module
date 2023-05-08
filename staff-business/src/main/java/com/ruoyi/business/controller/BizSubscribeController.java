@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -76,10 +78,19 @@ public class BizSubscribeController extends BaseController
     private MqttConfiguration mqttConfiguration;
 
     private AtomicInteger topicId = new AtomicInteger(1);
+    private static ConcurrentLinkedDeque receiveList = new ConcurrentLinkedDeque();
 
     // 令牌秘钥
     @Value("${token.secret}")
     private String secret;
+
+    public static ConcurrentLinkedDeque getReceiveList() {
+        return receiveList;
+    }
+
+    public static boolean remove(Object object) {
+        return receiveList.remove(object);
+    }
 
     /**
      *
@@ -226,9 +237,6 @@ public class BizSubscribeController extends BaseController
         /* 更新缓存 */
         ArrayList<String> list = new ArrayList<>();
         list.add(callbackTopic);
-        this.redisCache.setCacheList("clientTopics",list);
-        this.redisCache.expire("clientTopics",MqttConstantUtil.DEFAULT_TOPICS_LIST_EXPIRE);
-
 
         /* 全部酒店列表 */
         List<String> hotels = baseHotelController.listAllPrivate().stream().map(BaseHotel:: getHotelNumber).collect(Collectors.toList());
@@ -241,10 +249,6 @@ public class BizSubscribeController extends BaseController
         if(blacklist.size() != 0 ) {
             hotels = hotels.stream().filter( h -> !blacklist.contains(h)).collect(Collectors.toList());
         }
-
-        /* 打断，进入返回状态 */
-        mqttConfiguration.thread.interrupt();
-
 
         /* 判断是否携带酒店编号 */
         if(StringUtils.isNotNull(operationHotelId)) {
@@ -280,8 +284,16 @@ public class BizSubscribeController extends BaseController
             }
         }
 
+        final HashMap<String, Object> receive = new HashMap<>();
+        receive.put("topic",callbackTopic);
+        receive.put("time",System.currentTimeMillis());
+        receiveList.add(receive);
 
         return AjaxResult.success().put("token",token);
+    }
+
+    private void a() {
+
     }
 
     private String getCallbackTopic() {

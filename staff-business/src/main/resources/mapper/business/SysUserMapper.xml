@@ -9,7 +9,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="hotelId"    column="hotel_id"    />
         <result property="hotelName"    column="hotel_name"    />
         <result property="superAdministrator"    column="super_administrator"    />
-        <result property="deptId"    column="dept_id"    />
+        <result property="deptId"    column="department_id"    />
         <result property="userName"    column="user_name"    />
         <result property="nickName"    column="nick_name"    />
         <result property="userType"    column="user_type"    />
@@ -30,7 +30,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </resultMap>
 
     <sql id="selectSysUserVo">
-        select user_id, hotel_id, super_administrator, dept_id, user_name, nick_name, user_type, email, phonenumber, sex, avatar, password, status, del_flag, login_ip, login_date, create_by, create_time, update_by, update_time, remark from sys_user
+        select user_id, hotel_id, super_administrator, department_id, user_name, nick_name, user_type, email, phonenumber, sex, avatar, password, status, del_flag, login_ip, login_date, create_by, create_time, update_by, update_time, remark from sys_user
     </sql>
 
     <select id="selectSysUserList" parameterType="SysUser" resultMap="SysUserResult">
@@ -39,7 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="hotelId != null "> and u.hotel_id = #{hotelId}</if>
             <if test="hotelName != null and hotelName != '' "> and hotel_name = #{hotelName}</if>
             <if test="superAdministrator != null "> and super_administrator = #{superAdministrator}</if>
-            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="deptId != null "> and department_id = #{deptId}</if>
             <if test="userName != null  and userName != ''"> and user_name = {userName}</if>
             <if test="nickName != null  and nickName != ''"> and nick_name = #{nickName}</if>
             <if test="userType != null  and userType != ''"> and user_type = #{userType}</if>
@@ -64,7 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="hotelId != null">hotel_id,</if>
             <if test="superAdministrator != null">super_administrator,</if>
-            <if test="deptId != null">dept_id,</if>
+            <if test="deptId != null">department_id,</if>
             <if test="userName != null and userName != ''">user_name,</if>
             <if test="nickName != null">nick_name,</if>
             <if test="userType != null">user_type,</if>
@@ -112,7 +112,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <trim prefix="SET" suffixOverrides=",">
             <if test="hotelId != null">hotel_id = #{hotelId},</if>
             <if test="superAdministrator != null">super_administrator = #{superAdministrator},</if>
-            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="deptId != null">department_id = #{deptId},</if>
             <if test="userName != null and userName != ''">user_name = #{userName},</if>
             <if test="nickName != null">nick_name = #{nickName},</if>
             <if test="userType != null">user_type = #{userType},</if>

@@ -1,5 +1,22 @@
 <template>
   <div class="app-container">
+    <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+
+      <el-form-item label="酒店选择" prop="entityHotel">
+        <el-select v-model="queryParams.hotelId" placeholder="酒店选择">
+          <el-option
+            v-for="dict in hotels"
+            :key="dict.chotelId"
+            :label="dict.chotelName"
+            :value="dict.chotelId"
+          />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item>
+        <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
+      </el-form-item>
+    </el-form>
 
     <el-row :gutter="10" class="mb8">
       <el-col :span="1.5">
@@ -99,6 +116,7 @@
 <script>
 import { listDiagram, getDiagram, delDiagram, addDiagram, updateDiagram } from "@/api/business/diagram";
 import {listDiagramType} from "@/api/business/diagramType";
+import {listChainHotel} from "@/api/business/chainHotel";
 
 export default {
   name: "Diagram",
@@ -132,6 +150,7 @@ export default {
         diagramType: null,
         diagramPath: null,
       },
+      hotels: [],
       // 表单参数
       form: {},
       // 表单校验
@@ -149,11 +168,10 @@ export default {
     };
   },
   created() {
-    this.getList();
+    this.getEntityHotels();
   },
   methods: {
     beforeUpload(file) {
-      alert("ddd")
       return false;
     },
     /** 查询酒店介绍图列表 */
@@ -164,11 +182,28 @@ export default {
           this.diagramTypeList = response.rows;
         }
       )
-
       listDiagram(this.queryParams).then(response => {
         this.diagramList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+    },
+    getEntityHotels() {
+      var hotel =  [];
+      listChainHotel().then(res => {
+        hotel = res.data
+        if(hotel[0].chotelType === 0) {
+          // 连锁
+          if(hotel[0].chotelParent === 0)
+            this.hotels = hotel.slice(1);
+          else
+            this.hotels = hotel;
+        }else {
+          // 单体
+          this.hotels = hotel;
+        }
+        this.queryParams.hotelId = this.hotels[0].chotelId;
+        this.getList();
       });
     },
     // 取消按钮
@@ -223,6 +258,8 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+
+          this.form.hotelId = this.queryParams.hotelId;
           if (this.form.id != null) {
             updateDiagram(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");

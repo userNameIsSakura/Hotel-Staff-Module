@@ -1,10 +1,12 @@
 package com.ruoyi.business.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.business.domain.BaseHotel;
 import com.ruoyi.business.service.IBaseHotelService;
 import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,25 +47,25 @@ public class BaseChainHotelController extends BaseController
     /**
      * 查询连锁酒店列表
      */
-    @PreAuthorize("@ss.hasPermi('business:chainHotel:list')")
     @GetMapping("/list")
     public AjaxResult list(BaseChainHotel baseChainHotel)
     {
-        List<BaseChainHotel> list = baseChainHotelService.selectBaseChainHotelList(baseChainHotel);
-        return AjaxResult.success(list);
-    }
-
-    /**
-     * 获得集团ID
-     *
-     * @return int
-     */
-    @GetMapping
-    public Long getChotelId() {
-        if(SecurityUtils.getHotelId() != null)
-            return baseChainHotelService.selectBaseChainHotelByHotelId(SecurityUtils.getHotelId());
-        else
-            return 0L;
+        if(SecurityUtils.getSuperAdministrator() != 1L) {
+            final BaseChainHotel chainHotel = baseChainHotelService.selectBaseChainHotelByChotelId(SecurityUtils.getHotelId());
+            final BaseChainHotel chainHotel1 = new BaseChainHotel();
+            chainHotel1.setChotelParent(SecurityUtils.getHotelId());
+            final List<BaseChainHotel> baseChainHotels = baseChainHotelService.selectBaseChainHotelList(chainHotel1);
+            List<BaseChainHotel> list = new ArrayList<>();
+            list.add(chainHotel);
+            list.addAll(baseChainHotels);
+            return AjaxResult.success(list);
+        }else {
+            final BaseChainHotel baseChainHotel1 = new BaseChainHotel();
+            baseChainHotel1.setChotelParent(0L);
+            System.out.println(baseChainHotel1);
+            final List<BaseChainHotel> baseChainHotels = baseChainHotelService.selectBaseChainHotelList(baseChainHotel1);
+            return AjaxResult.success(baseChainHotels);
+        }
     }
 
 
@@ -98,6 +100,13 @@ public class BaseChainHotelController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody BaseChainHotel baseChainHotel)
     {
+        if(baseChainHotel.getChotelParent() != 1L) {
+            if(SecurityUtils.getSuperAdministrator() != 1L)
+                return AjaxResult.error("您无权限创建集团");
+        }else {
+            if(!SecurityUtils.getHotelId().equals(baseChainHotel.getChotelParent()))
+                return AjaxResult.error("您无权限创建该集团下的酒店");
+        }
         return toAjax(baseChainHotelService.insertBaseChainHotel(baseChainHotel));
     }
 

@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.business.domain.BaseAuth;
 import com.ruoyi.business.service.IBaseAuthService;
+import com.ruoyi.business.service.IBaseHotelService;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -41,6 +42,8 @@ public class BaseRoleController extends BaseController
     private IBaseRoleService baseRoleService;
     @Autowired
     private IBaseAuthService baseAuthService;
+    @Autowired
+    private IBaseHotelService baseHotelService;
 
     /**
      * 查询角色信息列表
@@ -50,7 +53,7 @@ public class BaseRoleController extends BaseController
     public TableDataInfo list(BaseRole baseRole)
     {
         startPage();
-        baseRole.setHotelId(SecurityUtils.getHotelId());
+        baseRole.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseRole.getHotelId()).getHotelId());
         List<BaseRole> list = baseRoleService.selectBaseRoleList(baseRole);
         return getDataTable(list);
     }
@@ -72,12 +75,12 @@ public class BaseRoleController extends BaseController
      * 获取角色信息详细信息
      */
     @PreAuthorize("@ss.hasPermi('business:role:query')")
-    @GetMapping(value = {"/","/{roleId}"})
-    public AjaxResult getInfo(@PathVariable(value = "roleId", required = false) Long roleId)
+    @GetMapping(value = {"/{hotelId}/","/{hotelId}/{roleId}"})
+    public AjaxResult getInfo(@PathVariable(value = "hotelId", required = false) Long hotelId,@PathVariable(value = "roleId", required = false) Long roleId)
     {
         AjaxResult success = AjaxResult.success(baseRoleService.selectBaseRoleByRoleId(roleId));
         BaseAuth baseAuth = new BaseAuth();
-        baseAuth.setHotelId(SecurityUtils.getHotelId());
+        baseAuth.setHotelId(hotelId);
         List<BaseAuth> baseAuths = baseAuthService.selectBaseAuthList(baseAuth);
         success.put("authList",baseAuths);
 
@@ -95,7 +98,7 @@ public class BaseRoleController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody BaseRole baseRole)
     {
-        baseRole.setHotelId(SecurityUtils.getHotelId());
+        baseRole.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseRole.getHotelId()).getHotelId());
         return toAjax(baseRoleService.insertBaseRole(baseRole));
     }
 
@@ -107,6 +110,7 @@ public class BaseRoleController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody BaseRole baseRole)
     {
+        baseRole.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseRole.getHotelId()).getHotelId());
         return toAjax(baseRoleService.updateBaseRole(baseRole));
     }
 

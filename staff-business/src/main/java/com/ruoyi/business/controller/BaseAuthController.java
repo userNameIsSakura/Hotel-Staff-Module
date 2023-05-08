@@ -3,6 +3,7 @@ package com.ruoyi.business.controller;
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.business.service.IBaseHotelService;
 import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,8 @@ public class BaseAuthController extends BaseController
 {
     @Autowired
     private IBaseAuthService baseAuthService;
+    @Autowired
+    private IBaseHotelService baseHotelService;
 
     /**
      * 查询权限信息列表
@@ -44,7 +47,7 @@ public class BaseAuthController extends BaseController
     public TableDataInfo list(BaseAuth baseAuth)
     {
         startPage();
-        baseAuth.setHotelId(SecurityUtils.getHotelId());
+        baseAuth.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseAuth.getHotelId()).getHotelId());
         List<BaseAuth> list = baseAuthService.selectBaseAuthList(baseAuth);
         return getDataTable(list);
     }
@@ -80,7 +83,7 @@ public class BaseAuthController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody BaseAuth baseAuth)
     {
-        baseAuth.setHotelId(SecurityUtils.getHotelId());
+        baseAuth.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseAuth.getHotelId()).getHotelId());
         int rows = baseAuthService.insertBaseAuth(baseAuth);
         return toAjax(rows);
     }
@@ -93,6 +96,7 @@ public class BaseAuthController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody BaseAuth baseAuth)
     {
+        baseAuth.setHotelId(baseHotelService.selectBaseHotelByChotelId(baseAuth.getHotelId()).getHotelId());
         return toAjax(baseAuthService.updateBaseAuth(baseAuth));
     }
 

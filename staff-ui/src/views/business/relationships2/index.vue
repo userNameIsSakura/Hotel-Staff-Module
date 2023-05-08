@@ -203,6 +203,7 @@ export default {
     };
   },
   created() {
+
     listHotelAll().then(res => {
       this.hotelList = res;
     })

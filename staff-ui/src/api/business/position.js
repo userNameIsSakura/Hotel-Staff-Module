@@ -9,9 +9,9 @@ export function listPosition(query) {
   })
 }
 // 查询职位信息列表
-export function listAllPosition() {
+export function listAllPosition(hotelId) {
   return request({
-    url: '/business/position/listAll',
+    url: '/business/position/listAll/' + hotelId,
     method: 'get',
   })
 }

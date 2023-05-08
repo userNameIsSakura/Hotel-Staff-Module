@@ -1,6 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+
+      <el-form-item label="酒店选择" prop="entityHotel">
+        <el-select v-model="queryParams.hotelId" placeholder="酒店选择">
+          <el-option
+            v-for="dict in hotels"
+            :key="dict.chotelId"
+            :label="dict.chotelName"
+            :value="dict.chotelId"
+          />
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="部门名" prop="departmentName">
         <el-input
           v-model="queryParams.departmentName"
@@ -37,7 +49,7 @@
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column label="部门名" align="center" prop="departmentName" />
+      <el-table-column label="部门名" align="left" prop="departmentName" />
       <el-table-column label="备注" align="center" prop="remark" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
         <template slot-scope="scope">
@@ -141,6 +153,7 @@
 import { listDepartment, getDepartment, delDepartment, addDepartment, updateDepartment } from "@/api/business/department";
 import Cookies from "js-cookie";
 import {listAllPosition, listPosition} from "@/api/business/position";
+import {listChainHotel} from "@/api/business/chainHotel";
 
 export default {
   name: "Department",
@@ -188,6 +201,7 @@ export default {
         hotelId: null,
         departmentName: null,
       },
+      hotels: [],
       // 表单参数
       form: {},
       // 表单校验
@@ -202,7 +216,7 @@ export default {
     };
   },
   created() {
-    this.getList();
+    this.getEntityHotels();
     //0:酒店管理员
     if(Cookies.get("admin") === "1")
       this.admin = true;
@@ -216,7 +230,7 @@ export default {
 
         this.allDepartmentList = response.data;
 
-        listAllPosition().then(res => {
+        listAllPosition(this.queryParams.hotelId).then(res => {
           this.allBasePositionList = res;
         })
 
@@ -225,6 +239,24 @@ export default {
           departmentName: "无上级部门",
         });
         this.loading = false;
+      });
+    },
+    getEntityHotels() {
+      var hotel =  [];
+      listChainHotel().then(res => {
+        hotel = res.data
+        if(hotel[0].chotelType === 0) {
+          // 连锁
+          if(hotel[0].chotelParent === 0)
+            this.hotels = hotel.slice(1);
+          else
+            this.hotels = hotel;
+        }else {
+          // 单体
+          this.hotels = hotel;
+        }
+        this.queryParams.hotelId = this.hotels[0].chotelId;
+        this.getList();
       });
     },
 
@@ -335,6 +367,7 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           this.form.basePositionList = this.basePositionList;
+          this.form.hotelId = this.queryParams.hotelId;
           if (this.form.departmentId != null) {
             //修改
             updateDepartment(this.form).then(response => {

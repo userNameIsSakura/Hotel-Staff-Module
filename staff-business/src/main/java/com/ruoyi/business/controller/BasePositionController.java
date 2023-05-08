@@ -4,6 +4,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import com.ruoyi.business.mapper.BasePositionMapper;
+import com.ruoyi.business.service.IBaseHotelService;
 import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,8 @@ public class BasePositionController extends BaseController
     private IBasePositionService basePositionService;
     @Autowired
     private BasePositionMapper basePositionMapper;
+    @Autowired
+    private IBaseHotelService baseHotelService;
 
     /**
      * 查询职位信息列表
@@ -47,7 +50,7 @@ public class BasePositionController extends BaseController
     public TableDataInfo list(BasePosition basePosition)
     {
         startPage();
-        basePosition.setHotelId(SecurityUtils.getHotelId());
+        basePosition.setHotelId(baseHotelService.selectBaseHotelByChotelId(basePosition.getHotelId()).getHotelId());
         List<BasePosition> list = basePositionService.selectBasePositionList(basePosition);
         return getDataTable(list);
     }
@@ -55,11 +58,11 @@ public class BasePositionController extends BaseController
      * 查询职位信息列表
      */
     @PreAuthorize("@ss.hasPermi('business:position:list')")
-    @GetMapping("/listAll")
-    public List<BasePosition> list()
+    @GetMapping("/listAll/{hotelId}")
+    public List<BasePosition> list(@PathVariable(value = "hotelId") Long hotelId)
     {
         BasePosition basePosition = new BasePosition();
-        basePosition.setHotelId(SecurityUtils.getHotelId());
+        basePosition.setHotelId(baseHotelService.selectBaseHotelByChotelId(hotelId).getHotelId());
         return basePositionService.selectBasePositionList(basePosition);
     }
 
@@ -69,7 +72,6 @@ public class BasePositionController extends BaseController
     @GetMapping("/listByDId/{departmentId}")
     public List<BasePosition> listByDId(@PathVariable Long departmentId)
     {
-        System.out.println(departmentId);
         return basePositionMapper.selectBasePositionByDepartmentId(departmentId);
     }
 
@@ -106,7 +108,7 @@ public class BasePositionController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody BasePosition basePosition)
     {
-        basePosition.setHotelId(SecurityUtils.getHotelId());
+        basePosition.setHotelId(baseHotelService.selectBaseHotelByChotelId(basePosition.getHotelId()).getHotelId());
         return toAjax(basePositionService.insertBasePosition(basePosition));
     }
 
@@ -118,7 +120,7 @@ public class BasePositionController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody BasePosition basePosition)
     {
-        basePosition.setHotelId(SecurityUtils.getHotelId());
+        basePosition.setHotelId(baseHotelService.selectBaseHotelByChotelId(basePosition.getHotelId()).getHotelId());
         return toAjax(basePositionService.updateBasePosition(basePosition));
     }
 

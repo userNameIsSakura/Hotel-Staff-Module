@@ -141,7 +141,7 @@ pdf:
   # 甲方信息
   partyA:
     # todo 修改为正式名称
-    name: 测试用甲方公司名
+    name: 恒合（烟台）数字科技有限公司
   # 合同有效期一年
   periodOfValidity: 31536000000
 

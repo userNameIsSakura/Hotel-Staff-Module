@@ -1,6 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+
+      <el-form-item label="酒店选择" prop="entityHotel">
+        <el-select v-model="queryParams.hotelId" placeholder="酒店选择">
+          <el-option
+            v-for="dict in hotels"
+            :key="dict.chotelId"
+            :label="dict.chotelName"
+            :value="dict.chotelId"
+          />
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="角色名" prop="roleName">
         <el-input
           v-model="queryParams.roleName"
@@ -122,6 +134,7 @@
 
 <script>
 import { listRole, getRole, delRole, addRole, updateRole } from "@/api/business/role";
+import {listChainHotel} from "@/api/business/chainHotel";
 
 export default {
   name: "Role",
@@ -154,6 +167,7 @@ export default {
         roleName: null,
         hotelId: null
       },
+      hotels: [],
       // 表单参数
       form: {},
       // 表单校验
@@ -168,7 +182,7 @@ export default {
     };
   },
   created() {
-    this.getList();
+    this.getEntityHotels();
   },
   methods: {
     /** 查询角色信息列表 */
@@ -178,6 +192,24 @@ export default {
         this.roleList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+    },
+    getEntityHotels() {
+      var hotel =  [];
+      listChainHotel().then(res => {
+        hotel = res.data
+        if(hotel[0].chotelType === 0) {
+          // 连锁
+          if(hotel[0].chotelParent === 0)
+            this.hotels = hotel.slice(1);
+          else
+            this.hotels = hotel;
+        }else {
+          // 单体
+          this.hotels = hotel;
+        }
+        this.queryParams.hotelId = this.hotels[0].chotelId;
+        this.getList();
       });
     },
     // 取消按钮
@@ -213,7 +245,7 @@ export default {
     /** 新增按钮操作 */
     handleAdd() {
       this.reset();
-      getRole().then(response => {
+      getRole(this.queryParams.hotelId,null).then(response => {
         this.authList = response.authList;
       })
       this.open = true;
@@ -223,7 +255,7 @@ export default {
     handleUpdate(row) {
       this.reset();
       const roleId = row.roleId || this.ids
-      getRole(roleId).then(response => {
+      getRole(this.queryParams.hotelId,roleId).then(response => {
         this.form = response.data;
         this.form.auths = response.auths;
         this.authList = response.authList;
@@ -235,6 +267,7 @@ export default {
     submitForm() {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          this.form.hotelId = this.queryParams.hotelId;
           if (this.form.roleId != null) {
             updateRole(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");

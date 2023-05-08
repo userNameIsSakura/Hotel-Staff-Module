@@ -22,7 +22,7 @@
           plain
           icon="el-icon-plus"
           size="mini"
-          @click="handleAdd"
+          @click="handleAddHotel"
           v-hasPermi="['business:chainHotel:add']"
         >新增</el-button>
       </el-col>
@@ -46,17 +46,11 @@
       :default-expand-all="isExpandAll"
       :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
     >
-      <el-table-column label="公司/集团" align="center" prop="chotelName" />
+      <el-table-column label="公司/集团" align="left" header-align="center" prop="chotelName" />
       <el-table-column label="备注" align="center" prop="remark" />
-      <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="right"  class-name="small-padding fixed-width">
+
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="text"
-            icon="el-icon-edit"
-            @click="(scope.row.chotelParent === null || scope.row.chotelParent === 0) ? handleUpdate(scope.row) : handleUpdateHotel(scope.row)"
-            v-hasPermi="['business:chainHotel:edit']"
-          >修改</el-button>
           <el-button
             size="mini"
             type="text"
@@ -65,32 +59,43 @@
             v-hasPermi="['business:chainHotel:add']"
             v-if="scope.row.chotelParent === null || scope.row.chotelParent === 0"
           >新增</el-button>
+
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
+            @click="handleUpdateHotel(scope.row)"
+            v-hasPermi="['business:chainHotel:edit']"
+            v-if="scope.row.chotelParent !== 0"
+          >修改</el-button>
+
           <el-button
             size="mini"
             type="text"
             icon="el-icon-delete"
             @click="handleDelete(scope.row)"
             v-hasPermi="['business:chainHotel:remove']"
+            v-if="scope.row.chotelParent !== 0"
           >删除</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <!-- 添加或修改连锁酒店对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
-      <el-form ref="form" :model="form" :rules="rules" label-width="120px">
-        <el-form-item label="公司/集团名" prop="chotelName">
-          <el-input v-model="form.chotelName" placeholder="请输入酒店名" />
-        </el-form-item>
-        <el-form-item label="备注" prop="remark">
-          <el-input v-model="form.remark" placeholder="请输入备注" />
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
-        <el-button @click="cancel">取 消</el-button>
-      </div>
-    </el-dialog>
+<!--    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>-->
+<!--      <el-form  ref="form" :model="form" :rules="rules" label-width="120px">-->
+<!--        <el-form-item label="公司/集团名" prop="chotelName" >-->
+<!--          <el-input v-model="form.chotelName" placeholder="请输入酒店名" />-->
+<!--        </el-form-item>-->
+<!--        <el-form-item label="备注" prop="remark">-->
+<!--          <el-input v-model="form.remark" placeholder="请输入备注" />-->
+<!--        </el-form-item>-->
+<!--      </el-form>-->
+<!--      <div slot="footer" class="dialog-footer">-->
+<!--        <el-button type="primary" @click="submitForm">确 定</el-button>-->
+<!--        <el-button @click="cancel">取 消</el-button>-->
+<!--      </div>-->
+<!--    </el-dialog>-->
 
 
     <!-- 添加或修改实体酒店对话框 -->
@@ -360,12 +365,12 @@ export default {
       this.handleQuery();
     },
     /** 新增按钮操作 */
-    handleAdd() {
-      this.reset();
-      this.form.chotelParent = 0;
-      this.open = true;
-      this.title = "添加连锁酒店";
-    },
+    // handleAdd() {
+    //   this.reset();
+    //   this.form.chotelParent = 0;
+    //   this.open = true;
+    //   this.title = "添加连锁酒店";
+    // },
     /** 新增实体酒店 */
     handleAddHotel(row) {
       this.resetHotelForm();
@@ -565,4 +570,6 @@ export default {
 .img {
   width: 150px;
 }
+
+
 </style>

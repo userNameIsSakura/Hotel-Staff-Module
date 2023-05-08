@@ -5,6 +5,7 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
+import VueHome from  '@/views/HomeView'
 
 /**
  * Note: 路由配置项
@@ -121,13 +122,13 @@ export const dynamicRoutes = [
   //超管
   {
     path: '',
-    component: Layout,
     redirect: 'index',
+    component: VueHome,
     permissions: ['business:staff:list'],
     children: [
       {
         path: 'index',
-        component: () => import('@/views/business/staff/index'),
+        component: () => import('@/views/HomeView'),
         name: 'Index',
         permissions: ['business:staff:list'],
         meta: { title: '首页', icon: 'dashboard', affix: true }

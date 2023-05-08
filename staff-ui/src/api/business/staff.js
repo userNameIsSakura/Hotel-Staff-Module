@@ -11,9 +11,9 @@ export function listStaff(query) {
 }
 
 // 查询员工信息详细
-export function getStaff(staffId) {
+export function getStaff(hotelId,staffId) {
   return request({
-    url: '/business/staff/' + parseStrEmpty(staffId),
+    url: '/business/staff/' + hotelId + "/" + parseStrEmpty(staffId),
     method: 'get'
   })
 }

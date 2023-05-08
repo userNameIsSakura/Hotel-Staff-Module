@@ -3,6 +3,9 @@ package com.ruoyi.web.controller.system;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.business.domain.BaseChainHotel;
+import com.ruoyi.business.service.IBaseChainHotelService;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -54,6 +57,9 @@ public class SysUserController extends BaseController
     @Autowired
     private ISysPostService postService;
 
+    @Autowired
+    private IBaseChainHotelService baseChainHotelService;
+
     /**
      * 获取用户列表
      */
@@ -63,6 +69,32 @@ public class SysUserController extends BaseController
     {
         startPage();
         List<SysUser> list = userService.selectUserList(user);
+        return getDataTable(list);
+    }
+
+
+    /**
+     * 获取酒店级别用户列表
+     */
+    @PreAuthorize("@ss.hasPermi('business:user:list')")
+    @GetMapping("/listHotelUser")
+    public TableDataInfo listHotelUser(SysUser user)
+    {
+        startPage();
+        user.setHotelId(SecurityUtils.getHotelId());
+        List<SysUser> list = userService.selectUserList(user);
+        final BaseChainHotel baseChainHotel = new BaseChainHotel();
+        baseChainHotel.setChotelParent(SecurityUtils.getHotelId());
+        final List<BaseChainHotel> baseChainHotels = baseChainHotelService.selectBaseChainHotelList(baseChainHotel);
+        for (BaseChainHotel chainHotel : baseChainHotels) {
+            user.setHotelId(chainHotel.getChotelId());
+            final List<SysUser> sysUsers = userService.selectUserList(user);
+            for (SysUser sysUser : sysUsers) {
+                sysUser.setHotelName(baseChainHotelService.selectBaseChainHotelByChotelId(sysUser.getHotelId()).getChotelName());
+            }
+            list.addAll(sysUsers);
+        }
+
         return getDataTable(list);
     }
 
@@ -118,6 +150,31 @@ public class SysUserController extends BaseController
     }
 
     /**
+     * 集团管理员根据用户编号获取详细信息
+     */
+    @PreAuthorize("@ss.hasPermi('business:user:list')")
+    @GetMapping(value = { "/hotel/", "/hotel/{userId}" })
+    public AjaxResult getInfoHotel(@PathVariable(value = "userId", required = false) Long userId)
+    {
+        userService.checkUserDataScope(userId);
+        AjaxResult ajax = AjaxResult.success();
+        List<SysRole> roles = roleService.selectRoleAll();
+        ajax.put("roles", SysUser.isAdmin(userId) ? roles : roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
+        ajax.put("posts", postService.selectPostAll());
+        if (StringUtils.isNotNull(userId))
+        {
+            SysUser sysUser = userService.selectUserById(userId);
+            if(sysUser.getHotelId().equals(SecurityUtils.getHotelId()) || SecurityUtils.getHotelId().equals(baseChainHotelService.selectBaseChainHotelByChotelId(sysUser.getHotelId()).getChotelParent()))
+                ajax.put(AjaxResult.DATA_TAG, sysUser);
+            else
+                return AjaxResult.error("集团校验失败");
+            ajax.put("postIds", postService.selectPostListByUserId(userId));
+            ajax.put("roleIds", sysUser.getRoles().stream().map(SysRole::getRoleId).collect(Collectors.toList()));
+        }
+        return ajax;
+    }
+
+    /**
      * 新增用户
      */
     @PreAuthorize("@ss.hasPermi('system:user:add')")
@@ -154,6 +211,57 @@ public class SysUserController extends BaseController
         return toAjax(userService.insertUser(user));
     }
 
+
+
+    /**
+     * 新增用户/集团下的酒店管理员
+     */
+    @PreAuthorize("@ss.hasPermi('business:user:list')")
+    @Log(title = "用户管理", businessType = BusinessType.INSERT)
+    @PostMapping("/hotel")
+    public AjaxResult addHotel(@Validated @RequestBody SysUser user)
+    {
+        try {
+            final BaseChainHotel baseChainHotel = baseChainHotelService.selectBaseChainHotelByChotelId(user.getHotelId());
+            if(!baseChainHotel.getChotelParent().equals(SecurityUtils.getHotelId()))
+                return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，集团校验失败");
+
+            user.setSuperAdministrator(3L);
+
+            if(user.getSuperAdministrator() == 0 && user.getHotelId() == null) {
+                return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，未选择酒店");
+            }
+
+            if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user)))
+            {
+                return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
+            }
+            else if (StringUtils.isNotEmpty(user.getPhonenumber())
+                    && UserConstants.NOT_UNIQUE.equals(userService.checkPhoneUnique(user)))
+            {
+                return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
+            }
+            else if (StringUtils.isNotEmpty(user.getEmail())
+                    && UserConstants.NOT_UNIQUE.equals(userService.checkEmailUnique(user)))
+            {
+                return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+            }
+            user.setCreateBy(getUsername());
+            user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
+
+            if(user.getSuperAdministrator() == 0)
+                user.setRoleIds(new Long[]{2L});
+            else if(user.getSuperAdministrator() == 1)
+                user.setRoleIds(new Long[]{1L});
+            else
+                user.setRoleIds(new Long[]{2L});
+
+            return toAjax(userService.insertUser(user));
+        }catch (Exception e) {
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败");
+        }
+    }
+
     /**
      * 修改用户
      */
@@ -166,6 +274,45 @@ public class SysUserController extends BaseController
         if(user.getSuperAdministrator() == 0 && user.getHotelId() == null) {
             return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，未选择酒店");
         }
+
+        userService.checkUserAllowed(user);
+        userService.checkUserDataScope(user.getUserId());
+
+        if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user)))
+        {
+            return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，登录账号已存在");
+        }
+        else if (StringUtils.isNotEmpty(user.getPhonenumber())
+                && UserConstants.NOT_UNIQUE.equals(userService.checkPhoneUnique(user)))
+        {
+            return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，手机号码已存在");
+        }
+        else if (StringUtils.isNotEmpty(user.getEmail())
+                && UserConstants.NOT_UNIQUE.equals(userService.checkEmailUnique(user)))
+        {
+            return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
+        }
+        user.setUpdateBy(getUsername());
+        return toAjax(userService.updateUser(user));
+    }
+
+    /**
+     * 修改集团下用户
+     */
+    @PreAuthorize("@ss.hasPermi('business:user:list')")
+    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
+    @PutMapping("/hotel")
+    public AjaxResult editHotel(@Validated @RequestBody SysUser user)
+    {
+
+        if(user.getSuperAdministrator() == 0 && user.getHotelId() == null) {
+            return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，未选择酒店");
+        }
+
+        user.setSuperAdministrator(2L);
+        final BaseChainHotel baseChainHotel = baseChainHotelService.selectBaseChainHotelByChotelId(user.getHotelId());
+        if(!baseChainHotel.getChotelParent().equals(SecurityUtils.getHotelId()))
+            return AjaxResult.error("修改用户'" + user.getUserName() + "'失败，集团校验失败");
 
         userService.checkUserAllowed(user);
         userService.checkUserDataScope(user.getUserId());

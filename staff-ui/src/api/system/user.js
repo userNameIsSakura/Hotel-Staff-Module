@@ -10,10 +10,31 @@ export function listUser(query) {
   })
 }
 
+
+// 查询用户列表
+export function listHotelUser(query) {
+  return request({
+    url: '/system/user/listHotelUser',
+    method: 'get',
+    params: query
+  })
+}
+
+
+
 // 查询用户详细
 export function getUser(userId) {
   return request({
     url: '/system/user/' + parseStrEmpty(userId),
+    method: 'get'
+  })
+}
+
+
+// 查询集团级用户详细
+export function getUserHotel(userId) {
+  return request({
+    url: '/system/user/hotel/' + parseStrEmpty(userId),
     method: 'get'
   })
 }
@@ -27,6 +48,16 @@ export function addUser(data) {
   })
 }
 
+// 新增酒店管理员
+export function addHotelUser(data) {
+  return request({
+    url: '/system/user/hotel',
+    method: 'post',
+    data: data
+  })
+}
+
+
 // 修改用户
 export function updateUser(data) {
   return request({
@@ -35,6 +66,15 @@ export function updateUser(data) {
     data: data
   })
 }
+
+export function updateHotelUser(data) {
+  return request({
+    url: '/system/user/hotel',
+    method: 'put',
+    data: data
+  })
+}
+
 
 // 删除用户
 export function delUser(userId) {

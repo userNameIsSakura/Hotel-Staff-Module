@@ -30,6 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService
     @Autowired
     private SysPasswordService passwordService;
 
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {

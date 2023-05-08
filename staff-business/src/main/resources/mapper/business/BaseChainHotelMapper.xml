@@ -9,16 +9,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="chotelParent"    column="chotel_parent"    />
         <result property="chotelName"    column="chotel_name"    />
         <result property="remark"    column="remark"    />
+        <result property="chotelType" column="chotel_type"/>
     </resultMap>
 
     <sql id="selectBaseChainHotelVo">
-        select chotel_id, chotel_parent, chotel_name, remark from base_chain_hotel
+        select chotel_id, chotel_parent, chotel_name, remark,chotel_type from base_chain_hotel
     </sql>
 
     <select id="selectBaseChainHotelList" parameterType="BaseChainHotel" resultMap="BaseChainHotelResult">
         <include refid="selectBaseChainHotelVo"/>
         <where>
             <if test="chotelParent != null "> and chotel_parent = #{chotelParent}</if>
+            <if test="chotelType != null "> and chotel_type = #{chotelType}</if>
             <if test="chotelName != null  and chotelName != ''"> and chotel_name = #{chotelName}</if>
         </where>
     </select>
@@ -47,11 +49,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="chotelParent != null">chotel_parent,</if>
             <if test="chotelName != null and chotelName != ''">chotel_name,</if>
             <if test="remark != null">remark,</if>
+            <if test="chotelType != null">chotel_type,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="chotelParent != null">#{chotelParent},</if>
             <if test="chotelName != null and chotelName != ''">#{chotelName},</if>
             <if test="remark != null">#{remark},</if>
+            <if test="chotelType != null">#{chotelType},</if>
          </trim>
     </insert>
 
@@ -61,6 +65,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="chotelParent != null">chotel_parent = #{chotelParent},</if>
             <if test="chotelName != null and chotelName != ''">chotel_name = #{chotelName},</if>
             <if test="remark != null">remark = #{remark},</if>
+            <if test="chotelType != null">chotel_type = #{chotelType},</if>
         </trim>
         where chotel_id = #{chotelId}
     </update>

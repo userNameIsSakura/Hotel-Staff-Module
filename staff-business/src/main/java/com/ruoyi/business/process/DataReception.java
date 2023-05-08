@@ -2,12 +2,11 @@ package com.ruoyi.business.process;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.business.controller.BizSubscribeController;
 import com.ruoyi.business.mqtt.MqttPushClient;
-import com.ruoyi.business.utils.MqttConstantUtil;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.web.service.TokenService;
-import io.netty.util.internal.StringUtil;
 import lombok.Data;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,19 +42,17 @@ public class DataReception implements Runnable{
     // 令牌秘钥
     @Value("${token.secret}")
     private String secret;
-
     private byte[] message;
-
     private String topic;
+    private static ConcurrentLinkedDeque<HashMap> msgList = new ConcurrentLinkedDeque<>();
 
     @SneakyThrows
     @Override
     public void run() {
         try {
+            String json = new String(message, StandardCharsets.UTF_8);
 
-            String json = new String(message, "UTF-8");
             JSONObject jsonObject = JSONObject.parseObject(json);
-
 
             System.out.println("-------------------信息--------------------");
             System.out.println(jsonObject);
@@ -63,6 +62,27 @@ public class DataReception implements Runnable{
             String mes = (String) jsonObject.get("message");
             HashMap cache = (HashMap) redisCache.getCacheMap(topic);
             String clientTopic = (String) cache.get("clientTopic");
+
+            boolean flag = false;
+            final ConcurrentLinkedDeque receiveList = BizSubscribeController.getReceiveList();
+            for (Object o : receiveList) {
+                HashMap<String,Object> map = (HashMap<String, Object>) o;
+                if(map.get("topic").equals(topic)) {
+                    if((((Long)(map.get("time"))) + 10 * 1000 > System.currentTimeMillis())) {
+                        /* 未过期 */
+                        flag = true;
+                        break;
+                    }else {
+                        /* 已过期 */
+                        BizSubscribeController.remove(o);
+                    }
+                }
+            }
+
+            /* 信息已丢弃或已过期 */
+            if(!flag) {
+                return;
+            }
 
             if(status == 0) {
                 /* 失败 */
@@ -82,9 +102,7 @@ public class DataReception implements Runnable{
                     array = new JSONArray();
                     array.add(data);
                 }
-
                 redisCache.setCacheList(token,array);
-
             }
             /* 同步 */
             synchronized (DataReception.class) {
@@ -101,72 +119,36 @@ public class DataReception implements Runnable{
                     hashMap.put("ifReturn",true);
                 }
                 redisCache.setCacheMap(topic,hashMap);
+
+                HashMap<String, Object> returnMap = new HashMap<>();
+                returnMap.put("token",token);
+                returnMap.put("responseNum",responseNum);
+
+                final HashMap map = new HashMap();
+                map.put("topic",clientTopic);
+                map.put("msg",JSONObject.toJSONString(returnMap).getBytes());
+                msgList.add(map);
             }
-
-/*            HashMap<String, String> map = new HashMap<>();
-            map.put("status","success");
-            map.put("token", token);
-            mqttPushClient.publish(clientTopic,JSONObject.toJSONString(map).getBytes());
-            System.out.println("交付客户端Topic：" + clientTopic);*/
-
         }catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     public void sendReportRegularly() throws InterruptedException {
-
-        synchronized (Thread.currentThread()) {
-
-            while (true) {
-                List<String> topics = redisCache.getCacheList("clientTopics");
-
-                while (topics ==null || topics.size() == 0) {
-                    /* 沉睡，等待唤醒 */
-                    try {
-                        TimeUnit.DAYS.sleep(Long.MAX_VALUE);
-                    }catch (InterruptedException e) {
-//                        System.out.println("正常唤醒");
-                        topics = redisCache.getCacheList("clientTopics");
-                    }
-                }
-
-                log.debug("---------检察中-----------");
-                for (String topic : topics) {
-
-                    Map<String, Object> map = redisCache.getCacheMap(topic);
-                    String clientTopic = (String) map.get("clientTopic");
-                    String token = (String) map.get("token");
-                    int responseNum = (int) map.get("responseNum");
-                    HashMap<String, Object> returnMap = new HashMap<>();
-                    returnMap.put("token",token);
-                    returnMap.put("responseNum",responseNum);
-
-                    if(System.currentTimeMillis() - (long) (map.get("timestamp")) > 10000 ) {
-                        /* 更新缓存 */
-                        log.debug("移除Topic:" + topic);
-                        redisCache.deleteFromList("clientTopics",topic);
-                    }
-                    mqttPushClient.publish(clientTopic,JSONObject.toJSONString(returnMap).getBytes());
-                    System.out.println("交付客户端Topic：" + clientTopic);
-                }
-
-                long l = System.currentTimeMillis();
-                double i = 2;
-                while (true) {
-                    try{
-                        TimeUnit.MILLISECONDS.sleep((long) (i*1000));
-                    }catch (InterruptedException e) {
-//                        System.out.println("异常打断（已解决");
-                        i = 0.1;
-                    }
-                    if(System.currentTimeMillis() - l < 2000)
-                        continue;
-                    break;
-                }
+        while (true) {
+            int size = msgList.size();
+            final HashMap<String, byte[]> map = new HashMap<>();
+            for (int i = 0; i < size; i++) {
+                final HashMap hashMap = msgList.removeFirst();
+                map.put((String) hashMap.get("topic"),(byte[]) hashMap.get("msg"));
             }
+            for (String s : map.keySet()) {
+                System.out.println("发送主题：" + s);
+                mqttPushClient.publish(s,map.get(s));
+            }
+            TimeUnit.MILLISECONDS.sleep(100);
         }
     }
+
 }
 

@@ -1,6 +1,18 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+
+      <el-form-item label="酒店选择" prop="entityHotel">
+        <el-select v-model="queryParams.hotelId" placeholder="酒店选择">
+          <el-option
+            v-for="dict in hotels"
+            :key="dict.chotelId"
+            :label="dict.chotelName"
+            :value="dict.chotelId"
+          />
+        </el-select>
+      </el-form-item>
+
       <el-form-item label="员工名" prop="staffName">
         <el-input
           v-model="queryParams.staffName"
@@ -245,6 +257,7 @@ import {listStaff, getStaff, delStaff, addStaff, updateStaff, updateStaffPasswor
 import Cookies from "js-cookie";
 import {listAllPosition, listPositionByDepartmentId} from "@/api/business/position";
 import {listDepartment} from "@/api/business/department";
+import {listChainHotel} from "@/api/business/chainHotel";
 
 export default {
   name: "Staff",
@@ -296,6 +309,7 @@ export default {
         departmentId: null,
         staffPassword: null,
       },
+      hotels: [],
       // 表单参数
       form: {},
       // 表单校验
@@ -319,14 +333,7 @@ export default {
     };
   },
   created() {
-
-    this.getList();
-    listDepartment().then(res => {
-      this.baseDepartmentList = res.data;
-    })
-    //0:酒店管理员
-    if(Cookies.get("admin") === "1")
-      this.admin = true;
+    this.getEntityHotels();
   },
   methods: {
     /** 查询员工信息列表 */
@@ -336,6 +343,33 @@ export default {
         this.staffList = response.rows;
         this.total = response.total;
         this.loading = false;
+      });
+
+      var temD = {};
+      temD.hotelId = this.queryParams.hotelId;
+      listDepartment(temD).then(res => {
+        this.baseDepartmentList = res.data;
+      })
+      //0:酒店管理员
+      if(Cookies.get("admin") === "1")
+        this.admin = true;
+    },
+    getEntityHotels() {
+      var hotel =  [];
+      listChainHotel().then(res => {
+        hotel = res.data
+        if(hotel[0].chotelType === 0) {
+          // 连锁
+          if(hotel[0].chotelParent === 0)
+            this.hotels = hotel.slice(1);
+          else
+            this.hotels = hotel;
+        }else {
+          // 单体
+          this.hotels = hotel;
+        }
+        this.queryParams.hotelId = this.hotels[0].chotelId;
+        this.getList();
       });
     },
     /** 员工的部门改变时改变职位 */
@@ -401,7 +435,7 @@ export default {
     handleAdd() {
       this.reset();
       this.open = true;
-      getStaff().then(response => {
+      getStaff(this.queryParams.hotelId,null).then(response => {
         this.roleList = response.roleList;
       })
       this.title = "添加员工信息";
@@ -439,7 +473,7 @@ export default {
       this.reset();
       const staffId = row.staffId || this.ids
 
-      getStaff(staffId).then(response => {
+      getStaff(this.queryParams.hotelId,staffId).then(response => {
         this.form = response.data;
         this.form.staffPassword = "";
         this.resetOpen = true;
@@ -456,7 +490,7 @@ export default {
         this.allBasePositionList = res;
       })
 
-      getStaff(staffId).then(response => {
+      getStaff(this.queryParams.hotelId,staffId).then(response => {
         this.form = response.data;
         this.form.roles = response.roles;
         this.roleList = response.roleList;
@@ -481,6 +515,7 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           this.form.basePositionList = this.basePositionList;
+          this.form.hotelId = this.queryParams.hotelId;
           if (this.form.staffId != null) {
             updateStaff(this.form).then(response => {
               this.$modal.msgSuccess("修改成功");
