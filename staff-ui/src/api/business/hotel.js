@@ -16,6 +16,15 @@ export function listHotelAll() {
   })
 }
 
+// 查询全部酒店
+export function listChainHotelAll() {
+  return request({
+    url: '/business/chainHotel/list',
+    method: 'get',
+    params: {}
+  })
+}
+
 // 查询集团下全部酒店
 export function list() {
   return request({

@@ -5,7 +5,6 @@ Vue.use(Router)
 
 /* Layout */
 import Layout from '@/layout'
-import VueHome from  '@/views/HomeView'
 
 /**
  * Note: 路由配置项
@@ -38,28 +37,28 @@ export const constantRoutes = [
     children: [
       {
         path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect')
+        component: (resolve) => require(['@/views/redirect'],resolve)
       }
     ]
   },
   {
     path: '/login',
-    component: () => import('@/views/login'),
+    component: (resolve) => require(['@/views/login'],resolve),
     hidden: true
   },
   {
     path: '/register',
-    component: () => import('@/views/register'),
+    component: (resolve) => require(['@/views/register'],resolve),
     hidden: true
   },
   {
     path: '/404',
-    component: () => import('@/views/error/404'),
+    component: (resolve) => require(['@/views/error/404'],resolve),
     hidden: true
   },
   {
     path: '/401',
-    component: () => import('@/views/error/401'),
+    component: (resolve) => require(['@/views/error/401'],resolve),
     hidden: true
   },
 
@@ -71,25 +70,25 @@ export const constantRoutes = [
     children: [
       {
         path: 'profile',
-        component: () => import('@/views/system/user/profile/index'),
+        component: (resolve) => require(['@/views/system/user/profile/index'],resolve),
         name: 'Profile',
         meta: { title: '个人中心', icon: 'user' }
       },
       {
         path: '/contractList',
-        component: () => import('@/views/business/model/index'),
+        component: (resolve) => require(['@/views/business/model/index'],resolve),
       },
       {
         path: '/electronicContract',
-        component: () => import('@/views/business/ElectronicContract'),
+        component: (resolve) => require(['@/views/business/ElectronicContract'],resolve),
       },
       {
         path: '/historyContracts',
-        component: () => import('@/views/business/contract/index'),
+        component: (resolve) => require(['@/views/business/contract/index'],resolve),
       },
       {
         path: '/hotel',
-        component: () => import('@/views/business/hotel/index'),
+        component: (resolve) => require(['@/views/business/hotel/index'],resolve),
       },
     ]
   },
@@ -99,8 +98,6 @@ export const constantRoutes = [
 
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes = [
-
-
   //超管
   {
     path: '',
@@ -110,7 +107,7 @@ export const dynamicRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/system/user/index'),
+        component: (resolve) => require(['@/views/system/user/index'],resolve),
         name: 'Index',
         permissions: ['system:user:list'],
         meta: { title: '首页', icon: 'dashboard', affix: true }
@@ -122,18 +119,15 @@ export const dynamicRoutes = [
   //超管
   {
     path: '',
-    redirect: 'index',
-    component: VueHome,
+    redirect: '/index',
+    permissions: ['business:staff:list']
+  },
+  {
+    path: '/index',
+    component: (resolve) => require(['@/views/index'],resolve),
+    name: 'Index',
     permissions: ['business:staff:list'],
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/HomeView'),
-        name: 'Index',
-        permissions: ['business:staff:list'],
-        meta: { title: '首页', icon: 'dashboard', affix: true }
-      }
-    ]
+    meta: { title: '首页', icon: 'dashboard', affix: true }
   },
   {
     path: '/system/user-auth',
@@ -143,7 +137,7 @@ export const dynamicRoutes = [
     children: [
       {
         path: 'role/:userId(\\d+)',
-        component: () => import('@/views/system/user/authRole'),
+        component: (resolve) => require(['@/views/system/user/authRole'],resolve),
         name: 'AuthRole',
         meta: { title: '分配角色', activeMenu: '/system/user' }
       }
@@ -157,7 +151,7 @@ export const dynamicRoutes = [
     children: [
       {
         path: 'user/:roleId(\\d+)',
-        component: () => import('@/views/system/role/authUser'),
+        component: (resolve) => require(['@/views/system/role/authUser'],resolve),
         name: 'AuthUser',
         meta: { title: '分配用户', activeMenu: '/system/role' }
       }
@@ -171,7 +165,7 @@ export const dynamicRoutes = [
     children: [
       {
         path: 'index/:dictId(\\d+)',
-        component: () => import('@/views/system/dict/data'),
+        component: (resolve) => require(['@/views/system/dict/data'],resolve),
         name: 'Data',
         meta: { title: '字典数据', activeMenu: '/system/dict' }
       }
@@ -185,7 +179,7 @@ export const dynamicRoutes = [
     children: [
       {
         path: 'index',
-        component: () => import('@/views/monitor/job/log'),
+        component: (resolve) => require(['@/views/monitor/job/log'],resolve),
         name: 'JobLog',
         meta: { title: '调度日志', activeMenu: '/monitor/job' }
       }
@@ -199,7 +193,7 @@ export const dynamicRoutes = [
     children: [
       {
         path: 'index/:tableId(\\d+)',
-        component: () => import('@/views/tool/gen/editTable'),
+        component: (resolve) => require(['@/views/tool/gen/editTable'],resolve),
         name: 'GenEdit',
         meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
       }

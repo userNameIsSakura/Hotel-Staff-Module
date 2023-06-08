@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.business.mapper.SysOperationLogMapper">
+
+    <resultMap type="com.ruoyi.business.domain.SysOperationLog" id="SysOperationLogMap">
+        <result property="logId" column="log_id" jdbcType="INTEGER"/>
+        <result property="logUser" column="log_user" jdbcType="INTEGER"/>
+        <result property="logCommand" column="log_command" jdbcType="VARCHAR"/>
+        <result property="logTime" column="log_time" jdbcType="TIMESTAMP"/>
+        <result property="logData" column="log_data" jdbcType="VARCHAR"/>
+        <result property="logType" column="log_type" jdbcType="INTEGER"/>
+        <result property="logTarget" column="log_target" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!--查询所有-->
+    <select id="queryAll" resultMap="SysOperationLogMap">
+        select
+          log_id, log_user, log_command, log_time, log_data, log_type, log_target
+        from sys_operation_log
+    </select>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="SysOperationLogMap">
+        select
+          log_id, log_user, log_command, log_time, log_data, log_type, log_target
+        from sys_operation_log
+        where log_id = #{logId}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="SysOperationLogMap">
+        select
+          log_id, log_user, log_command, log_time, log_data, log_type, log_target
+        from sys_operation_log
+        <where>
+            <if test="logId != null">
+                and log_id = #{logId}
+            </if>
+            <if test="logUser != null">
+                and log_user = #{logUser}
+            </if>
+            <if test="logCommand != null and logCommand != ''">
+                and log_command = #{logCommand}
+            </if>
+            <if test="logTime != null">
+                and log_time = #{logTime}
+            </if>
+            <if test="logData != null and logData != ''">
+                and log_data = #{logData}
+            </if>
+            <if test="logType != null">
+                and log_type = #{logType}
+            </if>
+            <if test="logTarget != null and logTarget != ''">
+                and log_target = #{logTarget}
+            </if>
+        </where>
+        limit #{pageable.offset}, #{pageable.pageSize}
+    </select>
+
+    <!--统计总行数-->
+    <select id="count" resultType="java.lang.Long">
+        select count(1)
+        from sys_operation_log
+        <where>
+            <if test="logId != null">
+                and log_id = #{logId}
+            </if>
+            <if test="logUser != null">
+                and log_user = #{logUser}
+            </if>
+            <if test="logCommand != null and logCommand != ''">
+                and log_command = #{logCommand}
+            </if>
+            <if test="logTime != null">
+                and log_time = #{logTime}
+            </if>
+            <if test="logData != null and logData != ''">
+                and log_data = #{logData}
+            </if>
+            <if test="logType != null">
+                and log_type = #{logType}
+            </if>
+            <if test="logTarget != null and logTarget != ''">
+                and log_target = #{logTarget}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="logId" useGeneratedKeys="true">
+        insert into sys_operation_log(log_user, log_command, log_time, log_data, log_type, log_target)
+        values (#{logUser}, #{logCommand}, #{logTime}, #{logData}, #{logType}, #{logTarget})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="logId" useGeneratedKeys="true">
+        insert into sys_operation_log(log_user, log_command, log_time, log_data, log_type, log_target)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+        (#{entity.logUser}, #{entity.logCommand}, #{entity.logTime}, #{entity.logData}, #{entity.logType}, #{entity.logTarget})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="logId" useGeneratedKeys="true">
+        insert into sys_operation_log(log_user, log_command, log_time, log_data, log_type, log_target)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.logUser}, #{entity.logCommand}, #{entity.logTime}, #{entity.logData}, #{entity.logType}, #{entity.logTarget})
+        </foreach>
+        on duplicate key update
+        log_user = values(log_user),
+        log_command = values(log_command),
+        log_time = values(log_time),
+        log_data = values(log_data),
+        log_type = values(log_type),
+        log_target = values(log_target)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update sys_operation_log
+        <set>
+            <if test="logUser != null">
+                log_user = #{logUser},
+            </if>
+            <if test="logCommand != null and logCommand != ''">
+                log_command = #{logCommand},
+            </if>
+            <if test="logTime != null">
+                log_time = #{logTime},
+            </if>
+            <if test="logData != null and logData != ''">
+                log_data = #{logData},
+            </if>
+            <if test="logType != null">
+                log_type = #{logType},
+            </if>
+            <if test="logTarget != null and logTarget != ''">
+                log_target = #{logTarget},
+            </if>
+        </set>
+        where log_id = #{logId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete from sys_operation_log where log_id = #{logId}
+    </delete>
+
+</mapper>
+
+

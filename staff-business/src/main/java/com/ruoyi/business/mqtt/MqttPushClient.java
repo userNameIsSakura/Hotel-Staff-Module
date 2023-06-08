@@ -162,6 +162,16 @@ public class MqttPushClient {
     }
 
     /**
+     * 取消订阅主题
+     * */
+    public void unSubscribe(String topic) {
+        try {
+            client.unsubscribe(topic);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    /**
      * 订阅某个主题
      *
      * @param topic

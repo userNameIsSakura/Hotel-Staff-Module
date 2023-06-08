@@ -157,9 +157,9 @@
               <el-select v-model="form.hotelId" placeholder="请选择酒店" maxlength="30" >
                 <el-option
                   v-for="item in hotelList"
-                  :key="item.hotelId"
-                  :label="item.hotelName"
-                  :value="parseInt(item.hotelId)"
+                  :key="item.chotelId"
+                  :label="item.chotelName"
+                  :value="parseInt(item.chotelId)"
                 ></el-option>
               </el-select>
             </el-form-item>
@@ -195,7 +195,7 @@ import { listUser, getUser, delUser, addUser, updateUser, resetUserPwd, changeUs
 import { getToken } from "@/utils/auth";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
-import {listHotel, listHotelAll} from "@/api/business/hotel";
+import {listChainHotelAll, listHotel, listHotelAll} from "@/api/business/hotel";
 
 export default {
   name: "User",
@@ -442,8 +442,9 @@ export default {
       });
     },
     getHotels() {
-      listHotelAll().then(response => {
-        this.hotelList = response;
+      listChainHotelAll().then(response => {
+        this.hotelList = response.data;
+        console.log(this.hotelList)
       })
     },
     /** 重置密码按钮操作 */

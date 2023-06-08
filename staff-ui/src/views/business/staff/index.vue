@@ -258,6 +258,7 @@ import Cookies from "js-cookie";
 import {listAllPosition, listPositionByDepartmentId} from "@/api/business/position";
 import {listDepartment} from "@/api/business/department";
 import {listChainHotel} from "@/api/business/chainHotel";
+import {test} from "@/api/pmsTest";
 
 export default {
   name: "Staff",
@@ -334,6 +335,17 @@ export default {
   },
   created() {
     this.getEntityHotels();
+
+    // websocket 测试
+    var socket = new WebSocket("ws://127.0.0.1:8090/ws/asset");
+
+    var data = {};
+    data.command = "Room_Building_PageList";
+    test(data);
+
+    socket.onmessage = function (msg) {
+      console.log(msg.data);
+    }
   },
   methods: {
     /** 查询员工信息列表 */

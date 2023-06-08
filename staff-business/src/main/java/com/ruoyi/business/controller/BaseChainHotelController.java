@@ -42,8 +42,6 @@ public class BaseChainHotelController extends BaseController
     @Autowired
     private IBaseHotelService baseHotelService;
 
-
-
     /**
      * 查询连锁酒店列表
      */

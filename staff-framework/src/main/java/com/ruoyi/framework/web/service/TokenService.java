@@ -91,6 +91,10 @@ public class TokenService
     {
         // 获取请求携带的令牌
         String token = getToken(request);
+        return getStaffUserByToken(token);
+    }
+
+    public StaffUser getStaffUserByToken(String token) {
         if (StringUtils.isNotEmpty(token))
         {
             try
@@ -109,6 +113,9 @@ public class TokenService
         }
         return null;
     }
+
+
+
 
     /**
      * 设置用户身份信息

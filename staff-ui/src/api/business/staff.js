@@ -3,12 +3,18 @@ import {parseStrEmpty} from "@/utils/ruoyi";
 
 // 查询员工信息列表
 export function listStaff(query) {
+
+
+
+
   return request({
     url: '/business/staff/list',
     method: 'get',
     params: query
   })
 }
+
+
 
 // 查询员工信息详细
 export function getStaff(hotelId,staffId) {

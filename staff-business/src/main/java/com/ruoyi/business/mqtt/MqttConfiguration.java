@@ -47,6 +47,8 @@ public class MqttConfiguration implements ApplicationRunner {
         thread.start();
     }
 
+
+
     public void connect() {
         mqttPushClient.connect(host, clientid, username, password, timeout, keepalive, qos);
     }

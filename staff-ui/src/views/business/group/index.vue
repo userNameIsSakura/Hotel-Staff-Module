@@ -49,8 +49,8 @@
       <el-table-column label="公司/集团" align="center" header-align="center" prop="chotelName" />
         <el-table-column label="属性" align="center" header-align="center" prop="chotelType">
           <template slot-scope="scope">
-            <span v-if="scope.row.chotelType === 1">连锁酒店集团</span>
-            <span v-if="scope.row.chotelType === 0">个体酒店集团</span>
+            <span v-if="scope.row.chotelType === 0">连锁酒店集团</span>
+            <span v-if="scope.row.chotelType === 1">个体酒店集团</span>
           </template>
         </el-table-column>
       <el-table-column label="操作" align="right"  class-name="small-padding fixed-width">
@@ -92,8 +92,8 @@
             </el-form-item>
             <el-form-item label="属性" prop="chotelType" >
               <el-select v-model="form.chotelType" placeholder="请选择属性">
-                <el-option label="连锁酒店集团" :value="1"/>
-                <el-option label="个体酒店集团" :value="0"/>
+                <el-option label="连锁酒店集团" :value="0"/>
+                <el-option label="个体酒店集团" :value="1"/>
               </el-select>
             </el-form-item>
             <el-form-item label="备注" prop="remark">

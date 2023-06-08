@@ -1,12 +1,12 @@
 package com.ruoyi.business.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,10 +14,13 @@ import javax.servlet.http.HttpServletResponse;
 import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.business.domain.BaseHotel;
 import com.ruoyi.business.domain.SubscribeHotelRelationships;
+import com.ruoyi.business.domain.SysOperationLog;
 import com.ruoyi.business.mapper.BaseHotelMapper;
 import com.ruoyi.business.mqtt.MqttConfiguration;
 import com.ruoyi.business.mqtt.MqttPushClient;
+import com.ruoyi.business.process.DataReception;
 import com.ruoyi.business.service.ISubscribeHotelRelationshipsService;
+import com.ruoyi.business.service.SysOperationLogService;
 import com.ruoyi.business.service.impl.BaseFunctionServiceImpl;
 import com.ruoyi.business.service.impl.BaseHotelServiceImpl;
 import com.ruoyi.business.utils.MqttConstantUtil;
@@ -30,10 +33,13 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.web.service.TokenService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.aspectj.lang.annotation.Pointcut;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -76,8 +82,10 @@ public class BizSubscribeController extends BaseController
     private RedisCache redisCache;
     @Autowired
     private MqttConfiguration mqttConfiguration;
+    @Autowired
+    private SysOperationLogService operationLogService;
 
-    private AtomicInteger topicId = new AtomicInteger(1);
+    private AtomicLong topicId = new AtomicLong(1L);
     private static ConcurrentLinkedDeque receiveList = new ConcurrentLinkedDeque();
 
     // 令牌秘钥
@@ -91,6 +99,8 @@ public class BizSubscribeController extends BaseController
     public static boolean remove(Object object) {
         return receiveList.remove(object);
     }
+
+    public static ConcurrentHashMap<String,Thread> topicThreadMap = new ConcurrentHashMap<>();
 
     /**
      *
@@ -124,7 +134,7 @@ public class BizSubscribeController extends BaseController
             hashMap.put("list",new ArrayList<>());
         } else if(pageNum == pageTotal){
             hashMap.put("list",cacheList.subList((pageNum-1) * pageSize, size));
-        }else {
+        } else {
             hashMap.put("list",cacheList.subList((pageNum-1) * pageSize ,  (pageNum-1) * pageSize + pageSize));
         }
         return hashMap;
@@ -148,7 +158,7 @@ public class BizSubscribeController extends BaseController
             return AjaxResult.error("权限验证失败");
         }
 
-        BaseHotel hotel = SpringContextUtils.getBean(BaseHotelServiceImpl.class).selectBaseHotelByHotelId(tokenService.getStaffUser(request).getHotelId());
+        BaseHotel hotel = null;
 
         if (!mqttConfiguration.getMqttPushClient().isConnected()) {
             return AjaxResult.error("MQTT未连接");
@@ -170,6 +180,15 @@ public class BizSubscribeController extends BaseController
         String topic = staffUser.getTopic();
         /* 酒店编号 */
         final String operationHotelId = (String) map.get("operationHotelId");
+
+        if(StringUtils.isNotNull(operationHotelId)) {
+            final BaseHotel hotel1 = new BaseHotel();
+            hotel1.setHotelNumber(operationHotelId);
+            final List<BaseHotel> hotel2 = SpringContextUtils.getBean(BaseHotelServiceImpl.class).selectBaseHotelList(hotel1);
+            if(hotel2.size() == 0)
+                return AjaxResult.error("酒店编号不存在");
+            hotel = hotel2.get(0);
+        }
 
         if(command.equals("")) {
             return AjaxResult.error("请求参数异常");
@@ -195,8 +214,8 @@ public class BizSubscribeController extends BaseController
         if(parameter == null) {
             parameter = new HashMap();
         }
-        /* 参数覆盖 */
 
+        /* 参数覆盖 */
         /* 权限级限制参数 */
         if(commandObject.getParameter() != null && !commandObject.getParameter().equals("")) {
             HashMap jsonObject = JSONObject.parseObject(commandObject.getParameter());
@@ -215,14 +234,16 @@ public class BizSubscribeController extends BaseController
         /* 此处直接将map对象传入，不转换成JSON，否则会出现反斜杠 */
         map.put("data",parameter);
         /* 酒店级限制参数 */
-        /* 1.酒店押金 */
-        map.put("hotelDeposit",hotel.getHotelDeposit());
-        /* 2.免费早餐 */
-        map.put("freeBreakfast",hotel.getHotelFreeBreakfast());
-        /* 3.酒店结算时间 */
-        map.put("clearingTime",hotel.getHotelSettlement());
-        /* 4.房卡数量 */
-        map.put("roomCardNumber",hotel.getHotelRoomCards());
+        if(hotel != null) {
+            /* 1.酒店押金 */
+            map.put("hotelDeposit",hotel.getHotelDeposit());
+            /* 2.免费早餐 */
+            map.put("freeBreakfast",hotel.getHotelFreeBreakfast());
+            /* 3.酒店结算时间 */
+            map.put("clearingTime",hotel.getHotelSettlement());
+            /* 4.房卡数量 */
+            map.put("roomCardNumber",hotel.getHotelRoomCards());
+        }
 
         HashMap<String, Object> redisCache = new HashMap<>();
         redisCache.put("responseNum", 0);
@@ -250,13 +271,13 @@ public class BizSubscribeController extends BaseController
             hotels = hotels.stream().filter( h -> !blacklist.contains(h)).collect(Collectors.toList());
         }
 
+        /* 检查登录者所在酒店是否具有该权限 */
+        if(!hotels.contains(SpringContextUtils.getBean(BaseHotelServiceImpl.class).selectBaseHotelByHotelId(staffUser.getHotelId()).getHotelNumber())) {
+            return AjaxResult.error("您无权使用该命令");
+        }
+
         /* 判断是否携带酒店编号 */
         if(StringUtils.isNotNull(operationHotelId)) {
-
-            if(!hotels.contains(operationHotelId)) {
-                return AjaxResult.error("您无权使用该命令");
-            }
-
             map.put("operationHotelId",operationHotelId);
             String serverTopic = "area/" + operationHotelId.substring(0,2) +"/" + operationHotelId.substring(2,4) + "/" + operationHotelId.substring(4,6) + "/" + operationHotelId.substring(6,10);
             System.out.println(serverTopic);
@@ -267,7 +288,7 @@ public class BizSubscribeController extends BaseController
             System.out.println(map);
             client.publish(serverTopic,JSONObject.toJSONString(map).getBytes());
             System.out.println("发送数据：" + JSONObject.toJSONString(map));
-        }else {
+        } else {
             /* 未携带：广播 */
             /* 发布消息 */
             for (String h : hotels) {
@@ -289,15 +310,188 @@ public class BizSubscribeController extends BaseController
         receive.put("time",System.currentTimeMillis());
         receiveList.add(receive);
 
+        if(StringUtils.isNotEmpty(operationHotelId)) {
+            hotels = new ArrayList<>();
+            hotels.add(operationHotelId);
+        }
+        operationLog(userId, command, parameter, StringUtils.isNotEmpty(operationHotelId), hotels);
         return AjaxResult.success().put("token",token);
     }
 
-    private void a() {
+    /**
+     * 操作日志
+     *
+     * @param userId  用户id
+     * @param command 命令
+     * @param data    数据
+     */
+    private void operationLog(Long userId, String command, HashMap data, boolean hotelId, List<String> hotels) {
+        final SysOperationLog sysOperationLog = new SysOperationLog();
+        sysOperationLog.setLogUser(userId);
+        sysOperationLog.setLogCommand(command);
+        sysOperationLog.setLogData(JSONObject.toJSONString(data));
+        sysOperationLog.setLogType(hotelId ? 1 : 0);
+        sysOperationLog.setLogTarget(JSONObject.toJSONString(hotels));
+        sysOperationLog.setLogTime(new Date(System.currentTimeMillis()));
+        operationLogService.insert(sysOperationLog);
+    }
 
+    /**
+     * PMS前端请求接口
+     *
+     * @param map     参数
+     * @param request 请求
+     * @return {@link Object}
+     */
+    @PostMapping("/pmsRequest")
+    public Object pmsRequest(@RequestBody HashMap<String,Object> map, HttpServletRequest request) {
+
+        /* 检查token */
+        StaffUser staffUser = tokenService.getStaffUser(request);
+
+        if(staffUser == null) {
+            return AjaxResult.error("权限验证失败");
+        }
+
+        if (!mqttConfiguration.getMqttPushClient().isConnected()) {
+            return AjaxResult.error("MQTT未连接");
+        }
+
+        /* 命令 */
+        String command = (String) map.get("command");
+        /* 参数 */
+        HashMap parameter = (HashMap) map.get("parameter");
+        /* 酒店编号 */
+        final String operationHotelId = (String) map.get("operationHotelId");
+
+        BizSubscribe bizSubscribe = new BizSubscribe();
+        bizSubscribe.setSubscribeContent(command);
+        /* 命令是否存在 */
+        List<BizSubscribe> bizSubscribes = bizSubscribeService.selectBizSubscribeList(bizSubscribe);
+        if(bizSubscribes.size() == 0) {
+            return AjaxResult.error("当前请求不存在");
+        }
+
+        /* 是否可用 */
+        BizSubscribe commandObject = bizSubscribes.get(0);
+        if(commandObject.getAvailable() == 0) {
+            return AjaxResult.error("当前请求不可用");
+        }
+
+        /* 限制参数 */
+        if(parameter == null) {
+            parameter = new HashMap();
+        }
+        /* 参数覆盖 */
+        if(commandObject.getParameter() != null && !commandObject.getParameter().equals("")) {
+            HashMap jsonObject = JSONObject.parseObject(commandObject.getParameter());
+            parameter.putAll(jsonObject);
+        }
+
+        /* 获取返回Topic */
+        String callbackTopic = getPMSCallbackTopic();
+
+        /* 服务端数据 */
+        map = new HashMap<>();
+        /* PMS的UserId为0 */
+        map.put("operationSystemUserId",staffUser.getUserId());
+        map.put("callbackTopic",callbackTopic);
+        map.put("callbackTopicQos",1);
+        map.put("operationCmd",command);
+        /* 此处直接将map对象传入，不转换成JSON，否则会出现反斜杠 */
+        map.put("data",parameter);
+
+        BaseHotel hotel = null;
+        if(StringUtils.isNotNull(operationHotelId)) {
+            final BaseHotel hotel1 = new BaseHotel();
+            hotel1.setHotelNumber(operationHotelId);
+            final List<BaseHotel> baseHotels = SpringContextUtils.getBean(BaseHotelServiceImpl.class).selectBaseHotelList(hotel1);
+            if(baseHotels.size() == 0)
+                return AjaxResult.error("不存在该酒店");
+            hotel = baseHotels.get(0);
+        }
+        /* 酒店级限制参数 */
+        if(hotel != null) {
+            /* 1.酒店押金 */
+            map.put("hotelDeposit",hotel.getHotelDeposit());
+            /* 2.免费早餐 */
+            map.put("freeBreakfast",hotel.getHotelFreeBreakfast());
+            /* 3.酒店结算时间 */
+            map.put("clearingTime",hotel.getHotelSettlement());
+            /* 4.房卡数量 */
+            map.put("roomCardNumber",hotel.getHotelRoomCards());
+        }
+
+        HashMap<String, Object> redisCache = new HashMap<>();
+        redisCache.put("timestamp",System.currentTimeMillis());
+        String token = Jwts.builder().setClaims(redisCache).signWith(SignatureAlgorithm.HS512,secret).compact();
+        redisCache.put("token",token);
+        this.redisCache.setCacheMap(callbackTopic,redisCache);
+        this.redisCache.expire(callbackTopic,MqttConstantUtil.DEFAULT_SURPLUS_EXPIRE);
+
+        /* 全部酒店列表 */
+        List<String> hotels = baseHotelController.listAllPrivate().stream().map(BaseHotel:: getHotelNumber).collect(Collectors.toList());
+
+        /* 筛选黑名单 */
+        List<SubscribeHotelRelationships> subscribeHotelRelationships = subscribeHotelRelationshipsService.selectSubscribeHotelRelationshipsByContent(command);
+        List<String> blacklist = subscribeHotelRelationships.stream().map(SubscribeHotelRelationships::getHotelNumber).collect(Collectors.toList());
+
+        /* 获得酒店列表 */
+        if(blacklist.size() != 0 ) {
+            hotels = hotels.stream().filter( h -> !blacklist.contains(h)).collect(Collectors.toList());
+        }
+
+        /* 检查登录者所在酒店是否具有该权限 */
+        if(!hotels.contains(SpringContextUtils.getBean(BaseHotelServiceImpl.class).selectBaseHotelByHotelId(staffUser.getHotelId()).getHotelNumber())) {
+            return AjaxResult.error("您无权使用该命令");
+        }
+
+        topicThreadMap.put(callbackTopic,Thread.currentThread());
+        logger.debug("topic" + callbackTopic + "已存入线程Map");
+
+        /* 判断是否携带酒店编号 */
+        if(StringUtils.isNotNull(operationHotelId)) {
+            map.put("operationHotelId",operationHotelId);
+            String serverTopic = "area/" + operationHotelId.substring(0,2) +"/" + operationHotelId.substring(2,4) + "/" + operationHotelId.substring(4,6) + "/" + operationHotelId.substring(6,10);
+            System.out.println(serverTopic);
+            /* 订阅 */
+            client.subscribe(callbackTopic);
+            System.out.println("订阅成功:"+callbackTopic);
+            /* 发布 */
+            System.out.println(map);
+            client.publish(serverTopic,JSONObject.toJSONString(map).getBytes());
+            System.out.println("发送数据：" + JSONObject.toJSONString(map));
+        }else {
+            return AjaxResult.error("未携带酒店编号");
+        }
+
+        final HashMap<String, Object> receive = new HashMap<>();
+        receive.put("topic",callbackTopic);
+        receive.put("time",System.currentTimeMillis());
+        receiveList.add(receive);
+
+        if(StringUtils.isNotEmpty(operationHotelId)) {
+            hotels = new ArrayList<>();
+            hotels.add(operationHotelId);
+        }
+        operationLog(staffUser.getUserId(), command, parameter, StringUtils.isNotEmpty(operationHotelId), hotels);
+
+
+        try {
+            TimeUnit.SECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            return DataReception.topicMsgMap.get(callbackTopic);
+        }
+
+        return AjaxResult.error("超时");
     }
 
     private String getCallbackTopic() {
         return "callback/"+ topicId.getAndIncrement();
+    }
+
+    private String getPMSCallbackTopic() {
+        return "pmsCallback/"+ topicId.getAndIncrement();
     }
 
 

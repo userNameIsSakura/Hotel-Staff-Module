@@ -4,6 +4,8 @@ import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.business.controller.BizSubscribeController;
 import com.ruoyi.business.mqtt.MqttPushClient;
+import com.ruoyi.business.utils.MqttMessageUtil;
+import com.ruoyi.business.websocket.WebSocket;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.web.service.TokenService;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 
@@ -38,6 +41,8 @@ public class DataReception implements Runnable{
     private TokenService tokenService;
     @Autowired
     private MqttPushClient mqttPushClient;
+    @Autowired
+    private WebSocket webSocket;
 
     // 令牌秘钥
     @Value("${token.secret}")
@@ -45,6 +50,8 @@ public class DataReception implements Runnable{
     private byte[] message;
     private String topic;
     private static ConcurrentLinkedDeque<HashMap> msgList = new ConcurrentLinkedDeque<>();
+
+    public static ConcurrentHashMap<String,Object> topicMsgMap = new ConcurrentHashMap<>();
 
     @SneakyThrows
     @Override
@@ -57,6 +64,18 @@ public class DataReception implements Runnable{
             System.out.println("-------------------信息--------------------");
             System.out.println(jsonObject);
             System.out.println("------------------------------------------");
+
+            /* PMS请求数据到达 */
+            if(topic.startsWith("pms")) {
+                if(jsonObject == null)
+                    jsonObject = new JSONObject();
+                topicMsgMap.put(topic,jsonObject);
+                if(BizSubscribeController.topicThreadMap.get(topic) != null)
+                    BizSubscribeController.topicThreadMap.get(topic).interrupt();
+                else
+                    log.error("pms线程为空");
+                return;
+            }
 
             int status = (int) jsonObject.get("code");
             String mes = (String) jsonObject.get("message");
@@ -74,6 +93,8 @@ public class DataReception implements Runnable{
                         break;
                     }else {
                         /* 已过期 */
+                        /* 取消订阅 */
+                        mqttPushClient.unSubscribe(topic);
                         BizSubscribeController.remove(o);
                     }
                 }
@@ -81,6 +102,7 @@ public class DataReception implements Runnable{
 
             /* 信息已丢弃或已过期 */
             if(!flag) {
+                log.debug("信息已过期");
                 return;
             }
 
@@ -89,6 +111,7 @@ public class DataReception implements Runnable{
                 log.debug("服务端(" + topic +")异常:" + mes);
                 return;
             }
+
             String token = (String) cache.get("token");
 
             if(StringUtils.isNotNull(jsonObject.get("data"))) {
@@ -104,6 +127,7 @@ public class DataReception implements Runnable{
                 }
                 redisCache.setCacheList(token,array);
             }
+
             /* 同步 */
             synchronized (DataReception.class) {
                 cache = (HashMap) redisCache.getCacheMap(topic);
@@ -127,6 +151,8 @@ public class DataReception implements Runnable{
                 final HashMap map = new HashMap();
                 map.put("topic",clientTopic);
                 map.put("msg",JSONObject.toJSONString(returnMap).getBytes());
+                /* 标识位设为0表示是返回信息 */
+                map.put("type", MqttMessageUtil.MSG_TYPE_RESPONSE);
                 msgList.add(map);
             }
         }catch (Exception e) {
@@ -149,6 +175,4 @@ public class DataReception implements Runnable{
             TimeUnit.MILLISECONDS.sleep(100);
         }
     }
-
 }
-

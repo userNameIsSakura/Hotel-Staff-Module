@@ -24,8 +24,6 @@ public class InterfaceController {
     private BaseHotelServiceImpl baseHotelService;
     @Value("${tencent.api.key}")
     private String key;
-    @Value("${hotel.member.url}")
-    private String memberUrl;
 
     // TODO: 2023/4/1 此处接口只允许小程序端调用
 

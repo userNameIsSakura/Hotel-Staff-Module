@@ -26,15 +26,6 @@ public class BaseHotel
     @Excel(name = "酒店编号")
     private String hotelNumber;
 
-    /** 省 */
-    private String province;
-
-    /** 市 */
-    private String city;
-
-    /** 区 */
-    private String area;
-
     /** 房卡数量 */
     @Excel(name = "房卡数量")
     private Long hotelRoomCards;

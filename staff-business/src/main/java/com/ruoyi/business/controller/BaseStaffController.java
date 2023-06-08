@@ -14,6 +14,7 @@ import com.ruoyi.business.service.IBaseHotelService;
 import com.ruoyi.business.service.IBaseRoleService;
 import com.ruoyi.common.core.domain.model.StaffUser;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.web.service.TokenService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,6 @@ public class BaseStaffController extends BaseController
 
 //    private static AtomicInteger clientId = new AtomicInteger(0);
     private static HashMap<String,AtomicInteger> clientid = new HashMap<>();
-
 
     /**
      * 查询员工信息列表
@@ -119,8 +119,6 @@ public class BaseStaffController extends BaseController
         return "topic_zzj_" + phone + format;
     }
 
-
-
     /**
      * 心跳
      *
@@ -136,6 +134,23 @@ public class BaseStaffController extends BaseController
         }
         tokenService.verifyStaffToken(staffUser);
         return true;
+    }
+
+    @PostMapping("/validate")
+    public AjaxResult heart(@RequestBody HashMap<String,String> map,HttpServletRequest request) {
+
+        if(!heart(request))
+            return AjaxResult.error("无权限");
+
+        final String token = map.get("token");
+        if(StringUtils.isEmpty(token))
+            return AjaxResult.error("未携带验证用Token");
+        StaffUser staffUser = tokenService.getStaffUserByToken(token);
+        if(staffUser == null) {
+            return AjaxResult.error("Token无效或已过期");
+        }
+        tokenService.verifyStaffToken(staffUser);
+        return AjaxResult.success(hotelService.selectBaseHotelByHotelId(staffUser.getHotelId()));
     }
 
 /*    @PostMapping("/auth")
@@ -166,8 +181,6 @@ public class BaseStaffController extends BaseController
         ExcelUtil<BaseStaff> util = new ExcelUtil<BaseStaff>(BaseStaff.class);
         util.exportExcel(response, list, "员工信息数据");
     }
-
-
 
     /**
      * 获取员工信息详细信息
@@ -240,8 +253,6 @@ public class BaseStaffController extends BaseController
         return toAjax(baseStaffMapper.updateBaseStaffPassword(staff));
 
     }
-
-
 
     /**
      * 删除员工信息
