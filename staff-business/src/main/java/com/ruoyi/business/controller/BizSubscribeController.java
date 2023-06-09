@@ -173,7 +173,20 @@ public class BizSubscribeController extends BaseController
         /* 命令 */
         String command = (String) map.get("command");
         /* 参数 */
-        HashMap parameter = (HashMap) map.get("parameter");
+        final Object para = map.get("parameter");
+        HashMap parameterMap = null;
+        ArrayList<HashMap> parameterArray = null;
+
+        String paraType = "array";
+        if(para instanceof HashMap) {
+            parameterMap = (HashMap) para;
+            paraType = "map";
+        }
+        else if(para instanceof ArrayList)
+            parameterArray = (ArrayList<HashMap>) para;
+        else
+            return AjaxResult.error("parameter格式解析错误");
+
         /* userId */
         String operationSystemUserId = userId.toString();
         /* 客户端topic */
@@ -211,15 +224,31 @@ public class BizSubscribeController extends BaseController
         }
 
         /* 限制参数 */
-        if(parameter == null) {
-            parameter = new HashMap();
+        if(parameterMap == null) {
+            parameterMap = new HashMap();
         }
+
+        if(parameterArray == null) {
+            parameterArray = new ArrayList<>();
+        }
+
 
         /* 参数覆盖 */
         /* 权限级限制参数 */
         if(commandObject.getParameter() != null && !commandObject.getParameter().equals("")) {
             HashMap jsonObject = JSONObject.parseObject(commandObject.getParameter());
-            parameter.putAll(jsonObject);
+            if(paraType.equals("map")) {
+                parameterMap.putAll(jsonObject);
+            }else {
+                try {
+                    for (HashMap object : parameterArray) {
+                        object.putAll(jsonObject);
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    return AjaxResult.error("参数覆盖失败");
+                }
+            }
         }
 
         /* 获取返回Topic */
@@ -232,7 +261,7 @@ public class BizSubscribeController extends BaseController
         map.put("callbackTopicQos",1);
         map.put("operationCmd",command);
         /* 此处直接将map对象传入，不转换成JSON，否则会出现反斜杠 */
-        map.put("data",parameter);
+        map.put("data",paraType.equals("map") ? parameterMap : parameterArray);
         /* 酒店级限制参数 */
         if(hotel != null) {
             /* 1.酒店押金 */
@@ -314,7 +343,7 @@ public class BizSubscribeController extends BaseController
             hotels = new ArrayList<>();
             hotels.add(operationHotelId);
         }
-        operationLog(userId, command, parameter, StringUtils.isNotEmpty(operationHotelId), hotels);
+        operationLog(userId, command, paraType.equals("map") ? parameterMap : parameterArray, StringUtils.isNotEmpty(operationHotelId), hotels);
         return AjaxResult.success().put("token",token);
     }
 
@@ -325,7 +354,7 @@ public class BizSubscribeController extends BaseController
      * @param command 命令
      * @param data    数据
      */
-    private void operationLog(Long userId, String command, HashMap data, boolean hotelId, List<String> hotels) {
+    private void operationLog(Long userId, String command, Object data, boolean hotelId, List<String> hotels) {
         final SysOperationLog sysOperationLog = new SysOperationLog();
         sysOperationLog.setLogUser(userId);
         sysOperationLog.setLogCommand(command);
@@ -360,7 +389,19 @@ public class BizSubscribeController extends BaseController
         /* 命令 */
         String command = (String) map.get("command");
         /* 参数 */
-        HashMap parameter = (HashMap) map.get("parameter");
+        final Object para = map.get("parameter");
+        HashMap parameterMap = null;
+        ArrayList<HashMap> parameterArray = null;
+
+        String paraType = "array";
+        if(para instanceof HashMap) {
+            parameterMap = (HashMap) para;
+            paraType = "map";
+        }
+        else if(para instanceof ArrayList)
+            parameterArray = (ArrayList<HashMap>) para;
+        else
+            return AjaxResult.error("parameter格式解析错误");
         /* 酒店编号 */
         final String operationHotelId = (String) map.get("operationHotelId");
 
@@ -379,13 +420,29 @@ public class BizSubscribeController extends BaseController
         }
 
         /* 限制参数 */
-        if(parameter == null) {
-            parameter = new HashMap();
+        if(parameterMap == null) {
+            parameterMap = new HashMap();
         }
+
+        if(parameterArray == null) {
+            parameterArray = new ArrayList<>();
+        }
+
         /* 参数覆盖 */
         if(commandObject.getParameter() != null && !commandObject.getParameter().equals("")) {
             HashMap jsonObject = JSONObject.parseObject(commandObject.getParameter());
-            parameter.putAll(jsonObject);
+            if(paraType.equals("map")) {
+                parameterMap.putAll(jsonObject);
+            }else {
+                try {
+                    for (HashMap object : parameterArray) {
+                        object.putAll(jsonObject);
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    return AjaxResult.error("参数覆盖失败");
+                }
+            }
         }
 
         /* 获取返回Topic */
@@ -399,7 +456,7 @@ public class BizSubscribeController extends BaseController
         map.put("callbackTopicQos",1);
         map.put("operationCmd",command);
         /* 此处直接将map对象传入，不转换成JSON，否则会出现反斜杠 */
-        map.put("data",parameter);
+        map.put("data",paraType.equals("map") ? parameterMap : parameterArray);
 
         BaseHotel hotel = null;
         if(StringUtils.isNotNull(operationHotelId)) {
@@ -474,7 +531,7 @@ public class BizSubscribeController extends BaseController
             hotels = new ArrayList<>();
             hotels.add(operationHotelId);
         }
-        operationLog(staffUser.getUserId(), command, parameter, StringUtils.isNotEmpty(operationHotelId), hotels);
+        operationLog(staffUser.getUserId(), command, paraType.equals("map") ? parameterMap : parameterArray, StringUtils.isNotEmpty(operationHotelId), hotels);
 
 
         try {
