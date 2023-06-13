@@ -70,8 +70,8 @@ public class DataReception implements Runnable{
                 if(jsonObject == null)
                     jsonObject = new JSONObject();
                 topicMsgMap.put(topic,jsonObject);
-                if(BizSubscribeController.topicThreadMap.get(topic) != null)
-                    BizSubscribeController.topicThreadMap.get(topic).interrupt();
+                if(BizSubscribeController.getTopicThreadMap().get(topic) != null)
+                    BizSubscribeController.getTopicThreadMap().get(topic).interrupt();
                 else
                     log.error("pms线程为空");
                 return;
@@ -109,7 +109,6 @@ public class DataReception implements Runnable{
             if(status == 0) {
                 /* 失败 */
                 log.debug("服务端(" + topic +")异常:" + mes);
-                return;
             }
 
             String token = (String) cache.get("token");

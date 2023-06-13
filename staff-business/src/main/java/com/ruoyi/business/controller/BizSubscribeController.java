@@ -3,9 +3,7 @@ package com.ruoyi.business.controller;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -15,31 +13,25 @@ import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.business.domain.BaseHotel;
 import com.ruoyi.business.domain.SubscribeHotelRelationships;
 import com.ruoyi.business.domain.SysOperationLog;
-import com.ruoyi.business.mapper.BaseHotelMapper;
 import com.ruoyi.business.mqtt.MqttConfiguration;
 import com.ruoyi.business.mqtt.MqttPushClient;
 import com.ruoyi.business.process.DataReception;
 import com.ruoyi.business.service.ISubscribeHotelRelationshipsService;
 import com.ruoyi.business.service.SysOperationLogService;
-import com.ruoyi.business.service.impl.BaseFunctionServiceImpl;
 import com.ruoyi.business.service.impl.BaseHotelServiceImpl;
 import com.ruoyi.business.utils.MqttConstantUtil;
 import com.ruoyi.business.utils.SpringContextUtils;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.model.StaffUser;
 import com.ruoyi.common.core.redis.RedisCache;
-import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.web.service.TokenService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.aspectj.lang.annotation.Pointcut;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -85,22 +77,40 @@ public class BizSubscribeController extends BaseController
     @Autowired
     private SysOperationLogService operationLogService;
 
-    private AtomicLong topicId = new AtomicLong(1L);
-    private static ConcurrentLinkedDeque receiveList = new ConcurrentLinkedDeque();
-
-    // 令牌秘钥
+    /* 令牌密钥 */
     @Value("${token.secret}")
     private String secret;
 
+    /* 消息-线程MAP */
+    private static ConcurrentHashMap<String,Thread> topicThreadMap = new ConcurrentHashMap<>();
+    /* Topic分配编号 */
+    private AtomicLong topicId = new AtomicLong(1L);
+    /* 有效消息队列 */
+    private static ConcurrentLinkedDeque receiveList = new ConcurrentLinkedDeque();
+
+
+
+    /**
+     * 获取当前消息-线程MAP
+     * */
+    public static ConcurrentHashMap<String,Thread> getTopicThreadMap() {
+        return topicThreadMap;
+    }
+
+    /**
+     * 获取当前消息队列
+     * */
     public static ConcurrentLinkedDeque getReceiveList() {
         return receiveList;
     }
 
+    /**
+     * 从消息队列中删除消息
+     * */
     public static boolean remove(Object object) {
         return receiveList.remove(object);
     }
 
-    public static ConcurrentHashMap<String,Thread> topicThreadMap = new ConcurrentHashMap<>();
 
     /**
      *
