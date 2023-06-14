@@ -65,7 +65,6 @@
     <el-table v-loading="loading" :data="subscribeList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="订阅内容" align="center" prop="subscribeContent" />
-      <el-table-column label="限制参数" align="center" prop="parameter" />
       <el-table-column label="是否可用" align="center" >
         <template slot-scope="scope">
           {{scope.row.available === true ? "启用" : "停用"}}
@@ -100,18 +99,53 @@
     />
 
     <!-- 添加或修改订阅信息对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
+    <el-dialog :title="title" :visible.sync="open" width="600px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="订阅内容">
           <el-input v-model="form.subscribeContent" :min-height="192"/>
         </el-form-item>
-        <el-form-item label="限制参数" prop="parameter">
-          <el-input v-model="form.parameter" placeholder="请输入限制参数" />
-        </el-form-item>
+
         <el-form-item label="是否启用" prop="available">
           <el-switch v-model="form.available"></el-switch>
         </el-form-item>
       </el-form>
+
+      <el-divider content-position="center">限制参数</el-divider>
+      <el-row :gutter="10" class="mb8">
+        <el-col :span="1.5">
+          <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAddParam">添加</el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button type="danger" icon="el-icon-delete" size="mini" @click="handleDeleteParam">删除</el-button>
+        </el-col>
+      </el-row>
+
+
+      <el-table :data="paramList" :row-class-name="rowParamIndex" @selection-change="handleParamSelectionChange" ref="baseParam">
+        <el-table-column type="selection" width="50" align="center" />
+        <el-table-column label="序号" align="center" prop="index" width="50"/>
+
+        <el-table-column label="KEY" prop="remark" width="150">
+          <template slot-scope="scope">
+            <el-input v-model="scope.row.key" />
+          </template>
+        </el-table-column>
+
+        <el-table-column label="VALUE" width="250">
+          <template slot-scope="scope">
+            <div style="display: flex; align-items: center;">
+              <el-select v-model="scope.row.valueType" style="margin-right: 10px;">
+                <el-option label="字符串" value="string" selected="true"></el-option>
+                <el-option label="数字" value="number"></el-option>
+              </el-select>
+              <el-input v-model="scope.row.value" :clearable="true" v-if="scope.row.valueType === 'string'" type="text" />
+              <el-input v-model.number="scope.row.value" :clearable="true" v-if="scope.row.valueType === 'number'" type="number"/>
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+
+
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
@@ -141,8 +175,12 @@ export default {
       total: 0,
       // 订阅信息表格数据
       subscribeList: [],
+      // 订阅限制参数数据
+      paramList: [],
       // 弹出层标题
       title: "",
+      checkedParam: [],
+      valueType: "text",
       // 是否显示弹出层
       open: false,
       // 查询参数
@@ -193,8 +231,11 @@ export default {
         subscribeId: null,
         subscribeContent: null,
         parameter: null,
-        available: null
+        available: true,
+        paramList: []
       };
+
+      this.paramList = [];
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
@@ -223,11 +264,33 @@ export default {
     handleUpdate(row) {
       this.reset();
       const subscribeId = row.subscribeId || this.ids
+
       getSubscribe(subscribeId).then(response => {
         response.data.available = response.data.available === 1;
         this.form = response.data;
         this.open = true;
         this.title = "修改订阅信息";
+
+
+        this.paramList = [];
+        if(!(this.form.parameter === null || this.form.parameter === "")) {
+          var parse = JSON.parse(this.form.parameter);
+          var list = [];
+          var keys = Object.keys(parse);
+          for (let key of keys) {
+            var tem = {
+              key:"",
+              value:"",
+              valueType:"string"
+            };
+            tem.key = key;
+            tem.value = Reflect.get(parse,key);
+            tem.valueType = typeof tem.value === "number" ? "number" : "string";
+            list.push(tem);
+          }
+          console.log(list);
+          this.paramList = list;
+        }
       });
     },
     /** 提交按钮 */
@@ -235,11 +298,34 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
 
+          for(let param of this.paramList) {
+            if(param.key === "" || param.value === "") {
+              this.$message.error(param.index + "号数据存在空值");
+              return;
+            }
+
+            if(param.valueType === "number" && typeof param.value !== "number") {
+              if(!isNaN(param.value)) {
+                param.value = parseInt(param.value);
+              }else {
+                this.$message.error(param.index + "号数据值非数字格式");
+                return;
+              }
+            }
+          }
+
+          if(this.form.subscribeContent === "" || this.form.subscribeContent === null) {
+            this.$message.error("订阅内容不得为空");
+            return;
+          }
+
           if(this.form.available) {
             this.form.available = 1;
           }else {
             this.form.available = 0;
           }
+
+          this.form.paramList = this.paramList;
 
           if (this.form.subscribeId != null) {
             updateSubscribe(this.form).then(response => {
@@ -272,7 +358,34 @@ export default {
       this.download('business/subscribe/export', {
         ...this.queryParams
       }, `subscribe_${new Date().getTime()}.xlsx`)
-    }
+    },
+    /** 职位信息添加按钮操作 */
+    handleAddParam() {
+      let obj = {};
+      obj.key = "";
+      obj.value = "";
+      this.paramList.push(obj);
+    },
+    /** 复选框选中数据 */
+    handleParamSelectionChange(selection) {
+      this.checkedParam = selection.map(item => item.index)
+    },
+    /** 职位信息删除按钮操作 */
+    handleDeleteParam() {
+      if (this.checkedParam.length === 0) {
+        this.$modal.msgError("请先选择要删除的数据");
+      } else {
+        const paramList = this.paramList;
+        const checkedParam = this.checkedParam;
+        this.paramList = paramList.filter(function(item) {
+          return checkedParam.indexOf(item.index) === -1
+        });
+      }
+    },
+    /** 职位信息序号 */
+    rowParamIndex({ row, rowIndex }) {
+      row.index = rowIndex + 1;
+    },
   }
 };
 </script>

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.ruoyi.business.domain.BaseChainHotel;
 import com.ruoyi.business.mapper.BaseChainHotelMapper;
+import com.ruoyi.common.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.business.mapper.BaseHotelMapper;
@@ -72,7 +73,7 @@ public class BaseHotelServiceImpl implements IBaseHotelService
         /* 插入连锁酒店表 */
         final BaseChainHotel baseChainHotel = new BaseChainHotel();
         baseChainHotel.setChotelName(baseHotel.getHotelName());
-        baseChainHotel.setChotelParent(baseHotel.getChotelParent());
+        baseChainHotel.setChotelParent(SecurityUtils.getHotelId());
         baseChainHotelMapper.insertBaseChainHotel(baseChainHotel);
         /* 插入 */
         baseHotel.setChotelId(baseChainHotel.getChotelId());
@@ -123,6 +124,7 @@ public class BaseHotelServiceImpl implements IBaseHotelService
         baseChainHotel.setChotelId(baseHotel.getChotelId());
         baseChainHotel.setChotelName(baseHotel.getHotelName());
         baseChainHotel.setRemark(baseHotel.getRemark());
+        baseChainHotel.setChotelParent(SecurityUtils.getHotelId());
         baseChainHotelMapper.updateBaseChainHotel(baseChainHotel);
 
         String prefix = baseHotel.getHotelNumber().substring(0, 6);

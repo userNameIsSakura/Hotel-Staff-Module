@@ -1,13 +1,13 @@
 package com.ruoyi.business.domain;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
+import java.util.ArrayList;
+
 /**
  * 订阅信息对象 biz_subscribe
- * 
+ *
  * @author ruoyi
  * @date 2023-01-30
  */
@@ -30,50 +30,61 @@ public class BizSubscribe extends BaseEntity
     @Excel(name = "是否可用")
     private Integer available;
 
-    public void setSubscribeId(Long subscribeId) 
+    private ArrayList<SubscribeParam> paramList;
+
+    public ArrayList<SubscribeParam> getParamList() {
+        return paramList;
+    }
+
+    public void setParamList(ArrayList<SubscribeParam> paramList) {
+        this.paramList = paramList;
+    }
+
+    public void setSubscribeId(Long subscribeId)
     {
         this.subscribeId = subscribeId;
     }
 
-    public Long getSubscribeId() 
+    public Long getSubscribeId()
     {
         return subscribeId;
     }
-    public void setSubscribeContent(String subscribeContent) 
+    public void setSubscribeContent(String subscribeContent)
     {
         this.subscribeContent = subscribeContent;
     }
 
-    public String getSubscribeContent() 
+    public String getSubscribeContent()
     {
         return subscribeContent;
     }
-    public void setParameter(String parameter) 
+    public void setParameter(String parameter)
     {
         this.parameter = parameter;
     }
 
-    public String getParameter() 
+    public String getParameter()
     {
         return parameter;
     }
-    public void setAvailable(Integer available) 
+    public void setAvailable(Integer available)
     {
         this.available = available;
     }
 
-    public Integer getAvailable() 
+    public Integer getAvailable()
     {
         return available;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("subscribeId", getSubscribeId())
-            .append("subscribeContent", getSubscribeContent())
-            .append("parameter", getParameter())
-            .append("available", getAvailable())
-            .toString();
+        return "BizSubscribe{" +
+                "subscribeId=" + subscribeId +
+                ", subscribeContent='" + subscribeContent + '\'' +
+                ", parameter='" + parameter + '\'' +
+                ", available=" + available +
+                ", paramList=" + paramList +
+                '}';
     }
 }

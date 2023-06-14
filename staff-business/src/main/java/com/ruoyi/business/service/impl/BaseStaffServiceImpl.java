@@ -142,7 +142,7 @@ public class BaseStaffServiceImpl implements IBaseStaffService
 
     public void insertStaffRole(BaseStaff baseStaff) {
         Long[] roles = baseStaff.getRoles();
-        if(roles.length != 0) {
+        if(roles != null && roles.length != 0) {
             List<StaffRoleRelationships> list = new ArrayList<>();
             for (Long role : roles) {
                 StaffRoleRelationships staffRoleRelationships = new StaffRoleRelationships();

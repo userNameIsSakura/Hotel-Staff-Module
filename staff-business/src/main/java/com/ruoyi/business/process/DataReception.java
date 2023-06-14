@@ -65,8 +65,8 @@ public class DataReception implements Runnable{
             System.out.println(jsonObject);
             System.out.println("------------------------------------------");
 
-            /* PMS请求数据到达 */
-            if(topic.startsWith("pms")) {
+            /* 同步请求数据到达 */
+            if(topic.startsWith("sync")) {
                 if(jsonObject == null)
                     jsonObject = new JSONObject();
                 topicMsgMap.put(topic,jsonObject);

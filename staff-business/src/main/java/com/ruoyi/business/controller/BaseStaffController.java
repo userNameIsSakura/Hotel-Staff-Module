@@ -7,11 +7,13 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.ruoyi.business.domain.BaseHotel;
 import com.ruoyi.business.domain.BaseRole;
 import com.ruoyi.business.domain.StaffRoleRelationships;
 import com.ruoyi.business.mapper.BaseStaffMapper;
 import com.ruoyi.business.service.IBaseHotelService;
 import com.ruoyi.business.service.IBaseRoleService;
+import com.ruoyi.business.utils.ServiceNameUtil;
 import com.ruoyi.common.core.domain.model.StaffUser;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
@@ -103,7 +105,36 @@ public class BaseStaffController extends BaseController
             hashMap.put("msg","登录成功");
             hashMap.put("token",token);
             hashMap.put("hotelId",hotelService.selectBaseHotelByHotelId(staff.getHotelId()).getHotelNumber());
-            hashMap.put("topic",clientTopic);
+
+
+            if(ServiceNameUtil.Service_Hotel_Id.equals(-1L)) {
+                final BaseHotel hotel = new BaseHotel();
+                hotel.setHotelName(ServiceNameUtil.SERVICE_HOTEL_NAME);
+                final List<BaseHotel> baseHotels = baseHotelService.selectBaseHotelList(hotel);
+                if(baseHotels.size() == 0) {
+                    return AjaxResult.error("系统异常，未查询到内部模块信息");
+                }
+                if(baseHotels.size() > 1) {
+                    return AjaxResult.error("系统异常，有多条命名恒和的数据");
+                }
+                ServiceNameUtil.Service_Hotel_Id = baseHotels.get(0).getHotelId();
+            }
+
+            if(staff.getHotelId().equals(ServiceNameUtil.Service_Hotel_Id)) {
+                switch (staff.getStaffName()) {
+                    // TODO: 2023/6/14 补齐其他服务
+                    case ServiceNameUtil.FILE_SERVICE: {
+                        hashMap.put("topic",ServiceNameUtil.FILE_SERVICE_TOPIC);
+                        break;
+                    }
+                    default: {
+                        hashMap.put("topic",clientTopic);
+                    }
+                }
+            }else {
+                hashMap.put("topic",clientTopic);
+            }
+
             return hashMap;
         }
         HashMap<String, String> hashMap = new HashMap<>();

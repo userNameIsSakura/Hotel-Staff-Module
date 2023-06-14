@@ -313,6 +313,7 @@ export default {
       hotels: [],
       // 表单参数
       form: {},
+      checkedBasePosition: [],
       // 表单校验
       rules: {
         staffName: [

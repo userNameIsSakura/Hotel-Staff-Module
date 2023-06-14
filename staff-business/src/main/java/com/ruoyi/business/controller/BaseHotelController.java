@@ -95,8 +95,7 @@ public class BaseHotelController extends BaseController
     @PreAuthorize("@ss.hasPermi('business:chainHotel:export')")
     @Log(title = "酒店列表", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, BaseHotel baseHotel)
-    {
+    public void export(HttpServletResponse response, BaseHotel baseHotel) {
         List<BaseHotel> list = baseHotelService.selectBaseHotelList(baseHotel);
         ExcelUtil<BaseHotel> util = new ExcelUtil<BaseHotel>(BaseHotel.class);
         util.exportExcel(response, list, "酒店列表数据");

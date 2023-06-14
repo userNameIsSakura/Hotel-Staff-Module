@@ -10,9 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson2.JSONObject;
-import com.ruoyi.business.domain.BaseHotel;
-import com.ruoyi.business.domain.SubscribeHotelRelationships;
-import com.ruoyi.business.domain.SysOperationLog;
+import com.ruoyi.business.domain.*;
 import com.ruoyi.business.mqtt.MqttConfiguration;
 import com.ruoyi.business.mqtt.MqttPushClient;
 import com.ruoyi.business.process.DataReception;
@@ -20,6 +18,7 @@ import com.ruoyi.business.service.ISubscribeHotelRelationshipsService;
 import com.ruoyi.business.service.SysOperationLogService;
 import com.ruoyi.business.service.impl.BaseHotelServiceImpl;
 import com.ruoyi.business.utils.MqttConstantUtil;
+import com.ruoyi.business.utils.ServiceNameUtil;
 import com.ruoyi.business.utils.SpringContextUtils;
 import com.ruoyi.common.constant.HttpStatus;
 import com.ruoyi.common.core.domain.model.StaffUser;
@@ -44,7 +43,6 @@ import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.business.domain.BizSubscribe;
 import com.ruoyi.business.service.IBizSubscribeService;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.common.core.page.TableDataInfo;
@@ -383,7 +381,7 @@ public class BizSubscribeController extends BaseController
      * @return {@link Object}
      */
     @PostMapping("/pmsRequest")
-    public Object pmsRequest(@RequestBody HashMap<String,Object> map, HttpServletRequest request) {
+    public Object syncRequest(@RequestBody HashMap<String,Object> map, HttpServletRequest request) {
 
         /* 检查token */
         StaffUser staffUser = tokenService.getStaffUser(request);
@@ -398,6 +396,7 @@ public class BizSubscribeController extends BaseController
 
         /* 命令 */
         String command = (String) map.get("command");
+
         /* 参数 */
         final Object para = map.get("parameter");
         HashMap parameterMap = null;
@@ -456,7 +455,7 @@ public class BizSubscribeController extends BaseController
         }
 
         /* 获取返回Topic */
-        String callbackTopic = getPMSCallbackTopic();
+        String callbackTopic = getSyncCallbackTopic();
 
         /* 服务端数据 */
         map = new HashMap<>();
@@ -477,6 +476,7 @@ public class BizSubscribeController extends BaseController
                 return AjaxResult.error("不存在该酒店");
             hotel = baseHotels.get(0);
         }
+
         /* 酒店级限制参数 */
         if(hotel != null) {
             /* 1.酒店押金 */
@@ -519,15 +519,22 @@ public class BizSubscribeController extends BaseController
         /* 判断是否携带酒店编号 */
         if(StringUtils.isNotNull(operationHotelId)) {
             map.put("operationHotelId",operationHotelId);
-            String serverTopic = "area/" + operationHotelId.substring(0,2) +"/" + operationHotelId.substring(2,4) + "/" + operationHotelId.substring(4,6) + "/" + operationHotelId.substring(6,10);
-            System.out.println(serverTopic);
+
+            String serverTopic = "";
+            if(command.startsWith("HotelFileManage_")) {
+                /* 文件上传服务命令 */
+                serverTopic = ServiceNameUtil.FILE_SERVICE_TOPIC;
+            }else {
+                /* PMS命令 */
+                serverTopic = "area/" + operationHotelId.substring(0,2) +"/" + operationHotelId.substring(2,4) + "/" + operationHotelId.substring(4,6) + "/" + operationHotelId.substring(6,10);
+            }
             /* 订阅 */
             client.subscribe(callbackTopic);
-            System.out.println("订阅成功:"+callbackTopic);
             /* 发布 */
-            System.out.println(map);
             client.publish(serverTopic,JSONObject.toJSONString(map).getBytes());
-            System.out.println("发送数据：" + JSONObject.toJSONString(map));
+            System.out.println("订阅成功:"+callbackTopic + "\n" +
+                    "发送数据：" + JSONObject.toJSONString(map) + "\n" +
+                    "目的Topic：" + serverTopic);
         }else {
             return AjaxResult.error("未携带酒店编号");
         }
@@ -557,8 +564,8 @@ public class BizSubscribeController extends BaseController
         return "callback/"+ topicId.getAndIncrement();
     }
 
-    private String getPMSCallbackTopic() {
-        return "pmsCallback/"+ topicId.getAndIncrement();
+    private String getSyncCallbackTopic() {
+        return "syncCallback/"+ topicId.getAndIncrement();
     }
 
 
@@ -617,6 +624,38 @@ public class BizSubscribeController extends BaseController
     @PostMapping
     public AjaxResult add(@RequestBody BizSubscribe bizSubscribe)
     {
+
+        final BizSubscribe bizSubscribe1 = new BizSubscribe();
+        bizSubscribe1.setSubscribeContent(bizSubscribe.getSubscribeContent());
+        if(bizSubscribeService.selectBizSubscribeList(bizSubscribe1).size() != 0) {
+            return AjaxResult.error("该订阅内容已存在");
+        }
+
+        final ArrayList<SubscribeParam> paramList = bizSubscribe.getParamList();
+        if(paramList != null) {
+            /* 检查一下参数值是否有重复的 */
+            if(paramList.stream().map(SubscribeParam::getKey).distinct().count() < paramList.size()) {
+                /* 含有重复键值 */
+                return AjaxResult.error("有重复键值，请检查并修改后重新提交");
+            }
+
+            /* 检查属性值和类型是否对应 */
+            for (SubscribeParam subscribeParam : paramList) {
+                try {
+                    if(subscribeParam.getValueType().equals("number")) {
+                        subscribeParam.setValue(Long.valueOf(subscribeParam.getValue().toString()));
+                    }
+                    if(subscribeParam.getValueType().equals("string")) {
+                        subscribeParam.setValue(subscribeParam.getValue().toString());
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    return AjaxResult.error("属性" + subscribeParam.getKey() + "的值类型转换异常,请检查是否数字过大");
+                }
+            }
+        }
+
+
         return toAjax(bizSubscribeService.insertBizSubscribe(bizSubscribe));
     }
 
@@ -628,6 +667,37 @@ public class BizSubscribeController extends BaseController
     @PutMapping
     public AjaxResult edit(@RequestBody BizSubscribe bizSubscribe)
     {
+
+        final BizSubscribe bizSubscribe1 = new BizSubscribe();
+        bizSubscribe1.setSubscribeContent(bizSubscribe.getSubscribeContent());
+        final List<BizSubscribe> bizSubscribes = bizSubscribeService.selectBizSubscribeList(bizSubscribe1);
+        if(bizSubscribes.size() != 0 && !bizSubscribes.get(0).getSubscribeId().equals(bizSubscribe.getSubscribeId())) {
+            return AjaxResult.error("该订阅内容已存在");
+        }
+
+        final ArrayList<SubscribeParam> paramList = bizSubscribe.getParamList();
+        if(paramList != null) {
+            /* 检查一下参数值是否有重复的 */
+            if(paramList.stream().map(SubscribeParam::getKey).distinct().count() < paramList.size()) {
+                /* 含有重复键值 */
+                return AjaxResult.error("有重复键值，请检查并修改后重新提交");
+            }
+
+            /* 检查属性值和类型是否对应 */
+            for (SubscribeParam subscribeParam : paramList) {
+                try {
+                    if(subscribeParam.getValueType().equals("number")) {
+                        subscribeParam.setValue(Long.valueOf(subscribeParam.getValue().toString()));
+                    }
+                    if(subscribeParam.getValueType().equals("string")) {
+                        subscribeParam.setValue(subscribeParam.getValue().toString());
+                    }
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    return AjaxResult.error("属性" + subscribeParam.getKey() + "的值类型转换异常,请检查是否数字过大");
+                }
+            }
+        }
         return toAjax(bizSubscribeService.updateBizSubscribe(bizSubscribe));
     }
 
