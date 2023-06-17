@@ -128,26 +128,32 @@ public class BaseHotelServiceImpl implements IBaseHotelService
         baseChainHotelMapper.updateBaseChainHotel(baseChainHotel);
 
         String prefix = baseHotel.getHotelNumber().substring(0, 6);
-        String groupId = baseHotel.getHotelNumber().substring(6, 8);
+        if(!baseHotelMapper.selectBaseHotelByHotelId(baseHotel.getHotelId()).getHotelNumber().startsWith(prefix)) {
+            String groupId = baseHotel.getHotelNumber().substring(6, 8);
 
-        String num = baseHotelMapper.selectNumByAddressPrefix(prefix);
 
-        if( num == null ) {
-            num = "00";
+            String num = baseHotelMapper.selectNumByAddressPrefix(prefix);
+
+            if( num == null ) {
+                num = "00";
+            }else {
+                num = num.substring(8,10);
+            }
+
+            int newId = Integer.parseInt(num) + 1;
+
+            String id;
+            if(newId < 10) {
+                id = "0" + newId;
+            }else {
+                id = String.valueOf(newId);
+            }
+
+            // todo 不能每次修改酒店信息就改编号吧！
+            baseHotel.setHotelNumber(prefix + groupId + id);
         }else {
-            num = num.substring(8,10);
+            baseHotel.setHotelNumber("");
         }
-
-        int newId = Integer.parseInt(num) + 1;
-
-        String id;
-        if(newId < 10) {
-            id = "0" + newId;
-        }else {
-            id = String.valueOf(newId);
-        }
-
-        baseHotel.setHotelNumber(prefix + groupId + id);
 
         return baseHotelMapper.updateBaseHotel(baseHotel);
     }

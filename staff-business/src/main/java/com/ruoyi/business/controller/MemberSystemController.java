@@ -7,12 +7,17 @@ import com.ruoyi.business.domain.BaseHotel;
 import com.ruoyi.business.service.impl.BaseChainHotelServiceImpl;
 import com.ruoyi.business.service.impl.BaseHotelServiceImpl;
 import com.ruoyi.common.constant.HttpStatus;
+import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.model.StaffUser;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
+import com.ruoyi.framework.web.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,20 +34,62 @@ public class MemberSystemController {
     private BaseChainHotelServiceImpl baseChainHotelService;
     @Autowired
     private BaseHotelServiceImpl baseHotelService;
+    @Autowired
+    private TokenService tokenService;
+
 
     @RequestMapping(value = "/member/register", produces="application/json;charset=UTF-8")
-    public String register(@RequestBody HashMap map, HttpServletResponse response) throws IOException {
+    public String register(@RequestBody HashMap map, HttpServletRequest request) throws IOException {
+        /* 检查token */
+        StaffUser staffUser = tokenService.getStaffUser(request);
+
+        if(staffUser == null) {
+            return JSONObject.toJSONString(AjaxResult.error("权限验证失败"));
+        }
+
         return HttpUtils.sendPost2(memberUrl + "system/member/register", JSONObject.toJSONString(map));
     }
 
+
     @RequestMapping(value = "/subMember/register", produces="application/json;charset=UTF-8")
-    public String subRegister(@RequestBody HashMap map) throws IOException {
+    public String subRegister(@RequestBody HashMap map,HttpServletRequest request) throws IOException {
+
+        /* 检查token */
+        StaffUser staffUser = tokenService.getStaffUser(request);
+
+        if(staffUser == null) {
+            return JSONObject.toJSONString(AjaxResult.error("权限验证失败"));
+        }
+
+        if(map.get("hotelId") == null) {
+            return JSONObject.toJSONString(AjaxResult.error("集团ID不得为空"));
+        }
+        Long hotelId;
+        try {
+            hotelId = (Long) map.get("hotelId");
+        }catch (Exception e) {
+            return JSONObject.toJSONString(AjaxResult.error("集团Id格式错误"));
+        }
+
+        final BaseChainHotel baseChainHotel = baseChainHotelService.selectBaseChainHotelByChotelId(hotelId);
+        if(baseChainHotel == null) {
+            return JSONObject.toJSONString(AjaxResult.error("该集团不存在"));
+        }
+        map.put("hotelName",baseChainHotel.getChotelName());
         return HttpUtils.sendPost2(memberUrl + "system/subMember/register", JSONObject.toJSONString(map));
     }
 
     /* 根据身份证号码查询会员信息，返回会员ID，注册的子账号ID，子账号关联的酒店，手机号码 */
     @GetMapping(value = "/memberInfo", produces="application/json;charset=UTF-8")
-    public JSONObject memberList(@RequestParam(value = "memberIdnumber") String idNumber,HttpServletResponse response) {
+    public Object memberList(@RequestParam(value = "memberIdnumber") String idNumber,HttpServletResponse response,HttpServletRequest request) {
+
+        /* 检查token */
+        StaffUser staffUser = tokenService.getStaffUser(request);
+
+        if(staffUser == null) {
+            return AjaxResult.error("权限验证失败");
+        }
+
         // TODO: 2023/4/3 还要返回该会员常住的酒店
         final String res = HttpUtils.sendGet(memberUrl + "system/member/info?memberIdnumber=" + idNumber);
         final JSONObject jsonObject = JSONObject.parseObject(res);

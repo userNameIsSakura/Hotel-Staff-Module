@@ -347,6 +347,15 @@ export default {
     getList() {
       this.loading = true;
       listRule(this.queryParams).then(response => {
+
+        if(response === false) {
+          this.$confirm('您所在集团未加入会员系统', '确认', {
+            confirmButtonText: '确定',
+            type: 'info'
+          }).then(() => {
+            this.$router.push("/member/memberIndex");
+          });
+        }
         var list = [];
         list = response.rows;
         for (let i = 0; i < list.length; i++) {

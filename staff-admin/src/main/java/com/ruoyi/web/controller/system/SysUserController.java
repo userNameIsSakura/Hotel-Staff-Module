@@ -249,12 +249,8 @@ public class SysUserController extends BaseController
             user.setCreateBy(getUsername());
             user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
 
-            if(user.getSuperAdministrator() == 0)
-                user.setRoleIds(new Long[]{2L});
-            else if(user.getSuperAdministrator() == 1)
-                user.setRoleIds(new Long[]{1L});
-            else
-                user.setRoleIds(new Long[]{2L});
+
+            user.setRoleIds(new Long[]{3L});
 
             return toAjax(userService.insertUser(user));
         }catch (Exception e) {

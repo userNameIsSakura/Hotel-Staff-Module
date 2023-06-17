@@ -86,8 +86,6 @@ public class BizSubscribeController extends BaseController
     /* 有效消息队列 */
     private static ConcurrentLinkedDeque receiveList = new ConcurrentLinkedDeque();
 
-
-
     /**
      * 获取当前消息-线程MAP
      * */
@@ -550,7 +548,6 @@ public class BizSubscribeController extends BaseController
         }
         operationLog(staffUser.getUserId(), command, paraType.equals("map") ? parameterMap : parameterArray, StringUtils.isNotEmpty(operationHotelId), hotels);
 
-
         try {
             TimeUnit.SECONDS.sleep(10);
         } catch (InterruptedException e) {
@@ -567,7 +564,6 @@ public class BizSubscribeController extends BaseController
     private String getSyncCallbackTopic() {
         return "syncCallback/"+ topicId.getAndIncrement();
     }
-
 
     /**
      * 查询订阅信息列表
@@ -654,8 +650,6 @@ public class BizSubscribeController extends BaseController
                 }
             }
         }
-
-
         return toAjax(bizSubscribeService.insertBizSubscribe(bizSubscribe));
     }
 

@@ -21,15 +21,6 @@ public interface BaseChainHotelMapper
 
 
     /**
-     * 查询连锁酒店
-     *
-     * @param chotelId chotel id
-     * @return {@link BaseChainHotel}
-     */
-    public Long selectBaseChainHotelByHotelId(Long chotelId);
-
-
-    /**
      * 查询连锁酒店列表
      *
      * @param baseChainHotel 连锁酒店

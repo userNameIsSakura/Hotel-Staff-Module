@@ -33,16 +33,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
-
-    <select id="selectBaseChainHotelByHotelId" parameterType="Long" resultType="Long">
-        select c.* from base_chain_hotel c
-        where c.chotel_id = (
-            select c1.chotel_parent from base_chain_hotel c1, base_hotel h
-            where h.hotel_id = #{hotelId} and
-                  c1.chotel_id = h.chotel_id
-            )
-    </select>
-
     <insert id="insertBaseChainHotel" parameterType="BaseChainHotel" useGeneratedKeys="true" keyProperty="chotelId">
         insert into base_chain_hotel
         <trim prefix="(" suffix=")" suffixOverrides=",">

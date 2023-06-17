@@ -4,8 +4,10 @@ import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.business.domain.BaseHotel;
 import com.ruoyi.business.service.impl.BaseHotelServiceImpl;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.model.StaffUser;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
+import com.ruoyi.framework.web.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +26,8 @@ public class InterfaceController {
     private BaseHotelServiceImpl baseHotelService;
     @Value("${tencent.api.key}")
     private String key;
+    @Autowired
+    private TokenService tokenService;
 
     // TODO: 2023/4/1 此处接口只允许小程序端调用
 
@@ -34,7 +38,15 @@ public class InterfaceController {
      * @return {@link AjaxResult}
      */
     @PostMapping("/list")
-    public AjaxResult getHotelsByArea(@RequestBody HashMap<String,String> map) {
+    public AjaxResult getHotelsByArea(@RequestBody HashMap<String,String> map,HttpServletRequest request) {
+
+        /* 检查token */
+        StaffUser staffUser = tokenService.getStaffUser(request);
+
+        if(staffUser == null) {
+            return AjaxResult.error("权限验证失败");
+        }
+
         final String lat = map.get("lat");
         final String lng = map.get("lng");
         String level = map.get("level");
@@ -97,7 +109,14 @@ public class InterfaceController {
      * @return {@link AjaxResult}
      */
     @PostMapping("/position")
-    public AjaxResult getHotelsByPosition(@RequestBody HashMap<String,String> map) {
+    public AjaxResult getHotelsByPosition(@RequestBody HashMap<String,String> map,HttpServletRequest request) {
+
+        /* 检查token */
+        StaffUser staffUser = tokenService.getStaffUser(request);
+
+        if(staffUser == null) {
+            return AjaxResult.error("权限验证失败");
+        }
 
         final double lat;
         final double lng;

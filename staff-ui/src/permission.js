@@ -6,6 +6,7 @@ import 'nprogress/nprogress.css'
 import { getToken } from '@/utils/auth'
 import { isRelogin } from '@/utils/request'
 import {parseStrEmpty} from "@/utils/ruoyi";
+import {validation} from "@/api/business/aosMember";
 
 NProgress.configure({ showSpinner: false })
 

@@ -20,14 +20,6 @@ public interface IBaseChainHotelService
     public BaseChainHotel selectBaseChainHotelByChotelId(Long chotelId);
 
     /**
-     * 查询连锁酒店
-     *
-     * @param hotelId chotel id
-     * @return {@link BaseChainHotel}
-     */
-    public Long selectBaseChainHotelByHotelId(Long hotelId);
-
-    /**
      * 查询连锁酒店列表
      *
      * @param baseChainHotel 连锁酒店

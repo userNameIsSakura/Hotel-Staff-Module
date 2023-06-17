@@ -19,11 +19,6 @@ public class BaseChainHotelServiceImpl implements IBaseChainHotelService
     @Autowired
     private BaseChainHotelMapper baseChainHotelMapper;
 
-    @Override
-    public Long selectBaseChainHotelByHotelId(Long hotelId) {
-        return baseChainHotelMapper.selectBaseChainHotelByHotelId(hotelId);
-    }
-
     /**
      * 查询连锁酒店
      *

@@ -130,6 +130,13 @@ export const dynamicRoutes = [
     meta: { title: '首页', icon: 'dashboard', affix: true }
   },
   {
+    path: '/business/memberRegister',
+    component: (resolve) => require(['@/views/business/memberRegister/index'],resolve),
+    name: 'Index',
+    permissions: ['business:staff:list'],
+    meta: { title: '立即加入', icon: 'dashboard', affix: true }
+  },
+  {
     path: '/system/user-auth',
     component: Layout,
     hidden: true,

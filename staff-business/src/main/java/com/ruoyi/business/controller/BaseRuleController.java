@@ -23,6 +23,8 @@ public class BaseRuleController {
 
     @Autowired
     private IBaseChainHotelService baseChainHotelService;
+    @Autowired
+    private AOSMemberController aosMemberController;
 
     private Long getChainHotelId() {
         if(SecurityUtils.getSuperAdministrator() == 0L) {
@@ -42,6 +44,10 @@ public class BaseRuleController {
      */
     @PostMapping("/list")
     public Object list(@RequestBody HashMap baseCouponRule) throws IOException {
+        if(!aosMemberController.validation()) {
+            return false;
+        }
+
         try {
             baseCouponRule.put("chotelId",getChainHotelId());
             return HttpUtils.sendPost2(memberUrl + "system/rule/list", JSONObject.toJSONString(baseCouponRule));
@@ -117,18 +123,15 @@ public class BaseRuleController {
      */
     @PostMapping("/listSign")
     public Object listSignRule() throws IOException {
+        if(!aosMemberController.validation()) {
+            return false;
+        }
+
         try {
             return HttpUtils.sendPost2(memberUrl + "system/rule/listSign","");
         }catch (Exception e) {
             return AjaxResult.error("会员模块异常,请联系管理员");
         }
     }
-
-
-
-
-
-
-
 
 }
