@@ -372,13 +372,13 @@ public class BizSubscribeController extends BaseController
     }
 
     /**
-     * PMS前端请求接口
+     * 同步请求接口
      *
      * @param map     参数
      * @param request 请求
      * @return {@link Object}
      */
-    @PostMapping("/pmsRequest")
+    @PostMapping("/syncRequest")
     public Object syncRequest(@RequestBody HashMap<String,Object> map, HttpServletRequest request) {
 
         /* 检查token */

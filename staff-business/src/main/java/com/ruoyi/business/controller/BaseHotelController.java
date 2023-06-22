@@ -69,11 +69,11 @@ public class BaseHotelController extends BaseController
     public AjaxResult selectHotel(@RequestBody HotelSelectParam hotelSelectParam, HttpServletRequest request) {
 
         /* 检查token */
-//        StaffUser staffUser = tokenService.getStaffUser(request);
-//
-//        if(staffUser == null) {
-//            return AjaxResult.error("权限验证失败");
-//        }
+        StaffUser staffUser = tokenService.getStaffUser(request);
+
+        if(staffUser == null) {
+            return AjaxResult.error("权限验证失败");
+        }
 
         List<Long> hotelIds = new ArrayList<>();
 

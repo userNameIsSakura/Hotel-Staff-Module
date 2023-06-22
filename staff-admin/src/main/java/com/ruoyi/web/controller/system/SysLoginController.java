@@ -60,18 +60,18 @@ public class SysLoginController
         return ajax;
     }
 
-    @PostMapping("/loginInterface")
-    public AjaxResult loginInterface(@RequestBody LoginBody loginBody) {
-
-        AjaxResult ajax = AjaxResult.success();
-        // 生成令牌
-        String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
-                loginBody.getUuid(),false);
-
-        ajax.put(Constants.TOKEN, token);
-
-        return ajax;
-    }
+//    @PostMapping("/loginInterface")
+//    public AjaxResult loginInterface(@RequestBody LoginBody loginBody) {
+//
+//        AjaxResult ajax = AjaxResult.success();
+//        // 生成令牌
+//        String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
+//                loginBody.getUuid(),false);
+//
+//        ajax.put(Constants.TOKEN, token);
+//
+//        return ajax;
+//    }
 
 
     /**
