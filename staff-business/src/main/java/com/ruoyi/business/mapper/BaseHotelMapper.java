@@ -1,5 +1,6 @@
 package com.ruoyi.business.mapper;
 
+import java.util.HashMap;
 import java.util.List;
 import com.ruoyi.business.domain.BaseHotel;
 import org.apache.ibatis.annotations.Param;
@@ -20,6 +21,13 @@ public interface BaseHotelMapper
      */
     public BaseHotel selectBaseHotelByHotelId(Long hotelId);
 
+
+    /**
+     * 对外查询酒店接口
+     *
+     * @param
+     * */
+    public List<BaseHotel> selectBaseHotelForOutside(HashMap<String,Object> map);
 
     /**
      * 查询酒店列表

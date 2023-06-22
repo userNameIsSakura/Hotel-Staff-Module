@@ -1,13 +1,29 @@
 package com.ruoyi.business.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.business.domain.BaseChainHotel;
+import com.ruoyi.business.domain.HotelSelectParam;
 import com.ruoyi.business.service.IBaseChainHotelService;
+import com.ruoyi.common.core.domain.model.StaffUser;
+import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.common.utils.http.HttpUtils;
+import com.ruoyi.common.utils.uuid.UUID;
+import com.ruoyi.framework.web.service.TokenService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.geo.*;
+import org.springframework.data.redis.connection.RedisGeoCommands;
+import org.springframework.data.redis.core.GeoOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,12 +46,138 @@ import com.ruoyi.common.core.page.TableDataInfo;
 @RequestMapping("/business/hotel")
 public class BaseHotelController extends BaseController
 {
+
+    @Value("${tencent.api.key}")
+    private String key;
+    @Value("${ruoyi.profile}")
+    private String uploadPathPrefix;
+
     @Autowired
     private IBaseHotelService baseHotelService;
     @Autowired
     private IBaseChainHotelService baseChainHotelService;
-    @Value("${ruoyi.profile}")
-    private String uploadPathPrefix;
+    @Autowired
+    private RedisTemplate redisTemplate;
+    @Autowired
+    private TokenService tokenService;
+
+
+    /**
+     * 对模块酒店查询接口 （同城 + 距离 + 酒店信息）
+     * */
+    @PostMapping("/select")
+    public AjaxResult selectHotel(@RequestBody HotelSelectParam hotelSelectParam, HttpServletRequest request) {
+
+        /* 检查token */
+//        StaffUser staffUser = tokenService.getStaffUser(request);
+//
+//        if(staffUser == null) {
+//            return AjaxResult.error("权限验证失败");
+//        }
+
+        List<Long> hotelIds = new ArrayList<>();
+
+        /* 若涉及到范围查询或者同城查询，则需要检查经纬度是否不为空 */
+        if(hotelSelectParam.getDistance() != null || hotelSelectParam.getLevel() != null) {
+            /* 必须包含的参数：经纬度 */
+            if(hotelSelectParam.getLat() == null)
+                return AjaxResult.error("纬度不得为空");
+            if(hotelSelectParam.getLng() == null)
+                return AjaxResult.error("经度不得为空");
+        }
+
+        final Double lat = hotelSelectParam.getLat();
+        final Double lng = hotelSelectParam.getLng();
+
+        if(hotelSelectParam.getDistance() != null) {
+            /* 限制距离,通过Redis快速查询范围内的酒店ID */
+            final double distance = hotelSelectParam.getDistance();
+            // TODO: 2023/6/20 系统自动维护，更新酒店位置数据到Redis
+            final GeoOperations geo = redisTemplate.opsForGeo();
+            /* 查询范围内所有酒店ID */
+            final GeoResults<RedisGeoCommands.GeoLocation<Long>> hotels = geo.radius("hotels", new Circle(new Point(lng, lat), new Distance(distance,Metrics.NEUTRAL)));
+            for (GeoResult<RedisGeoCommands.GeoLocation<Long>> longGeoResult : hotels.getContent()) {
+                hotelIds.add(longGeoResult.getContent().getName());
+            }
+        }else {
+            hotelIds = baseHotelService.selectBaseHotelList(new BaseHotel()).stream().map(BaseHotel::getHotelId).collect(Collectors.toList());
+        }
+
+        /* 如果酒店ID组为空，直接返回 */
+        if(hotelIds.size() == 0)
+            return AjaxResult.success(new ArrayList<>());
+
+        /* 根据酒店信息查询 */
+        /* 根据Level是否为空判断是否需要同城查询（酒店地域编号识别） */
+        if(hotelSelectParam.getBaseHotel() == null)
+            hotelSelectParam.setBaseHotel(new BaseHotel());
+        final BaseHotel baseHotel = hotelSelectParam.getBaseHotel();
+
+        /* 同城查询编号，默认不查同城 */
+        String adcode = "";
+        if(hotelSelectParam.getLevel() != null) {
+            final Integer level = hotelSelectParam.getLevel();
+            /* 不为空，即需要同城查询 */
+            String url = "https://apis.map.qq.com/ws/geocoder/v1/?location="+lat+","+lng+"&key="+ key +"&get_poi=1";
+            final String s = HttpUtils.sendGet(url);
+            if(StringUtils.isEmpty(s))
+                return AjaxResult.error("地址信息查询失败");
+            final JSONObject jsonObject = JSONObject.parseObject(s);
+            if(!jsonObject.get("status").toString().equals("0"))
+                return AjaxResult.error("地址信息查询失败");
+            final String result = jsonObject.get("result").toString();
+            final JSONObject resultO = JSONObject.parseObject(result);
+            final String ad_info = resultO.get("ad_info").toString();
+            final JSONObject adInfo = JSONObject.parseObject(ad_info);
+            adcode = adInfo.get("adcode").toString();
+
+            switch (level) {
+                case 1: {
+                    break;
+                }
+                case 2:{
+                    adcode = adcode.substring(0,4);
+                    break;
+                }
+                case 3:{
+                    adcode = adcode.substring(0,2);
+                    break;
+                }
+                default:{
+                    return AjaxResult.error("Level参数不合法（合法值：1，2，3）");
+                }
+            }
+        }
+        /* 查询结果并返回 */
+        final HashMap<String, Object> map = new HashMap<>();
+        map.put("hotel",baseHotel);
+        map.put("hotelIds",hotelIds);
+        map.put("adcode",adcode);
+        System.out.println("查询" + map);
+        final List<BaseHotel> baseHotels = baseHotelService.selectBaseHotelForOutside(map);
+
+        if(lat != null && lng != null) {
+            /* 携带了经纬度，需要计算距离 */
+            String uuid = String.valueOf(UUID.randomUUID());
+            final GeoOperations geo = redisTemplate.opsForGeo();
+            geo.add("hotels",new Point(lng,lat),uuid);
+            try {
+                for (BaseHotel hotel : baseHotels) {
+                    final Distance hotels = geo.distance("hotels", hotel.getHotelId(), uuid);
+                    hotel.setDistance(hotels.getValue());
+                }
+            }finally {
+                geo.remove("hotels",uuid);
+            }
+        }
+
+        return AjaxResult.success(baseHotels);
+    }
+
+
+
+
+
 
     /**
      * 查询酒店列表列表

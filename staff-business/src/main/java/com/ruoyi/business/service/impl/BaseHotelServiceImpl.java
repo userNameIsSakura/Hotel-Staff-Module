@@ -1,5 +1,6 @@
 package com.ruoyi.business.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.ruoyi.business.domain.BaseChainHotel;
@@ -27,6 +28,11 @@ public class BaseHotelServiceImpl implements IBaseHotelService
     private BaseChainHotelMapper baseChainHotelMapper;
 
 
+    @Override
+    public List<BaseHotel> selectBaseHotelForOutside(HashMap<String, Object> map) {
+        return baseHotelMapper.selectBaseHotelForOutside(map);
+    }
+
     /**
      * 查询酒店列表
      *
@@ -39,6 +45,8 @@ public class BaseHotelServiceImpl implements IBaseHotelService
         BaseHotel baseHotel = baseHotelMapper.selectBaseHotelByHotelId(hotelId);
         return baseHotel;
     }
+
+
 
     /**
      * 查询酒店列表列表

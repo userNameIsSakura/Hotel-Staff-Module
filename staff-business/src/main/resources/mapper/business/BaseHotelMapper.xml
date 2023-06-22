@@ -41,6 +41,34 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         </where>
     </select>
 
+
+    <select id="selectBaseHotelForOutside" parameterType="java.util.HashMap" resultMap="BaseHotelResult">
+        select hotel_id, hotel_name, remark, hotel_bill, hotel_room_cards, hotel_number, hotel_settlement, hotel_free_breakfast, hotel_deposit, hotel_poster, hotel_introduct, chotel_id,latlng from base_hotel
+        <where>
+            hotel_id in
+            <foreach collection="hotelIds" item="id" open="(" separator="," close=")">
+              #{id}
+            </foreach>
+            and hotel_number like concat(#{adcode},'%')
+            <if test="hotelName != null  and hotelName != ''"> and hotel_name like "%"#{hotel.hotelName}"%"</if>
+            <if test="hotelRoomCards != null "> and hotel_room_cards = #{hotel.hotelRoomCards}</if>
+            <if test="hotelNumber != null  and hotelNumber != ''"> and hotel_number = #{hotel.hotelNumber}</if>
+            <if test="hotelSettlement != null  and hotelSettlement != ''"> and hotel_settlement = #{hotel.hotelSettlement}</if>
+            <if test="hotelFreeBreakfast != null "> and hotel_free_breakfast = #{hotel.hotelFreeBreakfast}</if>
+            <if test="hotelDeposit != null "> and hotel_deposit = #{hotel.hotelDeposit}</if>
+            <if test="hotelPoster != null  and hotelPoster != ''"> and hotel_poster = #{hotel.hotelPoster}</if>
+            <if test="hotelBill != null  and hotelBill != ''"> and hotel_bill = #{hotel.hotelBill}</if>
+            <if test="hotelIntroduct != null  and hotelIntroduct != ''"> and hotel_introduct = #{hotel.hotelIntroduct}</if>
+            <if test="chotelId != null "> and chotel_id = #{hotel.chotelId}</if>
+            <if test="latlng != null and latlng != ''"> and latlng = #{hotel.latlng}</if>
+        </where>
+    </select>
+
+
+
+
+
+
     <select id="selectBaseHotelByHotelId" parameterType="Long" resultMap="BaseHotelResult">
         <include refid="selectBaseHotelVo"/>
         where hotel_id = #{hotelId}
