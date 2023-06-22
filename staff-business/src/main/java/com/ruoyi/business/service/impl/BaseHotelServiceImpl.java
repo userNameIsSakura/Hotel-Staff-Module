@@ -46,8 +46,6 @@ public class BaseHotelServiceImpl implements IBaseHotelService
         return baseHotel;
     }
 
-
-
     /**
      * 查询酒店列表列表
      *

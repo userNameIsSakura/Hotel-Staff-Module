@@ -101,7 +101,7 @@
     <!-- 添加或修改实体酒店对话框 -->
     <el-dialog :title="title" :visible.sync="formOpen" width="800px" append-to-body>
       <el-form ref="hotelForm" :model="hotelForm" :rules="rulesForm" label-width="120px">
-        <el-form-item label="省/市/区" label-width="80px" prop="account">
+        <el-form-item label="省/市/区" label-width="80px" prop="account" v-if="hotelForm.hotelId == null">
           <v-distpicker @selected="select" :province="hotelForm.province" :city="hotelForm.city" :area="hotelForm.area"></v-distpicker>
         </el-form-item>
         <el-form-item label="酒店名" prop="hotelName">

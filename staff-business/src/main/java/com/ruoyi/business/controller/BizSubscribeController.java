@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.business.annotations.StaffTokenCheck;
 import com.ruoyi.business.domain.*;
 import com.ruoyi.business.mqtt.MqttConfiguration;
 import com.ruoyi.business.mqtt.MqttPushClient;

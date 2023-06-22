@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class HotelSelectParam {
-    private BaseHotel baseHotel;
+    private BaseHotel hotel;
 
     /**
      * 1. 当distance不为空，lat,lng一定不能为空，查询范围内

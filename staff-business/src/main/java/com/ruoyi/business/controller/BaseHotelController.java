@@ -4,16 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.business.annotations.StaffTokenCheck;
 import com.ruoyi.business.domain.BaseChainHotel;
 import com.ruoyi.business.domain.HotelSelectParam;
 import com.ruoyi.business.service.IBaseChainHotelService;
-import com.ruoyi.common.core.domain.model.StaffUser;
-import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.http.HttpUtils;
@@ -67,14 +65,8 @@ public class BaseHotelController extends BaseController
      * 对模块酒店查询接口 （同城 + 距离 + 酒店信息）
      * */
     @PostMapping("/select")
+    @StaffTokenCheck
     public AjaxResult selectHotel(@RequestBody HotelSelectParam hotelSelectParam, HttpServletRequest request) {
-
-        /* 检查token */
-        StaffUser staffUser = tokenService.getStaffUser(request);
-
-        if(staffUser == null) {
-            return AjaxResult.error("权限验证失败");
-        }
 
         List<Long> hotelIds = new ArrayList<>();
 
@@ -110,9 +102,9 @@ public class BaseHotelController extends BaseController
 
         /* 根据酒店信息查询 */
         /* 根据Level是否为空判断是否需要同城查询（酒店地域编号识别） */
-        if(hotelSelectParam.getBaseHotel() == null)
-            hotelSelectParam.setBaseHotel(new BaseHotel());
-        final BaseHotel baseHotel = hotelSelectParam.getBaseHotel();
+        if(hotelSelectParam.getHotel() == null)
+            hotelSelectParam.setHotel(new BaseHotel());
+        final BaseHotel baseHotel = hotelSelectParam.getHotel();
 
         /* 同城查询编号，默认不查同城 */
         String adcode = "";

@@ -50,17 +50,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
               #{id}
             </foreach>
             and hotel_number like concat(#{adcode},'%')
-            <if test="hotelName != null  and hotelName != ''"> and hotel_name like "%"#{hotel.hotelName}"%"</if>
-            <if test="hotelRoomCards != null "> and hotel_room_cards = #{hotel.hotelRoomCards}</if>
-            <if test="hotelNumber != null  and hotelNumber != ''"> and hotel_number = #{hotel.hotelNumber}</if>
-            <if test="hotelSettlement != null  and hotelSettlement != ''"> and hotel_settlement = #{hotel.hotelSettlement}</if>
-            <if test="hotelFreeBreakfast != null "> and hotel_free_breakfast = #{hotel.hotelFreeBreakfast}</if>
-            <if test="hotelDeposit != null "> and hotel_deposit = #{hotel.hotelDeposit}</if>
-            <if test="hotelPoster != null  and hotelPoster != ''"> and hotel_poster = #{hotel.hotelPoster}</if>
-            <if test="hotelBill != null  and hotelBill != ''"> and hotel_bill = #{hotel.hotelBill}</if>
-            <if test="hotelIntroduct != null  and hotelIntroduct != ''"> and hotel_introduct = #{hotel.hotelIntroduct}</if>
-            <if test="chotelId != null "> and chotel_id = #{hotel.chotelId}</if>
-            <if test="latlng != null and latlng != ''"> and latlng = #{hotel.latlng}</if>
+            <if test="hotel.hotelId != null"> and hotel_id = #{hotel.hotelId}</if>
+            <if test="hotel.hotelName != null  and hotel.hotelName != ''"> and hotel_name like concat("%",#{hotel.hotelName},"%")</if>
+            <if test="hotel.hotelRoomCards != null "> and hotel_room_cards = #{hotel.hotelRoomCards}</if>
+            <if test="hotel.hotelNumber != null  and hotel.hotelNumber != ''"> and hotel_number = #{hotel.hotelNumber}</if>
+            <if test="hotel.hotelSettlement != null  and hotel.hotelSettlement != ''"> and hotel_settlement = #{hotel.hotelSettlement}</if>
+            <if test="hotel.hotelFreeBreakfast != null "> and hotel_free_breakfast = #{hotel.hotelFreeBreakfast}</if>
+            <if test="hotel.hotelDeposit != null "> and hotel_deposit = #{hotel.hotelDeposit}</if>
+            <if test="hotel.hotelPoster != null  and hotel.hotelPoster != ''"> and hotel_poster = #{hotel.hotelPoster}</if>
+            <if test="hotel.hotelBill != null  and hotel.hotelBill != ''"> and hotel_bill = #{hotel.hotelBill}</if>
+            <if test="hotel.hotelIntroduct != null  and hotel.hotelIntroduct != ''"> and hotel_introduct = #{hotel.hotelIntroduct}</if>
+            <if test="hotel.chotelId != null "> and chotel_id = #{hotel.chotelId}</if>
+            <if test="hotel.latlng != null and hotel.latlng != ''"> and latlng = #{hotel.latlng}</if>
         </where>
     </select>
 

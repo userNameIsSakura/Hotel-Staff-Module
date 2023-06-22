@@ -2,6 +2,7 @@ package com.ruoyi.business.controller;
 
 import com.alibaba.fastjson2.JSONArray;
 import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.business.annotations.StaffTokenCheck;
 import com.ruoyi.business.domain.BaseChainHotel;
 import com.ruoyi.business.domain.BaseHotel;
 import com.ruoyi.business.service.impl.BaseChainHotelServiceImpl;
@@ -26,6 +27,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/business/memberSystem")
+@StaffTokenCheck
 public class MemberSystemController {
 
     @Value("${hotel.member.url}")
@@ -40,62 +42,28 @@ public class MemberSystemController {
 
     @PostMapping(value = "/member/register", produces="application/json;charset=UTF-8")
     public String register(@RequestBody HashMap map, HttpServletRequest request) throws IOException {
-        /* 检查token */
-        StaffUser staffUser = tokenService.getStaffUser(request);
-
-        if(staffUser == null) {
-            return JSONObject.toJSONString(AjaxResult.error("权限验证失败"));
-        }
 
         return HttpUtils.sendPost2(memberUrl + "system/member/register", JSONObject.toJSONString(map));
     }
 
     @PostMapping(value = "/regular/add", produces="application/json;charset=UTF-8")
     public String regularAdd(@RequestBody HashMap map,HttpServletRequest request) throws  IOException {
-        /* 检查token */
-        StaffUser staffUser = tokenService.getStaffUser(request);
-
-        if(staffUser == null) {
-            return JSONObject.toJSONString(AjaxResult.error("权限验证失败"));
-        }
         return HttpUtils.sendPost2(memberUrl + "system/regular/add", JSONObject.toJSONString(map));
     }
 
 
     @PostMapping(value = "/regular/delete", produces="application/json;charset=UTF-8")
     public String regularDel(@RequestBody HashMap map,HttpServletRequest request) throws  IOException {
-        /* 检查token */
-        StaffUser staffUser = tokenService.getStaffUser(request);
-
-        if(staffUser == null) {
-            return JSONObject.toJSONString(AjaxResult.error("权限验证失败"));
-        }
         return HttpUtils.sendPost2(memberUrl + "system/regular/delete", JSONObject.toJSONString(map));
     }
 
     @GetMapping(value = "/regular/{memberId}", produces="application/json;charset=UTF-8")
     public String regularList(@PathVariable(value = "memberId")int memberId,HttpServletRequest request) {
-        /* 检查token */
-        StaffUser staffUser = tokenService.getStaffUser(request);
-
-        if(staffUser == null) {
-            return JSONObject.toJSONString(AjaxResult.error("权限验证失败"));
-        }
         return HttpUtils.sendGet(memberUrl + "system/regular/" + memberId);
     }
 
-
-
     @PostMapping(value = "/subMember/register", produces="application/json;charset=UTF-8")
     public String subRegister(@RequestBody HashMap map,HttpServletRequest request) throws IOException {
-
-        /* 检查token */
-        StaffUser staffUser = tokenService.getStaffUser(request);
-
-        if(staffUser == null) {
-            return JSONObject.toJSONString(AjaxResult.error("权限验证失败"));
-        }
-
         if(map.get("hotelId") == null) {
             return JSONObject.toJSONString(AjaxResult.error("集团ID不得为空"));
         }
@@ -119,14 +87,6 @@ public class MemberSystemController {
     /* 根据身份证号码查询会员信息，返回会员ID，注册的子账号ID，子账号关联的酒店，手机号码 */
     @GetMapping(value = "/memberInfo", produces="application/json;charset=UTF-8")
     public Object memberList(@RequestParam(value = "memberIdnumber") String idNumber,HttpServletResponse response,HttpServletRequest request) {
-
-        /* 检查token */
-        StaffUser staffUser = tokenService.getStaffUser(request);
-
-        if(staffUser == null) {
-            return AjaxResult.error("权限验证失败");
-        }
-
         // TODO: 2023/4/3 还要返回该会员常住的酒店
         final String res = HttpUtils.sendGet(memberUrl + "system/member/info?memberIdnumber=" + idNumber);
         final JSONObject jsonObject = JSONObject.parseObject(res);
