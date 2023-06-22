@@ -60,6 +60,7 @@ public class BaseHotelController extends BaseController
     private RedisTemplate redisTemplate;
     @Autowired
     private TokenService tokenService;
+    private String positionRedisKey = "hotels";
 
 
     /**
@@ -95,7 +96,7 @@ public class BaseHotelController extends BaseController
             // TODO: 2023/6/20 系统自动维护，更新酒店位置数据到Redis
             final GeoOperations geo = redisTemplate.opsForGeo();
             /* 查询范围内所有酒店ID */
-            final GeoResults<RedisGeoCommands.GeoLocation<Long>> hotels = geo.radius("hotels", new Circle(new Point(lng, lat), new Distance(distance,Metrics.NEUTRAL)));
+            final GeoResults<RedisGeoCommands.GeoLocation<Long>> hotels = geo.radius(positionRedisKey, new Circle(new Point(lng, lat), new Distance(distance,Metrics.NEUTRAL)));
             for (GeoResult<RedisGeoCommands.GeoLocation<Long>> longGeoResult : hotels.getContent()) {
                 hotelIds.add(longGeoResult.getContent().getName());
             }
@@ -160,14 +161,14 @@ public class BaseHotelController extends BaseController
             /* 携带了经纬度，需要计算距离 */
             String uuid = String.valueOf(UUID.randomUUID());
             final GeoOperations geo = redisTemplate.opsForGeo();
-            geo.add("hotels",new Point(lng,lat),uuid);
+            geo.add(positionRedisKey,new Point(lng,lat),uuid);
             try {
                 for (BaseHotel hotel : baseHotels) {
-                    final Distance hotels = geo.distance("hotels", hotel.getHotelId(), uuid);
+                    final Distance hotels = geo.distance(positionRedisKey, hotel.getHotelId(), uuid);
                     hotel.setDistance(hotels.getValue());
                 }
             }finally {
-                geo.remove("hotels",uuid);
+                geo.remove(positionRedisKey,uuid);
             }
         }
 

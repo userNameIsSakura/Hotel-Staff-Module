@@ -38,7 +38,7 @@ public class MemberSystemController {
     private TokenService tokenService;
 
 
-    @RequestMapping(value = "/member/register", produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/member/register", produces="application/json;charset=UTF-8")
     public String register(@RequestBody HashMap map, HttpServletRequest request) throws IOException {
         /* 检查token */
         StaffUser staffUser = tokenService.getStaffUser(request);
@@ -50,8 +50,43 @@ public class MemberSystemController {
         return HttpUtils.sendPost2(memberUrl + "system/member/register", JSONObject.toJSONString(map));
     }
 
+    @PostMapping(value = "/regular/add", produces="application/json;charset=UTF-8")
+    public String regularAdd(@RequestBody HashMap map,HttpServletRequest request) throws  IOException {
+        /* 检查token */
+        StaffUser staffUser = tokenService.getStaffUser(request);
 
-    @RequestMapping(value = "/subMember/register", produces="application/json;charset=UTF-8")
+        if(staffUser == null) {
+            return JSONObject.toJSONString(AjaxResult.error("权限验证失败"));
+        }
+        return HttpUtils.sendPost2(memberUrl + "system/regular/add", JSONObject.toJSONString(map));
+    }
+
+
+    @PostMapping(value = "/regular/delete", produces="application/json;charset=UTF-8")
+    public String regularDel(@RequestBody HashMap map,HttpServletRequest request) throws  IOException {
+        /* 检查token */
+        StaffUser staffUser = tokenService.getStaffUser(request);
+
+        if(staffUser == null) {
+            return JSONObject.toJSONString(AjaxResult.error("权限验证失败"));
+        }
+        return HttpUtils.sendPost2(memberUrl + "system/regular/delete", JSONObject.toJSONString(map));
+    }
+
+    @GetMapping(value = "/regular/{memberId}", produces="application/json;charset=UTF-8")
+    public String regularList(@PathVariable(value = "memberId")int memberId,HttpServletRequest request) {
+        /* 检查token */
+        StaffUser staffUser = tokenService.getStaffUser(request);
+
+        if(staffUser == null) {
+            return JSONObject.toJSONString(AjaxResult.error("权限验证失败"));
+        }
+        return HttpUtils.sendGet(memberUrl + "system/regular/" + memberId);
+    }
+
+
+
+    @PostMapping(value = "/subMember/register", produces="application/json;charset=UTF-8")
     public String subRegister(@RequestBody HashMap map,HttpServletRequest request) throws IOException {
 
         /* 检查token */
@@ -78,6 +113,8 @@ public class MemberSystemController {
         map.put("hotelName",baseChainHotel.getChotelName());
         return HttpUtils.sendPost2(memberUrl + "system/subMember/register", JSONObject.toJSONString(map));
     }
+
+
 
     /* 根据身份证号码查询会员信息，返回会员ID，注册的子账号ID，子账号关联的酒店，手机号码 */
     @GetMapping(value = "/memberInfo", produces="application/json;charset=UTF-8")
