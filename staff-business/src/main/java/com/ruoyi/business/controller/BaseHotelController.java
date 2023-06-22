@@ -85,7 +85,6 @@ public class BaseHotelController extends BaseController
         if(hotelSelectParam.getDistance() != null) {
             /* 限制距离,通过Redis快速查询范围内的酒店ID */
             final double distance = hotelSelectParam.getDistance();
-            // TODO: 2023/6/20 系统自动维护，更新酒店位置数据到Redis
             final GeoOperations geo = redisTemplate.opsForGeo();
             /* 查询范围内所有酒店ID */
             final GeoResults<RedisGeoCommands.GeoLocation<Long>> hotels = geo.radius(positionRedisKey, new Circle(new Point(lng, lat), new Distance(distance,Metrics.NEUTRAL)));
