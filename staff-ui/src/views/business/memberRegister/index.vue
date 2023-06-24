@@ -44,11 +44,18 @@ export default {
         type: 'info'
       }).then(() => {
         memberRegister().then(res => {
-          this.$message({
-            type: 'success',
-            message: '加入成功!'
-          });
-          this.isMember = true;
+          if(res.data.code === 200) {
+            this.$message({
+              type: 'success',
+              message: '加入成功!'
+            });
+            this.isMember = true;
+          }else {
+            this.$message({
+              type: 'error',
+              message: '加入失败!'
+            });
+          }
         })
       });
     },

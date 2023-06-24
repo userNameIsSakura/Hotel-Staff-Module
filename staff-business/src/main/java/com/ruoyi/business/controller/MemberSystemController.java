@@ -39,31 +39,15 @@ public class MemberSystemController {
     @Autowired
     private TokenService tokenService;
 
-
+    /* 会员主账号 */
     @PostMapping(value = "/member/register", produces="application/json;charset=UTF-8")
     public String register(@RequestBody HashMap map, HttpServletRequest request) throws IOException {
-
         return HttpUtils.sendPost2(memberUrl + "system/member/register", JSONObject.toJSONString(map));
     }
 
-    @PostMapping(value = "/regular/add", produces="application/json;charset=UTF-8")
-    public String regularAdd(@RequestBody HashMap map,HttpServletRequest request) throws  IOException {
-        return HttpUtils.sendPost2(memberUrl + "system/regular/add", JSONObject.toJSONString(map));
-    }
-
-
-    @PostMapping(value = "/regular/delete", produces="application/json;charset=UTF-8")
-    public String regularDel(@RequestBody HashMap map,HttpServletRequest request) throws  IOException {
-        return HttpUtils.sendPost2(memberUrl + "system/regular/delete", JSONObject.toJSONString(map));
-    }
-
-    @GetMapping(value = "/regular/{memberId}", produces="application/json;charset=UTF-8")
-    public String regularList(@PathVariable(value = "memberId")int memberId,HttpServletRequest request) {
-        return HttpUtils.sendGet(memberUrl + "system/regular/" + memberId);
-    }
-
+    /* 会员子账号 */
     @PostMapping(value = "/subMember/register", produces="application/json;charset=UTF-8")
-    public String subRegister(@RequestBody HashMap map,HttpServletRequest request) throws IOException {
+    public String subRegister(@RequestBody HashMap map) throws IOException {
         if(map.get("hotelId") == null) {
             return JSONObject.toJSONString(AjaxResult.error("集团ID不得为空"));
         }
@@ -82,11 +66,26 @@ public class MemberSystemController {
         return HttpUtils.sendPost2(memberUrl + "system/subMember/register", JSONObject.toJSONString(map));
     }
 
+    /* 常住酒店相关 */
+    @PostMapping(value = "/regular/add", produces="application/json;charset=UTF-8")
+    public String regularAdd(@RequestBody HashMap map) throws  IOException {
+        return HttpUtils.sendPost2(memberUrl + "system/regular/add", JSONObject.toJSONString(map));
+    }
 
+
+    @PostMapping(value = "/regular/delete", produces="application/json;charset=UTF-8")
+    public String regularDel(@RequestBody HashMap map) throws  IOException {
+        return HttpUtils.sendPost2(memberUrl + "system/regular/delete", JSONObject.toJSONString(map));
+    }
+
+    @GetMapping(value = "/regular/{memberId}", produces="application/json;charset=UTF-8")
+    public String regularList(@PathVariable(value = "memberId")int memberId) {
+        return HttpUtils.sendGet(memberUrl + "system/regular/" + memberId);
+    }
 
     /* 根据身份证号码查询会员信息，返回会员ID，注册的子账号ID，子账号关联的酒店，手机号码 */
     @GetMapping(value = "/memberInfo", produces="application/json;charset=UTF-8")
-    public Object memberList(@RequestParam(value = "memberIdnumber") String idNumber,HttpServletResponse response,HttpServletRequest request) {
+    public Object memberList(@RequestParam(value = "memberIdnumber") String idNumber,HttpServletResponse response) {
         // TODO: 2023/4/3 还要返回该会员常住的酒店
         final String res = HttpUtils.sendGet(memberUrl + "system/member/info?memberIdnumber=" + idNumber);
         final JSONObject jsonObject = JSONObject.parseObject(res);
@@ -123,4 +122,69 @@ public class MemberSystemController {
         }
         return jsonObject;
     }
+
+    /* 资金池相关接口 */
+    @PostMapping(value = "/pool/recharge",produces="application/json;charset=UTF-8")
+    public String poolRecharge(@RequestBody HashMap map) throws IOException {
+        return HttpUtils.sendPost2(memberUrl + "system/pool/recharge",JSONObject.toJSONString(map));
+    }
+
+    @PostMapping(value = "/pool/consumption",produces="application/json;charset=UTF-8")
+    public String poolConsumption(@RequestBody HashMap map) throws IOException {
+        return HttpUtils.sendPost2(memberUrl + "system/pool/consumption",JSONObject.toJSONString(map));
+    }
+
+    @GetMapping(value = "/pool/balance",produces="application/json;charset=UTF-8")
+    public String poolBalance(@RequestParam(value = "memberPhone",required = false) String memberPhone,@RequestParam(value = "memberIdnumber",required = false) String memberIdnumber,@RequestParam(value = "hotelId") Long hotelId) throws IOException {
+        String url = memberUrl + "system/pool/balance";
+        String params = "";
+        if(memberPhone != null){
+            params += "memberPhone=" + memberPhone + "&";
+        }
+        if(memberIdnumber != null){
+            params += "memberIdnumber=" + memberIdnumber + "&";
+        }
+        params += "hotelId=" + hotelId;
+        return HttpUtils.sendGet(url,params);
+    }
+
+    @GetMapping(value = "/pool/log",produces="application/json;charset=UTF-8")
+    public String poolLog(@RequestParam(value = "memberPhone",required = false) String memberPhone,@RequestParam(value = "memberIdnumber",required = false) String memberIdnumber,@RequestParam(value = "hotelId") Long hotelId) throws IOException {
+        String url = memberUrl + "system/pool/log";
+        String params = "";
+        if(memberPhone != null){
+            params += "memberPhone=" + memberPhone + "&";
+        }
+        if(memberIdnumber != null){
+            params += "memberIdnumber=" + memberIdnumber + "&";
+        }
+        params += "hotelId=" + hotelId;
+        return HttpUtils.sendGet(url,params);
+    }
+
+    /* 优惠券相关接口 */
+    @GetMapping(value = "/coupon/list",produces="application/json;charset=UTF-8")
+    public String couponList(@RequestParam(value = "memberPhone",required = false) String memberPhone,@RequestParam(value = "memberIdnumber",required = false) String memberIdnumber,@RequestParam(value = "hotelId",required = false) Long hotelId) throws IOException {
+        String url = memberUrl + "system/coupon/list";
+        String params = "";
+        if(memberPhone != null){
+            params += "memberPhone=" + memberPhone + "&";
+        }
+        if(memberIdnumber != null){
+            params += "memberIdnumber=" + memberIdnumber + "&";
+        }
+        if(hotelId != null){
+            params += "hotelId=" + hotelId;
+        }
+        if(params.endsWith("&")){
+            params = params.substring(0,params.length()-1);
+        }
+        return HttpUtils.sendGet(url,params);
+    }
+
+    @PostMapping(value = "/coupon/use",produces="application/json;charset=UTF-8")
+    public String couponUse(@RequestBody HashMap map) throws IOException{
+        return HttpUtils.sendPost2(memberUrl + "system/coupon/use",JSONObject.toJSONString(map));
+    }
+
 }

@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,15 +25,21 @@ public class HotelPositionAutoTask {
     private BaseHotelServiceImpl baseHotelService;
     private final String key = "hotels";
 
-    @Scheduled(initialDelay = 0,fixedDelay = (1000 * 60 * 60 * 2))
+    @Scheduled(cron = "0 0 3 * * ?")
     public void pushPositions() {
+        System.out.println("更新酒店位置数据");
         final List<BaseHotel> baseHotels = baseHotelService.selectBaseHotelList(new BaseHotel());
         final GeoOperations geo = redisTemplate.opsForGeo();
         for (BaseHotel baseHotel : baseHotels) {
             final List<Double> position = parsePosition(baseHotel.getLatlng());
             geo.add(key,new Point(position.get(1),position.get(0)),baseHotel.getHotelId());
-            redisTemplate.expire(key,3, TimeUnit.HOURS);
+            redisTemplate.expire(key,25, TimeUnit.HOURS);
         }
+    }
+
+    @PostConstruct
+    private void init() {
+        pushPositions();
     }
 
     /**

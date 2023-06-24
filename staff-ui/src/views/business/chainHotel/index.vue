@@ -126,7 +126,7 @@
           <el-input v-model="hotelForm.hotelFreeBreakfast" placeholder="请输入免费早餐数量" />
         </el-form-item>
         <el-form-item label="押金" prop="hotelDeposit">
-          <el-input v-model="hotelForm.hotelDeposit" placeholder="请输入押金" />
+          <el-switch v-model="hotelForm.hotelDeposit" :active-value=1 :inactive-value=0 />
         </el-form-item>
         <el-form-item label="海报">
           <image-upload v-model="hotelForm.hotelPoster" limit="1"/>
@@ -401,6 +401,7 @@ export default {
       this.resetHotelForm();
       getHotelByCHotelId(row.chotelId).then(response => {
         this.hotelForm = response.data;
+        console.log(this.hotelForm)
         var hotelNumber = this.hotelForm.hotelNumber;
         var provinceId = hotelNumber.slice(0, 2) + "0000";
         var cityId = hotelNumber.slice(0, 4) + "00";

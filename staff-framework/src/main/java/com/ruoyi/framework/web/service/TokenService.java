@@ -104,6 +104,7 @@ public class TokenService
                 String uuid = (String) claims.get(Constants.STAFF_KEY);
                 String userKey = getStaffTokenKey(uuid);
                 StaffUser user = redisCache.getCacheObject(userKey);
+                refreshStaffToken(user);
                 return user;
             }
             catch (Exception e)
@@ -180,12 +181,10 @@ public class TokenService
     }
 
     public void refreshStaffToken(StaffUser staffUser) {
-
         staffUser.setExpireTime(System.currentTimeMillis() + expireTime * MILLIS_MINUTE);
         // 根据uuid将staffUser缓存
         String userKey = getStaffTokenKey(staffUser.getToken());
         redisCache.setCacheObject(userKey, staffUser, expireTime, TimeUnit.MINUTES);
-
     }
 
     /**

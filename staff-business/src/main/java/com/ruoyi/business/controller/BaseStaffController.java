@@ -184,21 +184,6 @@ public class BaseStaffController extends BaseController
         return AjaxResult.success(hotelService.selectBaseHotelByHotelId(staffUser.getHotelId()));
     }
 
-/*    @PostMapping("/auth")
-    public boolean auth(@RequestBody String url,HttpServletRequest request) {
-
-        StaffUser staffUser = tokenService.getStaffUser(request);
-
-        *//*有效期验证*//*
-        tokenService.verifyStaffToken(staffUser);
-
-        Long staffId = staffUser.getStaffId();
-        int i = baseStaffService.checkUrl(staffId, url);
-        if(i > 0)
-            return true;
-        return false;
-    }*/
-
     /**
      * 导出员工信息列表
      */

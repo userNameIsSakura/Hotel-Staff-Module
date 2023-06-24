@@ -10,6 +10,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import com.alibaba.fastjson2.JSONObject;
+import com.ruoyi.common.core.domain.AjaxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.ruoyi.common.constant.Constants;
@@ -271,9 +274,8 @@ public class HttpUtils
         } catch (Exception e) {
 
             System.out.println("发送 POST 请求出现异常！"+e);
-
             e.printStackTrace();
-
+            return JSONObject.toJSONString(AjaxResult.error("网络连接异常"));
         }
 
 //使用finally块来关闭输出流、输入流
