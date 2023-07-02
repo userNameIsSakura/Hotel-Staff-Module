@@ -29,9 +29,9 @@ export default {
   },
   methods: {
     checkMembership() {
-//调用接口判断是否加入会员系统
-//如果已加入，设置isMember为true
-//如果未加入，保持isMember为false
+      //调用接口判断是否加入会员系统
+      //如果已加入，设置isMember为true
+      //如果未加入，保持isMember为false
       validation().then(res => {
         this.isMember = res;
       })

@@ -186,11 +186,14 @@ hotel:
 mqtt:
   broker:
     host:
-      - tcp://139.9.100.253:30104
+      - tcp://119.177.60.66:30109
     username: hotel-user
-    password: "mXshRj2pe4EegpYHtHpU8Yyu"
+    password: "qRseHQ4tHSxVUHc7L3vxCthy"
     clientId: aos-test
     qos: 2
     timeout: 30
     keepalive: 10
     completionTimeout: 30
+
+
+

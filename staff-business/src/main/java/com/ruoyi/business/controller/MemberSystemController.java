@@ -85,9 +85,20 @@ public class MemberSystemController {
 
     /* 根据身份证号码查询会员信息，返回会员ID，注册的子账号ID，子账号关联的酒店，手机号码 */
     @GetMapping(value = "/memberInfo", produces="application/json;charset=UTF-8")
-    public Object memberList(@RequestParam(value = "memberIdnumber") String idNumber,HttpServletResponse response) {
+    public Object memberList(@RequestParam(value = "memberIdnumber",required = false) String idNumber,@RequestParam(value = "memberPhone",required = false) String memberPhone, HttpServletResponse response) {
         // TODO: 2023/4/3 还要返回该会员常住的酒店
-        final String res = HttpUtils.sendGet(memberUrl + "system/member/info?memberIdnumber=" + idNumber);
+        String param = "";
+        if(idNumber != null) {
+            param = "memberIdnumber=" + idNumber + "&";
+        }
+        if(memberPhone != null) {
+            param = "memberPhone=" + memberPhone;
+        }
+        if(param.endsWith("&")) {
+            param = param.substring(0,param.length() - 1);
+        }
+
+        final String res = HttpUtils.sendGet(memberUrl + "system/member/info",param);
         final JSONObject jsonObject = JSONObject.parseObject(res);
         if(StringUtils.isNull(jsonObject)) {
             final JSONObject error = new JSONObject();
@@ -96,7 +107,10 @@ public class MemberSystemController {
             response.setStatus(HttpStatus.ERROR);
             return error;
         }
-        if(!jsonObject.get("code").equals("200")) {
+
+
+
+        if(!jsonObject.get("code").equals("200") && Integer.parseInt(jsonObject.get("code").toString()) != 200) {
             response.setStatus(HttpStatus.ERROR);
             return jsonObject;
         }
@@ -187,4 +201,47 @@ public class MemberSystemController {
         return HttpUtils.sendPost2(memberUrl + "system/coupon/use",JSONObject.toJSONString(map));
     }
 
+    /* 预定等信息 */
+    @PostMapping(value = "/reservation/list",produces="application/json;charset=UTF-8")
+    public String reservationList(@RequestBody HashMap map) throws IOException {
+        return HttpUtils.sendPost2(memberUrl + "system/reservation/list",JSONObject.toJSONString(map));
+    }
+    @PostMapping(value = "/reservation/add",produces="application/json;charset=UTF-8")
+    public String reservationAdd(@RequestBody HashMap map) throws IOException {
+        return HttpUtils.sendPost2(memberUrl + "system/reservation/add",JSONObject.toJSONString(map));
+    }
+    @GetMapping("/reservation/{id}")
+    public String reservationRemove(@PathVariable(value = "id")String id) {
+        return HttpUtils.sendGet(memberUrl + "system/reservation/" + id);
+    }
+
+    @PostMapping(value = "/arrangement/list",produces="application/json;charset=UTF-8")
+    public String arrangementList(@RequestBody HashMap map) throws IOException {
+        return HttpUtils.sendPost2(memberUrl + "system/arrangement/list",JSONObject.toJSONString(map));
+    }
+    @PostMapping(value = "/arrangement/add",produces="application/json;charset=UTF-8")
+    public String arrangementAdd(@RequestBody HashMap map) throws IOException {
+        return HttpUtils.sendPost2(memberUrl + "system/arrangement/add",JSONObject.toJSONString(map));
+    }
+    @GetMapping("/arrangement/{id}")
+    public String arrangementRemove(@PathVariable(value = "id")String id) {
+        return HttpUtils.sendGet(memberUrl + "system/arrangement/" + id);
+    }
+
+    @PostMapping(value = "/checkIn/list",produces="application/json;charset=UTF-8")
+    public String checkInList(@RequestBody HashMap map) throws IOException {
+        return HttpUtils.sendPost2(memberUrl + "system/checkIn/list",JSONObject.toJSONString(map));
+    }
+    @PostMapping(value = "/checkIn/add",produces="application/json;charset=UTF-8")
+    public String checkInAdd(@RequestBody HashMap map) throws IOException {
+        return HttpUtils.sendPost2(memberUrl + "system/checkIn/add",JSONObject.toJSONString(map));
+    }
+    @GetMapping(value = "/checkIn/{id}",produces="application/json;charset=UTF-8")
+    public String checkInRemove(@PathVariable(value = "id")String id) {
+        return HttpUtils.sendGet(memberUrl + "system/checkIn/" + id);
+    }
+    @PostMapping(value = "/checkIn/latest",produces="application/json;charset=UTF-8")
+    public String checkInLatest(@RequestBody HashMap map) throws IOException {
+        return HttpUtils.sendPost2(memberUrl + "system/checkIn/latest",JSONObject.toJSONString(map));
+    }
 }

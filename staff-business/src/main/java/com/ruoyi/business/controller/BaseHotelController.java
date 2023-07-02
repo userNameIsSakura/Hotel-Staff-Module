@@ -95,6 +95,9 @@ public class BaseHotelController extends BaseController
             hotelIds = baseHotelService.selectBaseHotelList(new BaseHotel()).stream().map(BaseHotel::getHotelId).collect(Collectors.toList());
         }
 
+        if(hotelIds.contains(0L))
+            hotelIds.remove(0L);
+
         /* 如果酒店ID组为空，直接返回 */
         if(hotelIds.size() == 0)
             return AjaxResult.success(new ArrayList<>());
