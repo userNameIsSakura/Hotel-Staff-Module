@@ -88,7 +88,7 @@ public class MqttPushClient {
             try {
                 IMqttToken token = client.connectWithResult(options);
                 token.waitForCompletion();
-                client.subscribe(mqtt_topic, mqtt_qos);
+//                client.subscribe(mqtt_topic, mqtt_qos);
                 System.out.println("MQTT SERVER 重连成功!");
             } catch (Exception e) {
                 System.out.println("MQTT SERVER 重连失败!");
