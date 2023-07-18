@@ -80,8 +80,6 @@ public class TokenService
         return null;
     }
 
-
-
     /**
      * 获取员工身份信息
      *
@@ -114,9 +112,6 @@ public class TokenService
         }
         return null;
     }
-
-
-
 
     /**
      * 设置用户身份信息

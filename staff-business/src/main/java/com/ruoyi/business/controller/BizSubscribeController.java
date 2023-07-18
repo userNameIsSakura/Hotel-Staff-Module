@@ -552,7 +552,7 @@ public class BizSubscribeController extends BaseController
         try {
             TimeUnit.SECONDS.sleep(10);
         } catch (InterruptedException e) {
-            return DataReception.topicMsgMap.get(callbackTopic);
+            return DataReception.topicMsgMap.remove(callbackTopic);
         }
 
         return AjaxResult.error("超时");

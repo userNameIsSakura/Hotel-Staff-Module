@@ -70,8 +70,10 @@ public class DataReception implements Runnable{
                 if(jsonObject == null)
                     jsonObject = new JSONObject();
                 topicMsgMap.put(topic,jsonObject);
-                if(BizSubscribeController.getTopicThreadMap().get(topic) != null)
+                if(BizSubscribeController.getTopicThreadMap().get(topic) != null) {
                     BizSubscribeController.getTopicThreadMap().get(topic).interrupt();
+                    BizSubscribeController.getTopicThreadMap().remove(topic);
+                }
                 else
                     log.error("pms线程为空");
                 return;
