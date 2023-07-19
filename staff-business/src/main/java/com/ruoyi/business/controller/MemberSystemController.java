@@ -80,7 +80,23 @@ public class MemberSystemController {
 
     @GetMapping(value = "/regular/{memberId}", produces="application/json;charset=UTF-8")
     public String regularList(@PathVariable(value = "memberId")int memberId) {
-        return HttpUtils.sendGet(memberUrl + "system/regular/" + memberId);
+        final String json = HttpUtils.sendGet(memberUrl + "system/regular/" + memberId);
+
+        final JSONObject jsonObject = JSONObject.parseObject(json);
+
+        if(Integer.parseInt(jsonObject.get("code").toString()) != 200) {
+            return json;
+        }
+
+        try {
+            final ArrayList<Integer> data = (ArrayList<Integer>) jsonObject.get("data");
+
+            final List<BaseHotel> baseHotels = baseHotelService.selectBaseHotelByHotelIdArray(data);
+
+            return JSONObject.toJSONString(AjaxResult.success(baseHotels));
+        }catch (Exception e) {
+            return json;
+        }
     }
 
     /* 根据身份证号码查询会员信息，返回会员ID，注册的子账号ID，子账号关联的酒店，手机号码 */

@@ -1,5 +1,6 @@
 package com.ruoyi.business.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import com.ruoyi.business.domain.BaseHotel;
@@ -19,6 +20,9 @@ public interface IBaseHotelService
      * @return 酒店列表
      */
     public BaseHotel selectBaseHotelByHotelId(Long hotelId);
+
+    public List<BaseHotel> selectBaseHotelByHotelIdArray(ArrayList idList);
+
 
     public List<BaseHotel> selectBaseHotelForOutside(HashMap<String,Object> map);
 

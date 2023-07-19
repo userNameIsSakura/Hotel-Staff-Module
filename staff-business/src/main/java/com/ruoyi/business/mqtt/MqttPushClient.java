@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PreDestroy;
 import java.net.InetAddress;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Component
 public class MqttPushClient {
@@ -73,11 +74,16 @@ public class MqttPushClient {
             } catch (Exception e) {
                 System.out.println("MQTT SERVER 连接失败!");
                 e.printStackTrace();
+                TimeUnit.SECONDS.sleep(10);
+                /* 连接失败十秒后再次尝试 */
+                connect(host, clientID, username, password, timeout, keepalive, qos);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+
 
     /**
      * 重连服务

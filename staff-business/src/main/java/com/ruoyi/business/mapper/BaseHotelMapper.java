@@ -1,5 +1,6 @@
 package com.ruoyi.business.mapper;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import com.ruoyi.business.domain.BaseHotel;
@@ -21,6 +22,7 @@ public interface BaseHotelMapper
      */
     public BaseHotel selectBaseHotelByHotelId(Long hotelId);
 
+    public List<BaseHotel> selectBaseHotelByHotelIdArray(ArrayList idList);
 
     /**
      * 对外查询酒店接口

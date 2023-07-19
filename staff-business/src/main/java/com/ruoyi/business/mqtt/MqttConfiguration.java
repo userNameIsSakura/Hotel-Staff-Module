@@ -28,6 +28,7 @@ public class MqttConfiguration implements ApplicationRunner {
     private int timeout;
     private int keepalive;
 
+    /* 启动MQTT异步消息通知线程 */
     public final Thread thread = new Thread(() -> {
         try {
             this.dataReception.sendReportRegularly();

@@ -66,6 +66,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where hotel_id = #{hotelId}
     </select>
 
+    <select id="selectBaseHotelByHotelIdArray" parameterType="java.util.List" resultMap="BaseHotelResult">
+        <include refid="selectBaseHotelVo"/>
+        where hotel_id IN
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+
     <select id="selectBaseHotelByChotelId" parameterType="Long" resultMap="BaseHotelResult">
         <include refid="selectBaseHotelVo"/>
         where chotel_id = #{chotelId}

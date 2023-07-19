@@ -1,5 +1,6 @@
 package com.ruoyi.business.service.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -45,6 +46,12 @@ public class BaseHotelServiceImpl implements IBaseHotelService
         BaseHotel baseHotel = baseHotelMapper.selectBaseHotelByHotelId(hotelId);
         return baseHotel;
     }
+
+    @Override
+    public List<BaseHotel> selectBaseHotelByHotelIdArray(ArrayList idList) {
+        return baseHotelMapper.selectBaseHotelByHotelIdArray(idList);
+    }
+
 
     /**
      * 查询酒店列表列表
