@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @RestController
-@RequestMapping("/business/memberSystem")
+@RequestMapping(value = "/business/memberSystem",produces = "application/json;charset=UTF-8")
 @StaffTokenCheck
 public class MemberSystemController {
 
@@ -40,13 +40,13 @@ public class MemberSystemController {
     private TokenService tokenService;
 
     /* 会员主账号 */
-    @PostMapping(value = "/member/register", produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/member/register")
     public String register(@RequestBody HashMap map, HttpServletRequest request) throws IOException {
         return HttpUtils.sendPost2(memberUrl + "system/member/register", JSONObject.toJSONString(map));
     }
 
     /* 会员子账号 */
-    @PostMapping(value = "/subMember/register", produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/subMember/register")
     public String subRegister(@RequestBody HashMap map) throws IOException {
         if(map.get("hotelId") == null) {
             return JSONObject.toJSONString(AjaxResult.error("集团ID不得为空"));
@@ -67,18 +67,18 @@ public class MemberSystemController {
     }
 
     /* 常住酒店相关 */
-    @PostMapping(value = "/regular/add", produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/regular/add")
     public String regularAdd(@RequestBody HashMap map) throws  IOException {
         return HttpUtils.sendPost2(memberUrl + "system/regular/add", JSONObject.toJSONString(map));
     }
 
 
-    @PostMapping(value = "/regular/delete", produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/regular/delete")
     public String regularDel(@RequestBody HashMap map) throws  IOException {
         return HttpUtils.sendPost2(memberUrl + "system/regular/delete", JSONObject.toJSONString(map));
     }
 
-    @GetMapping(value = "/regular/{memberId}", produces="application/json;charset=UTF-8")
+    @GetMapping(value = "/regular/{memberId}")
     public String regularList(@PathVariable(value = "memberId")int memberId) {
         final String json = HttpUtils.sendGet(memberUrl + "system/regular/" + memberId);
 
@@ -100,7 +100,7 @@ public class MemberSystemController {
     }
 
     /* 根据身份证号码查询会员信息，返回会员ID，注册的子账号ID，子账号关联的酒店，手机号码 */
-    @GetMapping(value = "/memberInfo", produces="application/json;charset=UTF-8")
+    @GetMapping(value = "/memberInfo")
     public Object memberList(@RequestParam(value = "memberIdnumber",required = false) String idNumber,@RequestParam(value = "memberPhone",required = false) String memberPhone, HttpServletResponse response) {
         // TODO: 2023/4/3 还要返回该会员常住的酒店
         String param = "";
@@ -154,17 +154,17 @@ public class MemberSystemController {
     }
 
     /* 资金池相关接口 */
-    @PostMapping(value = "/pool/recharge",produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/pool/recharge")
     public String poolRecharge(@RequestBody HashMap map) throws IOException {
         return HttpUtils.sendPost2(memberUrl + "system/pool/recharge",JSONObject.toJSONString(map));
     }
 
-    @PostMapping(value = "/pool/consumption",produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/pool/consumption")
     public String poolConsumption(@RequestBody HashMap map) throws IOException {
         return HttpUtils.sendPost2(memberUrl + "system/pool/consumption",JSONObject.toJSONString(map));
     }
 
-    @GetMapping(value = "/pool/balance",produces="application/json;charset=UTF-8")
+    @GetMapping(value = "/pool/balance")
     public String poolBalance(@RequestParam(value = "memberPhone",required = false) String memberPhone,@RequestParam(value = "memberIdnumber",required = false) String memberIdnumber,@RequestParam(value = "hotelId") Long hotelId) throws IOException {
         String url = memberUrl + "system/pool/balance";
         String params = "";
@@ -178,7 +178,7 @@ public class MemberSystemController {
         return HttpUtils.sendGet(url,params);
     }
 
-    @GetMapping(value = "/pool/log",produces="application/json;charset=UTF-8")
+    @GetMapping(value = "/pool/log")
     public String poolLog(@RequestParam(value = "memberPhone",required = false) String memberPhone,@RequestParam(value = "memberIdnumber",required = false) String memberIdnumber,@RequestParam(value = "hotelId") Long hotelId) throws IOException {
         String url = memberUrl + "system/pool/log";
         String params = "";
@@ -193,7 +193,7 @@ public class MemberSystemController {
     }
 
     /* 优惠券相关接口 */
-    @GetMapping(value = "/coupon/list",produces="application/json;charset=UTF-8")
+    @GetMapping(value = "/coupon/list")
     public String couponList(@RequestParam(value = "memberPhone",required = false) String memberPhone,@RequestParam(value = "memberIdnumber",required = false) String memberIdnumber,@RequestParam(value = "hotelId",required = false) Long hotelId) throws IOException {
         String url = memberUrl + "system/coupon/list";
         String params = "";
@@ -212,17 +212,17 @@ public class MemberSystemController {
         return HttpUtils.sendGet(url,params);
     }
 
-    @PostMapping(value = "/coupon/use",produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/coupon/use")
     public String couponUse(@RequestBody HashMap map) throws IOException{
         return HttpUtils.sendPost2(memberUrl + "system/coupon/use",JSONObject.toJSONString(map));
     }
 
     /* 预定等信息 */
-    @PostMapping(value = "/reservation/list",produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/reservation/list")
     public String reservationList(@RequestBody HashMap map) throws IOException {
         return HttpUtils.sendPost2(memberUrl + "system/reservation/list",JSONObject.toJSONString(map));
     }
-    @PostMapping(value = "/reservation/add",produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/reservation/add")
     public String reservationAdd(@RequestBody HashMap map) throws IOException {
         return HttpUtils.sendPost2(memberUrl + "system/reservation/add",JSONObject.toJSONString(map));
     }
@@ -231,11 +231,11 @@ public class MemberSystemController {
         return HttpUtils.sendGet(memberUrl + "system/reservation/" + id);
     }
 
-    @PostMapping(value = "/arrangement/list",produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/arrangement/list")
     public String arrangementList(@RequestBody HashMap map) throws IOException {
         return HttpUtils.sendPost2(memberUrl + "system/arrangement/list",JSONObject.toJSONString(map));
     }
-    @PostMapping(value = "/arrangement/add",produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/arrangement/add")
     public String arrangementAdd(@RequestBody HashMap map) throws IOException {
         return HttpUtils.sendPost2(memberUrl + "system/arrangement/add",JSONObject.toJSONString(map));
     }
@@ -244,19 +244,19 @@ public class MemberSystemController {
         return HttpUtils.sendGet(memberUrl + "system/arrangement/" + id);
     }
 
-    @PostMapping(value = "/checkIn/list",produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/checkIn/list")
     public String checkInList(@RequestBody HashMap map) throws IOException {
         return HttpUtils.sendPost2(memberUrl + "system/checkIn/list",JSONObject.toJSONString(map));
     }
-    @PostMapping(value = "/checkIn/add",produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/checkIn/add")
     public String checkInAdd(@RequestBody HashMap map) throws IOException {
         return HttpUtils.sendPost2(memberUrl + "system/checkIn/add",JSONObject.toJSONString(map));
     }
-    @GetMapping(value = "/checkIn/{id}",produces="application/json;charset=UTF-8")
+    @GetMapping(value = "/checkIn/{id}")
     public String checkInRemove(@PathVariable(value = "id")String id) {
         return HttpUtils.sendGet(memberUrl + "system/checkIn/" + id);
     }
-    @PostMapping(value = "/checkIn/latest",produces="application/json;charset=UTF-8")
+    @PostMapping(value = "/checkIn/latest")
     public String checkInLatest(@RequestBody HashMap map) throws IOException {
         return HttpUtils.sendPost2(memberUrl + "system/checkIn/latest",JSONObject.toJSONString(map));
     }

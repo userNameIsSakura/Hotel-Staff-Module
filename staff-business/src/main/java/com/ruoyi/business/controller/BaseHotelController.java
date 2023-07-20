@@ -66,7 +66,10 @@ public class BaseHotelController extends BaseController
      * */
     @PostMapping("/select")
     @StaffTokenCheck
-    public AjaxResult selectHotel(@RequestBody HotelSelectParam hotelSelectParam, HttpServletRequest request) {
+    public AjaxResult selectHotel(@RequestBody HotelSelectParam hotelSelectParam,
+                                  @RequestHeader(value = "page", required = false) Integer page,
+                                  @RequestHeader(value = "size", required = false) Integer size,
+                                  HttpServletRequest request) {
 
         List<Long> hotelIds = new ArrayList<>();
 
@@ -149,7 +152,7 @@ public class BaseHotelController extends BaseController
         map.put("hotelIds",hotelIds);
         map.put("adcode",adcode);
         System.out.println("查询" + map);
-        final List<BaseHotel> baseHotels = baseHotelService.selectBaseHotelForOutside(map);
+        List<BaseHotel> baseHotels = baseHotelService.selectBaseHotelForOutside(map);
 
         if(lat != null && lng != null) {
             /* 携带了经纬度，需要计算距离 */
@@ -166,13 +169,18 @@ public class BaseHotelController extends BaseController
             }
         }
 
-        return AjaxResult.success(baseHotels);
+        // 分页处理
+        int total = baseHotels.size();
+        if (page != null && size != null) {
+            int startIndex = (page - 1) * size;
+            int endIndex = Math.min(startIndex + size, baseHotels.size());
+            baseHotels = baseHotels.subList(startIndex, endIndex);
+        }
+
+        final AjaxResult success = AjaxResult.success(baseHotels);
+        success.put("total",total);
+        return success;
     }
-
-
-
-
-
 
     /**
      * 查询酒店列表列表

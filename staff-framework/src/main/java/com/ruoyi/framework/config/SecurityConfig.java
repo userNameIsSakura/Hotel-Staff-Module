@@ -113,7 +113,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
                         "/business/staff/login","/business/staff/auth","/business/staff/heart","/business/staff/validate", // 员工账户接口
                         "/business/subscribe/clientRequest","/business/subscribe/getDataList","/business/subscribe/syncRequest", // 模块通信接口
                         "/business/memberSystem/**", // 会员系统
-                        "/business/hotel/select" // 酒店查询接口
+                        "/business/hotel/select", // 酒店查询接口
+                        "/face/**" // 人脸验证+上报航信PSB系统
                 )
                 .anonymous()
                 // 静态资源，可匿名访问
